@@ -4,28 +4,15 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use FlixTech\SchemaRegistryApi\SynchronousRegistry;
-use Symfony\Component\Console\Command\Command;
+use AvroSchemaParseException;
+use FlixTech\SchemaRegistryApi\Exception\SchemaRegistryException;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RegisterSchemaVersionCommand extends Command
+class RegisterSchemaVersionCommand extends AbstractSchemaCommand
 {
-
-    /**
-     * @var SynchronousRegistry
-     */
-    private $registry;
-
-    /**
-     * @param SynchronousRegistry $registry
-     */
-    public function __construct(SynchronousRegistry $registry)
-    {
-        parent::__construct();
-        $this->registry = $registry;
-    }
 
     /**
      * @return void
@@ -36,25 +23,22 @@ class RegisterSchemaVersionCommand extends Command
             ->setName('schema:registry:register:version')
             ->setDescription('Add new schema version to registry')
             ->setHelp('Add new schema version to registry')
-            ->addArgument('registryUrl', InputArgument::REQUIRED, 'Url of the schema registry')
-            ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to avro schema file')
-            ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema');
+            ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to avro schema file');
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
-     * @throws \FlixTech\SchemaRegistryApi\Exception\SchemaRegistryException
      * @return void
+     * @throws AvroSchemaParseException
+     * @throws SchemaRegistryException
      */
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $output->writeln('Add new schema version to registry');
 
-        $schemaPath = realpath($input->getArgument('schemaFile'));
-        $schemaName = $input->getArgument('schemaName');
-
-        $avroSchema = \AvroSchema::parse(file_get_contents($schemaPath));
+        $avroSchema = SchemaFileHelper::readAvroSchemaFromFile($input->getArgument('schemaFile'));
+        $schemaName = SchemaFileHelper::readSchemaName($input->getArgument('schemaFile'));
 
         $result = $this->registry->register($schemaName, $avroSchema);
 
