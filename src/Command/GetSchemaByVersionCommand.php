@@ -40,7 +40,7 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
             )
         );
 
-        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $data = $this->getJsonDataFromResponse($response);
 
         $output->writeln($data['schema']);
         return 0;

@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use function FlixTech\SchemaRegistryApi\Requests\checkIfSubjectHasSchemaRegisteredRequest;
 use function FlixTech\SchemaRegistryApi\Requests\schemaRequest;
 
 class GetSchemaCommand extends AbstractSchemaCommand
@@ -22,7 +23,7 @@ class GetSchemaCommand extends AbstractSchemaCommand
             ->setName('schema:registry:get:schema')
             ->setDescription('Get schema')
             ->setHelp('Get schema')
-            ->addArgument('schemaId', InputArgument::REQUIRED, 'Id of the schema')
+            ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema')
             ;
     }
 
@@ -33,8 +34,12 @@ class GetSchemaCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+
+        // TODO check best way to get ID
+        $id = $this->getIdBySchemaName($input->getArgument('schemaName'));
+
         try {
-            $response = $this->client->send(schemaRequest($input->getArgument('schemaId')));
+            $response = $this->client->send(schemaRequest($id));
         }catch (ClientException $e)
         {
             if( $e->getCode() !== 404){
@@ -45,8 +50,31 @@ class GetSchemaCommand extends AbstractSchemaCommand
             return 1;
         }
 
-        $data = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $data = $this->getJsonDataFromResponse($response);
         $output->writeln($data['schema']);
         return 0;
+    }
+
+    /**
+     * @param string $schemaName
+     * @return string|null
+     */
+    private function getIdBySchemaName(string $schemaName): ?string
+    {
+        try {
+            $response = $this->client->send(
+                checkIfSubjectHasSchemaRegisteredRequest(
+                    $schemaName
+                )
+            );
+
+            return $this->getJsonDataFromResponse($response);
+        }catch (ClientException $e) {
+            if ($e->getCode() !== 40403) {
+                throw $e;
+            }
+
+            return null;
+        }
     }
 }

@@ -39,7 +39,7 @@ class ListVersionsForSchemaCommand extends AbstractSchemaCommand
             )
         );
 
-        $data = json_decode($response->getBody()->getContents(), true, 2, JSON_THROW_ON_ERROR);
+        $data = $this->getJsonDataFromResponse($response);
 
         array_walk($data, static function($item) use ($output){
             $output->writeln($item);
