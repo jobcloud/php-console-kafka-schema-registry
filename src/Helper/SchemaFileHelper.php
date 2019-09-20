@@ -3,6 +3,7 @@
 namespace Jobcloud\SchemaConsole\Helper;
 
 use AvroSchema;
+use AvroSchemaParseException;
 use RuntimeException;
 
 class SchemaFileHelper
@@ -11,9 +12,17 @@ class SchemaFileHelper
     /**
      * @param string $filePath
      * @return AvroSchema
-     * @throws \AvroSchemaParseException
+     * @throws AvroSchemaParseException
      */
     public static function readAvroSchemaFromFile(string $filePath): AvroSchema {
+        return AvroSchema::parse(static::readSchemaFromFile($filePath));
+    }
+
+    /**
+     * @param string $filePath
+     * @return string
+     */
+    public static function readSchemaFromFile(string $filePath): string {
 
         if(!is_readable($filePath)) {
             throw new RuntimeException(
@@ -21,9 +30,7 @@ class SchemaFileHelper
             );
         }
 
-        $filePath = realpath($filePath);
-
-        return AvroSchema::parse(file_get_contents($filePath));
+        return file_get_contents(realpath($filePath));
     }
 
     /**

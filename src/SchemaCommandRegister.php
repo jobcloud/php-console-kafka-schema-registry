@@ -1,9 +1,13 @@
 <?php
 
-
 namespace Jobcloud\SchemaConsole;
 
-
+use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
+use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
+use Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand;
+use Jobcloud\SchemaConsole\Command\GetSchemaCommand;
+use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
+use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
 use Symfony\Component\Console\Application;
 
@@ -21,8 +25,14 @@ class SchemaCommandRegister
      * @param string $registryUrl
      */
     public static function register(Application $application, string $registryUrl): void {
-        $application
-            ->add(new RegisterSchemaVersionCommand($registryUrl))
-            ;
+        $application->addCommands([
+            new RegisterSchemaVersionCommand($registryUrl),
+            new ListAllSchemasCommand($registryUrl),
+            new ListVersionsForSchemaCommand($registryUrl),
+            new GetSchemaByVersionCommand($registryUrl),
+            new CheckCompatibilityCommand($registryUrl),
+            new CheckIsRegistredCommand($registryUrl),
+            new GetSchemaCommand($registryUrl),
+        ]);
     }
 }
