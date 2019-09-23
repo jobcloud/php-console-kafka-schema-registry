@@ -21,6 +21,18 @@ use const FlixTech\SchemaRegistryApi\Constants\VERSION_LATEST;
 
 class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 {
+
+    /**
+     * @var integer
+     */
+    private $maxRetries;
+
+    public function __construct(string $registryUrl, int $maxRetries = 10)
+    {
+        parent::__construct($registryUrl);
+        $this->maxRetries = $maxRetries;
+    }
+
     /**
      * @return void
      */
@@ -62,6 +74,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         }
 
         $abortRegister = false;
+        $retries = 0;
 
         while (false === $abortRegister) {
             foreach ($avroFiles as $schemaName => $avroFile) {
@@ -122,6 +135,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 try {
                     $schema = AvroSchema::parse($localSchema);
                 } catch (AvroSchemaParseException $e) {
+                    $output->writeln(sprintf('Skiping %s for now because %s', $schemaName, $e->getMessage()));
                     continue;
                 }
 
@@ -132,8 +146,19 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 unset($avroFiles[$schemaName]);
             }
 
+            $abortRegister = 0 === count($avroFiles);
+
+            if (false === $abortRegister) {
+                $abortRegister = $this->maxRetries === ++$retries;
+            }
 
         }
+
+        if ([] !== $avroFiles) {
+            $output->writeln(sprintf('Was unable to register the following schemas %s', implode(', ', $avroFiles)));
+            return -1;
+        }
+
         return 0;
     }
 }
