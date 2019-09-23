@@ -45,7 +45,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
         $data = $this->getJsonDataFromResponse($response);
 
         $output->writeln(
-            sprintf('Schema is %s', (bool) $data['is_compatible'] ? 'Compatible' : 'NOT Compatible')
+            sprintf('Schema is %s', $data['is_compatible'] ? 'Compatible' : 'NOT Compatible')
         );
 
         return (int) $data['is_compatible'];

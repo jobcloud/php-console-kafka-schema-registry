@@ -8,10 +8,10 @@ use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\checkIfSubjectHasSchemaRegisteredRequest;
-use function FlixTech\SchemaRegistryApi\Requests\schemaRequest;
+use function FlixTech\SchemaRegistryApi\Requests\singleSubjectVersionRequest;
+use const FlixTech\SchemaRegistryApi\Constants\VERSION_LATEST;
 
-class GetSchemaCommand extends AbstractSchemaCommand
+class GetLatestSchemaCommand extends AbstractSchemaCommand
 {
 
     /**
@@ -20,9 +20,9 @@ class GetSchemaCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:get:schema')
-            ->setDescription('Get schema')
-            ->setHelp('Get schema')
+            ->setName('schema:registry:get:schema:latest')
+            ->setDescription('Get latest schema')
+            ->setHelp('Get latest schema')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema')
             ->addArgument('outputFile', InputArgument::REQUIRED, 'Path to output file');
     }
@@ -34,18 +34,18 @@ class GetSchemaCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        // TODO check best way to get ID
-        $id = $this->getIdBySchemaName($input->getArgument('schemaName'));
+        $schemaName = $input->getArgument('schemaName');
 
         try {
-            $response = $this->client->send(schemaRequest($id));
+            $response = $this->client->send(
+                singleSubjectVersionRequest($schemaName, VERSION_LATEST)
+            );
         } catch (ClientException $e) {
             if( $e->getCode() !== 404){
                 throw $e;
             }
 
-            $output->writeln('Schema does not exist by given ID');
+            $output->writeln(sprintf('Schema %s does not exist', $schemaName));
             return 1;
         }
 
@@ -60,28 +60,5 @@ class GetSchemaCommand extends AbstractSchemaCommand
         $output->writeln(sprintf('Schema successfully written to %s.', $outputFile));
 
         return 0;
-    }
-
-    /**
-     * @param string $schemaName
-     * @return string|null
-     */
-    private function getIdBySchemaName(string $schemaName): ?string
-    {
-        try {
-            $response = $this->client->send(
-                checkIfSubjectHasSchemaRegisteredRequest(
-                    $schemaName
-                )
-            );
-
-            return $this->getJsonDataFromResponse($response);
-        }catch (ClientException $e) {
-            if ($e->getCode() !== 40403) {
-                throw $e;
-            }
-
-            return null;
-        }
     }
 }

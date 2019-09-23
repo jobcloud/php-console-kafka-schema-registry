@@ -5,7 +5,7 @@ namespace Jobcloud\SchemaConsole;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
 use Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand;
-use Jobcloud\SchemaConsole\Command\GetSchemaCommand;
+use Jobcloud\SchemaConsole\Command\GetLatestSchemaCommand;
 use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
@@ -32,7 +32,7 @@ class SchemaCommandRegister
             new GetSchemaByVersionCommand($registryUrl),
             new CheckCompatibilityCommand($registryUrl),
             new CheckIsRegistredCommand($registryUrl),
-            new GetSchemaCommand($registryUrl),
+            new GetLatestSchemaCommand($registryUrl),
         ]);
     }
 }
