@@ -8,6 +8,7 @@ use Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand;
 use Jobcloud\SchemaConsole\Command\GetLatestSchemaCommand;
 use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
+use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
 use Symfony\Component\Console\Application;
 
@@ -33,6 +34,7 @@ class SchemaCommandRegister
             new CheckCompatibilityCommand($registryUrl),
             new CheckIsRegistredCommand($registryUrl),
             new GetLatestSchemaCommand($registryUrl),
+            new RegisterChangedSchemasCommand($registryUrl)
         ]);
     }
 }
