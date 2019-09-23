@@ -98,6 +98,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
                 if (true === $isRegistered && $latestSchema === $localSchema) {
                     $output->writeln(sprintf('Schema %s has been skipped (no change)', $schemaName));
+                    unset($avroFiles[$schemaName]);
                     continue;
                 }
 
@@ -127,6 +128,8 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $this->registry->register($schemaName, AvroSchema::parse($localSchema));
 
                 $output->writeln(sprintf('Successfully registered new version of schema %s', $schemaName));
+
+                unset($avroFiles[$schemaName]);
             }
 
 
