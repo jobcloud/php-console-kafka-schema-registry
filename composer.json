@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "flix-tech/confluent-schema-registry-api": "^7.0",
+        "flix-tech/confluent-schema-registry-api": "^6.0",
         "symfony/console": "^4.3",
         "pimple/pimple": "^3.2",
         "guzzlehttp/guzzle": "^6.3"
