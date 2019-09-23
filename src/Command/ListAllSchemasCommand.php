@@ -31,11 +31,11 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
     {
 
         $response = $this->client->send(allSubjectsRequest());
-        $data = $this->getJsonDataFromResponse($response);
+        $schemas = $this->getJsonDataFromResponse($response);
 
-        array_walk($data, static function($item) use ($output){
-            $output->writeln($item);
-        });
+        foreach ($schemas as $schema) {
+            $output->writeln($schema);
+        }
 
         return 0;
     }

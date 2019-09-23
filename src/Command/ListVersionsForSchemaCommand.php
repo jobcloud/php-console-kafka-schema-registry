@@ -39,11 +39,11 @@ class ListVersionsForSchemaCommand extends AbstractSchemaCommand
             )
         );
 
-        $data = $this->getJsonDataFromResponse($response);
+        $schemaVersions = $this->getJsonDataFromResponse($response);
 
-        array_walk($data, static function($item) use ($output){
-            $output->writeln($item);
-        });
+        foreach($schemaVersions as $schemaVersion) {
+            $output->writeln($schemaVersion);
+        };
 
         return 0;
     }

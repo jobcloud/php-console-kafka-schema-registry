@@ -37,8 +37,8 @@ class SchemaFileHelper
      * @param string $filePath
      * @return string
      */
-    public static function readSchemaName(string $filePath): string
+    public static function getSchemaName(string $filePath): string
     {
-        return strtolower(rtrim(basename($filePath), '.json'));
+        return basename($filePath);
     }
 }

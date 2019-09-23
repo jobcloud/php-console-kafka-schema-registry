@@ -3,6 +3,7 @@
 namespace Jobcloud\SchemaConsole\Command;
 
 use FlixTech\SchemaRegistryApi\Registry\BlockingRegistry;
+use FlixTech\SchemaRegistryApi\Registry\Cache\AvroObjectCacheAdapter;
 use FlixTech\SchemaRegistryApi\Registry\CachedRegistry;
 use FlixTech\SchemaRegistryApi\Registry\PromisingRegistry;
 use Psr\Http\Message\ResponseInterface;
@@ -46,8 +47,11 @@ abstract class AbstractSchemaCommand extends Command
         $this->client = new Client(['base_uri' => $this->registryUrl]);
 
         parent::initialize($input, $output);
-        $this->registry = new BlockingRegistry(
-            new PromisingRegistry($this->client)
+        $this->registry = new CachedRegistry(
+            new BlockingRegistry(
+                new PromisingRegistry($this->client)
+            ),
+            new AvroObjectCacheAdapter()
         );
     }
 
@@ -57,6 +61,6 @@ abstract class AbstractSchemaCommand extends Command
      */
     protected function getJsonDataFromResponse(ResponseInterface $response)
     {
-        return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR)
+        return json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
     }
 }

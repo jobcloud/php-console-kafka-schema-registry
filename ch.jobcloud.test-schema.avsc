@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "test-schema",
+  "namespace": "ch.jobcloud",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "age",
+      "type": "int"
+    },
+    {
+      "name": "weight",
+      "type": "float"
+    }
+  ]
+}

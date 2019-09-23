@@ -22,7 +22,8 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
             ->setDescription('List all versions for given schema')
             ->setHelp('List all versions for given schema')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema')
-            ->addArgument('schemaVersion', InputArgument::REQUIRED, 'Version of the schema');
+            ->addArgument('schemaVersion', InputArgument::REQUIRED, 'Version of the schema')
+            ->addArgument('outputFile', InputArgument::REQUIRED, 'Path to output file');
     }
 
     /**
@@ -40,9 +41,15 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
             )
         );
 
+        $outputFile = $input->getArgument('outputFile');
         $data = $this->getJsonDataFromResponse($response);
 
-        $output->writeln($data['schema']);
+        if (false === file_put_contents($outputFile, $data['schema'])) {
+            $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));
+            return -1;
+        }
+
+        $output->writeln(sprintf('Schema successfully written to %s.', $outputFile));
         return 0;
     }
 }

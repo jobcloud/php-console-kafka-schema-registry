@@ -24,7 +24,7 @@ class GetSchemaCommand extends AbstractSchemaCommand
             ->setDescription('Get schema')
             ->setHelp('Get schema')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema')
-            ;
+            ->addArgument('outputFile', InputArgument::REQUIRED, 'Path to output file');
     }
 
     /**
@@ -40,8 +40,7 @@ class GetSchemaCommand extends AbstractSchemaCommand
 
         try {
             $response = $this->client->send(schemaRequest($id));
-        }catch (ClientException $e)
-        {
+        } catch (ClientException $e) {
             if( $e->getCode() !== 404){
                 throw $e;
             }
@@ -51,7 +50,15 @@ class GetSchemaCommand extends AbstractSchemaCommand
         }
 
         $data = $this->getJsonDataFromResponse($response);
-        $output->writeln($data['schema']);
+        $outputFile = $input->getArgument('outputFile');
+
+        if (false === file_put_contents($outputFile, $data['schema'])) {
+            $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));
+            return -1;
+        }
+
+        $output->writeln(sprintf('Schema successfully written to %s.', $outputFile));
+
         return 0;
     }
 

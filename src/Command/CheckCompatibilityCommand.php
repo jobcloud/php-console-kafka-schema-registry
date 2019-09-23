@@ -37,7 +37,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
         $response = $this->client->send(
             checkSchemaCompatibilityAgainstVersionRequest(
                 SchemaFileHelper::readSchemaFromFile($input->getArgument('schemaFile')),
-                SchemaFileHelper::readSchemaName($input->getArgument('schemaFile')),
+                SchemaFileHelper::getSchemaName($input->getArgument('schemaFile')),
                 $input->getArgument('schemaVersion')
             )
         );

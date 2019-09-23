@@ -38,7 +38,7 @@ class RegisterSchemaVersionCommand extends AbstractSchemaCommand
         $output->writeln('Add new schema version to registry');
 
         $avroSchema = SchemaFileHelper::readAvroSchemaFromFile($input->getArgument('schemaFile'));
-        $schemaName = SchemaFileHelper::readSchemaName($input->getArgument('schemaFile'));
+        $schemaName = SchemaFileHelper::getSchemaName($input->getArgument('schemaFile'));
 
         $result = $this->registry->register($schemaName, $avroSchema);
 

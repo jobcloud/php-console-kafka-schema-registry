@@ -37,18 +37,17 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
         try {
             $response = $this->client->send(
                 checkIfSubjectHasSchemaRegisteredRequest(
-                    SchemaFileHelper::readSchemaName($input->getArgument('schemaFile')),
+                    SchemaFileHelper::getSchemaName($input->getArgument('schemaFile')),
                     SchemaFileHelper::readSchemaFromFile($input->getArgument('schemaFile'))
                 )
             );
-        }catch (ClientException $e)
-        {
+        } catch (ClientException $e) {
             if( $e->getCode() !== 40403){
                 throw $e;
             }
 
             $output->writeln('Schema does not exist in any version');
-            return 1;
+            return -1;
         }
 
         $data = $this->getJsonDataFromResponse($response);
