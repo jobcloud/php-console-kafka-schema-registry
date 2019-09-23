@@ -55,7 +55,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
             $isRegistered = true;
             $schemaName = $file->getBasename('.' . Avro::FILE_EXTENSION);
-            $localSchema = json_encode(json_decode(file_get_contents($file->getFilename())));
+            $localSchema = json_encode(json_decode(file_get_contents($file->getRealPath())));
 
             try {
                 $latestSchema = $response = $this->client->send(
