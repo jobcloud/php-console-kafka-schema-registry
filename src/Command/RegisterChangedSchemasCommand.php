@@ -2,6 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\Avro;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
@@ -52,31 +53,45 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 continue;
             }
 
+            $isRegistered = true;
+            $schemaName = $file->getBasename('.' . Avro::FILE_EXTENSION);
             $localSchema = json_encode(json_decode(file_get_contents($file->getFilename())));
-            $latestSchema = $response = $this->client->send(
-                singleSubjectVersionRequest($file->getBasename(), VERSION_LATEST)
-            );
 
-            if ($latestSchema === $localSchema) {
+            try {
+                $latestSchema = $response = $this->client->send(
+                    singleSubjectVersionRequest($schemaName, VERSION_LATEST)
+                );
+            } catch (RequestException $e) {
+                if (404 !== $e->getCode()) {
+                    throw $e;
+                } else {
+                    $isRegistered = false;
+                }
+            }
+
+            if (true === $isRegistered && $latestSchema === $localSchema) {
+                $output->writeln(sprintf('Schema %s has been skipped (no change)', $schemaName));
                 continue;
             }
 
-            $response = $this->client->send(
-                checkSchemaCompatibilityAgainstVersionRequest(
-                    $localSchema,
-                    $file->getBasename(),
-                    VERSION_LATEST
-                )
-            );
+            if (true === $isRegistered) {
+                $response = $this->client->send(
+                    checkSchemaCompatibilityAgainstVersionRequest(
+                        $localSchema,
+                        $file->getBasename(),
+                        VERSION_LATEST
+                    )
+                );
 
-            if (false === $response['is_compatible']) {
-                $output->writeln(sprintf('Schema %s has an incompatible change', $file->getBasename()));
-                return -1;
+                if (false === $response['is_compatible']) {
+                    $output->writeln(sprintf('Schema %s has an incompatible change', $schemaName));
+                    return -1;
+                }
             }
 
-            $result = $this->registry->register($file->getBasename(), $localSchema);
+            $this->registry->register($schemaName, $localSchema);
 
-            $output->writeln(sprintf('Successfully registered new version of schema %s', $file->getBasename()));
+            $output->writeln(sprintf('Successfully registered new version of schema %s', $schemaName));
         }
 
         return 0;
