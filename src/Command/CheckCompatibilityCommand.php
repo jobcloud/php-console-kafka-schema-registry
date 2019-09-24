@@ -19,7 +19,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:compatibility')
+            ->setName('schema:registry:check:compatibility')
             ->setDescription('Check Schema Compatibility against version')
             ->setHelp('Check Schema Compatibility against version')
             ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to avro schema file')

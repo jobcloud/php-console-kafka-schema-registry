@@ -39,6 +39,6 @@ class SchemaFileHelper
      */
     public static function getSchemaName(string $filePath): string
     {
-        return basename($filePath);
+        return basename($filePath, '.' . Avro::FILE_EXTENSION);
     }
 }

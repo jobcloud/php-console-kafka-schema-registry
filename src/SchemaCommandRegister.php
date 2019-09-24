@@ -4,6 +4,7 @@ namespace Jobcloud\SchemaConsole;
 
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
+use Jobcloud\SchemaConsole\Command\GetCompatibilityModeCommand;
 use Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand;
 use Jobcloud\SchemaConsole\Command\GetLatestSchemaCommand;
 use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
@@ -27,6 +28,7 @@ class SchemaCommandRegister
      */
     public static function register(Application $application, string $registryUrl): void {
         $application->addCommands([
+            new GetCompatibilityModeCommand($registryUrl),
             new RegisterSchemaVersionCommand($registryUrl),
             new ListAllSchemasCommand($registryUrl),
             new ListVersionsForSchemaCommand($registryUrl),
