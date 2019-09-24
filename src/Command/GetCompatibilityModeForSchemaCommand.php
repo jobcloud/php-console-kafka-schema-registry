@@ -20,7 +20,7 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
         $this
             ->setName('schema:registry:get:schema:compatibility:mode')
             ->setDescription('Get the compatibility mode for a given schema')
-            ->setHelp('Get the default compatibility mode of the registry')
+            ->setHelp('Get the compatibility mode for a given schema')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema');
     }
 
@@ -36,7 +36,7 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
         $data = $this->getJsonDataFromResponse($response);
 
         $output->writeln(
-            sprintf('The registry\'s default compatibility mode is %s', $data['compatibilityLevel'])
+            sprintf('The schema\'s compatibility mode is %s', $data['compatibilityLevel'])
         );
 
         return 0;
