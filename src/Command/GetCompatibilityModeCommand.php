@@ -23,9 +23,9 @@ class GetCompatibilityModeCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int
+     * @return integer
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -33,11 +33,9 @@ class GetCompatibilityModeCommand extends AbstractSchemaCommand
 
         $data = $this->getJsonDataFromResponse($response);
 
-        var_dump($data);
-
-        /*$output->writeln(
-            sprintf('Schema is %s', $data['is_compatible'] ? 'Compatible' : 'NOT Compatible')
-        );*/
+        $output->writeln(
+            sprintf('The registry\'s default compatibility mode is %s', $data['compatibilityLevel'])
+        );
 
         return 0;
     }
