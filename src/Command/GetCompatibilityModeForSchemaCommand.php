@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Jobcloud\SchemaConsole\Command;
+
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use function FlixTech\SchemaRegistryApi\Requests\subjectCompatibilityLevelRequest;
+
+class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
+{
+
+    /**
+     * @return void
+     */
+    protected function configure(): void
+    {
+        $this
+            ->setName('schema:registry:get:schema:compatibility:mode')
+            ->setDescription('Get the compatibility mode for a given schema')
+            ->setHelp('Get the default compatibility mode of the registry')
+            ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema');
+    }
+
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return integer
+     */
+    public function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $response = $this->client->send(subjectCompatibilityLevelRequest($input->getArgument('schemaName')));
+
+        $data = $this->getJsonDataFromResponse($response);
+
+        $output->writeln(
+            sprintf('The registry\'s default compatibility mode is %s', $data['compatibilityLevel'])
+        );
+
+        return 0;
+    }
+}

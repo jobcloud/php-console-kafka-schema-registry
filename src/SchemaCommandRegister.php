@@ -28,6 +28,7 @@ class SchemaCommandRegister
      */
     public static function register(Application $application, string $registryUrl): void {
         $application->addCommands([
+            new GetCompatibilityModeForSchemaCommand($registryUrl),
             new GetCompatibilityModeCommand($registryUrl),
             new RegisterSchemaVersionCommand($registryUrl),
             new ListAllSchemasCommand($registryUrl),
