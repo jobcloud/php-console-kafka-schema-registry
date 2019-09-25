@@ -25,11 +25,12 @@ class CommandServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        if (false === isset($container['kafka.schema.registry.url'])) {
-            throw new RuntimeException('Missing setting kafka.schema.registry.url in your container');
-        }
-
         $container['kafka_schema_commands'] = static function ($container) {
+            
+            if (false === isset($container['kafka.schema.registry.url'])) {
+                throw new RuntimeException('Missing setting kafka.schema.registry.url in your container');
+            }
+
             return [
                 new CheckCompatibilityCommand($container['kafka.schema.registry.url']),
                 new CheckIsRegistredCommand($container['kafka.schema.registry.url']),
