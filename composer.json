@@ -14,7 +14,8 @@
         "flix-tech/confluent-schema-registry-api": "^6.0",
         "symfony/console": "^4.3",
         "pimple/pimple": "^3.2",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+      "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.3",
