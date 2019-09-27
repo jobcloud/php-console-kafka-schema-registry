@@ -57,7 +57,7 @@ abstract class AbstractSchemaCommand extends Command
             $clientConfig['auth'] = [$this->auth['username'], $this->auth['password']];
         }
 
-        $this->client = new Client(['base_uri' => $this->registryUrl]);
+        $this->client = new Client($clientConfig);
 
         parent::initialize($input, $output);
         $this->registry = new CachedRegistry(
