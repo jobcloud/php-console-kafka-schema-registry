@@ -31,18 +31,24 @@ class CommandServiceProvider implements ServiceProviderInterface
                 throw new RuntimeException('Missing setting kafka.schema.registry.url in your container');
             }
 
+            $auth = null;
+
+            if (true === isset($container['kafka.schema.registry.auth'])) {
+                $auth = $container['kafka.schema.registry.auth'];
+            }
+
             return [
-                new CheckCompatibilityCommand($container['kafka.schema.registry.url']),
-                new CheckIsRegistredCommand($container['kafka.schema.registry.url']),
-                new DeleteAllSchemasCommand($container['kafka.schema.registry.url']),
-                new GetCompatibilityModeCommand($container['kafka.schema.registry.url']),
-                new GetCompatibilityModeForSchemaCommand($container['kafka.schema.registry.url']),
-                new GetLatestSchemaCommand($container['kafka.schema.registry.url']),
-                new GetSchemaByVersionCommand($container['kafka.schema.registry.url']),
-                new ListAllSchemasCommand($container['kafka.schema.registry.url']),
-                new ListVersionsForSchemaCommand($container['kafka.schema.registry.url']),
-                new RegisterChangedSchemasCommand($container['kafka.schema.registry.url']),
-                new RegisterSchemaVersionCommand($container['kafka.schema.registry.url']),
+                new CheckCompatibilityCommand($container['kafka.schema.registry.url'], $auth),
+                new CheckIsRegistredCommand($container['kafka.schema.registry.url'], $auth),
+                new DeleteAllSchemasCommand($container['kafka.schema.registry.url'], $auth),
+                new GetCompatibilityModeCommand($container['kafka.schema.registry.url'], $auth),
+                new GetCompatibilityModeForSchemaCommand($container['kafka.schema.registry.url'], $auth),
+                new GetLatestSchemaCommand($container['kafka.schema.registry.url'], $auth),
+                new GetSchemaByVersionCommand($container['kafka.schema.registry.url'], $auth),
+                new ListAllSchemasCommand($container['kafka.schema.registry.url'], $auth),
+                new ListVersionsForSchemaCommand($container['kafka.schema.registry.url'], $auth),
+                new RegisterChangedSchemasCommand($container['kafka.schema.registry.url'], $auth),
+                new RegisterSchemaVersionCommand($container['kafka.schema.registry.url'], $auth),
             ];
         };
     }

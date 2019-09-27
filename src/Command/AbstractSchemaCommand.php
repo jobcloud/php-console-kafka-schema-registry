@@ -20,6 +20,11 @@ abstract class AbstractSchemaCommand extends Command
     protected $registryUrl;
 
     /**
+     * @var array|null
+     */
+    protected $auth;
+
+    /**
      * @var CachedRegistry
      */
     protected $registry;
@@ -31,11 +36,13 @@ abstract class AbstractSchemaCommand extends Command
 
     /**
      * @param string $registryUrl
+     * @param array  $auth
      */
-    public function __construct(string $registryUrl)
+    public function __construct(string $registryUrl, array $auth = null)
     {
         parent::__construct();
         $this->registryUrl = $registryUrl;
+        $this->auth = $auth;
     }
 
     /**
@@ -44,6 +51,12 @@ abstract class AbstractSchemaCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        $clientConfig = ['base_uri' => $this->registryUrl];
+
+        if (null !== $this->auth && true === isset($this->auth['username']) && true === isset($this->auth['password'])) {
+            $clientConfig['auth'] = [$this->auth['username'], $this->auth['password']];
+        }
+
         $this->client = new Client(['base_uri' => $this->registryUrl]);
 
         parent::initialize($input, $output);
