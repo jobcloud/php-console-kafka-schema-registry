@@ -37,6 +37,12 @@ class CommandServiceProvider implements ServiceProviderInterface
                 $auth = $container['kafka.schema.registry.auth'];
             }
 
+            $retries = 10;
+
+            if (true === isset($container['kafka.schema.registry.retries'])) {
+                $retries = $container['kafka.schema.registry.retries'];
+            }
+
             return [
                 new CheckCompatibilityCommand($container['kafka.schema.registry.url'], $auth),
                 new CheckIsRegistredCommand($container['kafka.schema.registry.url'], $auth),
@@ -47,7 +53,7 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new GetSchemaByVersionCommand($container['kafka.schema.registry.url'], $auth),
                 new ListAllSchemasCommand($container['kafka.schema.registry.url'], $auth),
                 new ListVersionsForSchemaCommand($container['kafka.schema.registry.url'], $auth),
-                new RegisterChangedSchemasCommand($container['kafka.schema.registry.url'], $auth),
+                new RegisterChangedSchemasCommand($container['kafka.schema.registry.url'], $retries, $auth),
                 new RegisterSchemaVersionCommand($container['kafka.schema.registry.url'], $auth),
             ];
         };

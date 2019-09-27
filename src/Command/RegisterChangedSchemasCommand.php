@@ -27,9 +27,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      */
     private $maxRetries;
 
-    public function __construct(string $registryUrl, int $maxRetries = 10)
+    public function __construct(string $registryUrl, int $maxRetries = 10, array $auth = null)
     {
-        parent::__construct($registryUrl);
+        parent::__construct($registryUrl, $auth);
         $this->maxRetries = $maxRetries;
     }
 
