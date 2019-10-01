@@ -30,10 +30,10 @@ class GetCompatibilityModeCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $data = $this->schemaRegistryApi->defaultCompatibilityLevelRequest();
+        $compatibilityLevel = $this->schemaRegistryApi->getDefaultCompatibilityLevel();
 
         $output->writeln(
-            sprintf('The registry\'s default compatibility mode is %s', $data['compatibilityLevel'])
+            sprintf('The registry\'s default compatibility mode is %s', $compatibilityLevel)
         );
 
         return 0;

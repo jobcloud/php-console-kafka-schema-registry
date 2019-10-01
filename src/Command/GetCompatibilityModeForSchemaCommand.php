@@ -32,10 +32,10 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $data = $this->schemaRegistryApi->subjectCompatibilityLevelRequest($input->getArgument('schemaName'));
+        $compatibilityLevel = $this->schemaRegistryApi->getSchemaCompatibilityLevel($input->getArgument('schemaName'));
 
         $output->writeln(
-            sprintf('The schema\'s compatibility mode is %s', $data['compatibilityLevel'])
+            sprintf('The schema\'s compatibility mode is %s', $compatibilityLevel)
         );
 
         return 0;

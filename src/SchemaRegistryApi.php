@@ -3,6 +3,7 @@
 namespace Jobcloud\SchemaConsole;
 
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use function FlixTech\SchemaRegistryApi\Requests\allSubjectsRequest;
@@ -12,7 +13,6 @@ use function FlixTech\SchemaRegistryApi\Requests\checkSchemaCompatibilityAgainst
 use function FlixTech\SchemaRegistryApi\Requests\defaultCompatibilityLevelRequest;
 use function FlixTech\SchemaRegistryApi\Requests\deleteSubjectRequest;
 use function FlixTech\SchemaRegistryApi\Requests\registerNewSchemaVersionWithSubjectRequest;
-use function FlixTech\SchemaRegistryApi\Requests\schemaRequest;
 use function FlixTech\SchemaRegistryApi\Requests\singleSubjectVersionRequest;
 use function FlixTech\SchemaRegistryApi\Requests\subjectCompatibilityLevelRequest;
 
@@ -42,139 +42,138 @@ class SchemaRegistryApi
      * @return array
      * @throws GuzzleException
      */
-    public function allSubjectsRequest(): array
+    public function getAllSchemas(): array
     {
         return $this->parseJsonResponse($this->client->send(allSubjectsRequest()));
     }
 
     /**
-     * @param string $subjectName
+     * @param string $schemaName
      * @return array
      * @throws GuzzleException
      */
-    public function allSubjectVersionsRequest(string $subjectName): array
+    public function getAllSchemaVersions(string $schemaName): array
     {
         return $this->parseJsonResponse(
             $this->client->send(
-                allSubjectVersionsRequest($subjectName)
+                allSubjectVersionsRequest($schemaName)
             )
         );
     }
 
     /**
-     * @param string $subjectName
-     * @param string $versionId
+     * @param string $schemaName
+     * @param string $version
      * @return array
      * @throws GuzzleException
      */
-    public function singleSubjectVersionRequest(string $subjectName, string $versionId): array
+    public function getSchemaByVersion(string $schemaName, string $version): array
     {
         return $this->parseJsonResponse(
             $this->client->send(
-                singleSubjectVersionRequest($subjectName, $versionId)
-            )
-        );
-    }
-
-    /**
-     * @param string $schema
-     * @param string $subjectName
-     * @return array
-     * @throws GuzzleException
-     */
-    public function registerNewSchemaVersionWithSubjectRequest(string $schema, string $subjectName): array
-    {
-        return $this->parseJsonResponse(
-            $this->client->send(
-                registerNewSchemaVersionWithSubjectRequest($schema, $subjectName)
+                singleSubjectVersionRequest($schemaName, $version)
             )
         );
     }
 
     /**
      * @param string $schema
-     * @param string $subjectName
-     * @param string $versionId
+     * @param string $schemaName
      * @return array
      * @throws GuzzleException
      */
-    public function checkSchemaCompatibilityAgainstVersionRequest(
+    public function createNewSchemaVersion(string $schema, string $schemaName): array
+    {
+        return $this->parseJsonResponse(
+            $this->client->send(
+                registerNewSchemaVersionWithSubjectRequest($schema, $schemaName)
+            )
+        );
+    }
+
+    /**
+     * @param string $schema
+     * @param string $schemaName
+     * @param string $version
+     * @return bool
+     * @throws GuzzleException
+     */
+    public function checkSchemaCompatibilityForVersion(
         string $schema,
-        string $subjectName,
-        string $versionId
-    ): array
+        string $schemaName,
+        string $version
+    ): bool
     {
-        return $this->parseJsonResponse(
+        $result = $this->parseJsonResponse(
             $this->client->send(
-                checkSchemaCompatibilityAgainstVersionRequest($schema, $subjectName, $versionId)
+                checkSchemaCompatibilityAgainstVersionRequest($schema, $schemaName, $version)
             )
         );
+
+        return (bool) $result['is_compatible'];
     }
 
     /**
-     * @param string $subjectName
+     * @param string $schemaName
      * @param string $schema
-     * @return array
+     * @return int|null
      * @throws GuzzleException
      */
-    public function checkIfSubjectHasSchemaRegisteredRequest(string $subjectName, string $schema): array
+    public function getVersionForSchema(string $schemaName, string $schema): ?int
     {
-        return $this->parseJsonResponse(
-            $this->client->send(
-                checkIfSubjectHasSchemaRegisteredRequest($subjectName, $schema)
-            ));
+        try {
+            $result = $this->parseJsonResponse(
+                $this->client->send(
+                    checkIfSubjectHasSchemaRegisteredRequest($schemaName, $schema)
+                ));
+
+            return (int) $result['version'];
+
+        } catch (ClientException $e) {
+            if( $e->getCode() !== 40403){
+                return null;
+            }
+
+            throw $e;
+        }
     }
 
     /**
-     * @param string $id
-     * @return array
+     * @param string $schemaName
+     * @return void
      * @throws GuzzleException
      */
-    public function schemaRequest(string $id): array
-    {
-        return $this->parseJsonResponse(
-            $this->client->send(
-                schemaRequest($id)
-            )
-        );
+    public function deleteSchema(string $schemaName): void {
+        $this->client->send(deleteSubjectRequest($schemaName));
     }
 
     /**
-     * @param string $id
-     * @return array
+     * @return string
      * @throws GuzzleException
      */
-    public function deleteSubjectRequest(string $id): array {
-        return $this->parseJsonResponse(
-            $this->client->send(
-                deleteSubjectRequest($id)
-            )
-        );
-    }
-
-    /**
-     * @return array
-     * @throws GuzzleException
-     */
-    public function defaultCompatibilityLevelRequest(): array {
-        return $this->parseJsonResponse(
+    public function getDefaultCompatibilityLevel(): string {
+        $result = $this->parseJsonResponse(
             $this->client->send(
                 defaultCompatibilityLevelRequest()
             )
         );
+
+        return $result['compatibilityLevel'];
     }
 
     /**
-     * @param string $subjectName
-     * @return array
+     * @param string $schemaName
+     * @return string
      * @throws GuzzleException
      */
-    public function subjectCompatibilityLevelRequest(string $subjectName): array
+    public function getSchemaCompatibilityLevel(string $schemaName): string
     {
-        return $this->parseJsonResponse(
+        $result = $this->parseJsonResponse(
             $this->client->send(
-                subjectCompatibilityLevelRequest($subjectName)
+                subjectCompatibilityLevelRequest($schemaName)
             )
         );
+
+        return $result['compatibilityLevel'];
     }
 }

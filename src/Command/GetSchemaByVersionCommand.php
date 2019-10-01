@@ -36,7 +36,7 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
     {
 
         $outputFile = $input->getArgument('outputFile');
-        $data = $this->schemaRegistryApi->singleSubjectVersionRequest(
+        $data = $this->schemaRegistryApi->getSchemaByVersion(
             $input->getArgument('schemaName'),
             $input->getArgument('schemaVersion'),
         );

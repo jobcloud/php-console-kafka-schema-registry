@@ -47,7 +47,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
-     * @throws AvroSchemaParseException
      * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
@@ -83,7 +82,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $localSchema = json_encode(json_decode(file_get_contents($avroFile)));
 
                 try {
-                    $schemaVersions = $this->schemaRegistryApi->allSubjectVersionsRequest($schemaName);
+                    $schemaVersions = $this->schemaRegistryApi->getAllSchemaVersions($schemaName);
 
                     $lastKey = array_key_last($schemaVersions);
                     $latestVersion = $schemaVersions[$lastKey];
@@ -96,7 +95,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 }
 
                 if (true === $isRegistered) {
-                    $latestSchema = $this->schemaRegistryApi->singleSubjectVersionRequest(
+                    $latestSchema = $this->schemaRegistryApi->getSchemaByVersion(
                         $schemaName,
                         $latestVersion
                     )['schema'];
@@ -110,13 +109,13 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
                 if (true === $isRegistered) {
 
-                    $result = $this->schemaRegistryApi->checkSchemaCompatibilityAgainstVersionRequest(
+                    $compatible = $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
                         $localSchema,
                         $schemaName,
                         $latestVersion
                     );
 
-                    if (false === $result['is_compatible']) {
+                    if (false === $compatible) {
                         $output->writeln(sprintf('Schema %s has an incompatible change', $schemaName));
                         return -1;
                     }
@@ -129,7 +128,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                     continue;
                 }
 
-                $this->registry->register($schemaName, $schema);
+                $this->schemaRegistryApi->createNewSchemaVersion($schema, $schemaName);
 
                 $output->writeln(sprintf('Successfully registered new version of schema %s', $schemaName));
 

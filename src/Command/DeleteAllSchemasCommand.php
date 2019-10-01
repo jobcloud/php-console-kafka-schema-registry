@@ -31,10 +31,10 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
     public function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $schemas = $this->schemaRegistryApi->allSubjectsRequest();
+        $schemas = $this->schemaRegistryApi->getAllSchemas();
 
         foreach ($schemas as $schemaName) {
-            $this->schemaRegistryApi->deleteSubjectRequest($schemaName);
+            $this->schemaRegistryApi->deleteSchema($schemaName);
         }
 
         $output->writeln(sprintf('All schemas deleted.'));

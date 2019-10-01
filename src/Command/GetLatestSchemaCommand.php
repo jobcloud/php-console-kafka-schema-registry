@@ -38,7 +38,7 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
         $schemaName = $input->getArgument('schemaName');
 
         try {
-            $data = $this->schemaRegistryApi->singleSubjectVersionRequest($schemaName, VERSION_LATEST);
+            $data = $this->schemaRegistryApi->getSchemaByVersion($schemaName, VERSION_LATEST);
         } catch (ClientException $e) {
             if( $e->getCode() !== 404){
                 throw $e;

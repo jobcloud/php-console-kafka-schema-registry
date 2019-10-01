@@ -35,16 +35,16 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $data = $this->schemaRegistryApi->checkSchemaCompatibilityAgainstVersionRequest(
+        $compatible = $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
             SchemaFileHelper::readSchemaFromFile($input->getArgument('schemaFile')),
             SchemaFileHelper::getSchemaName($input->getArgument('schemaFile')),
             $input->getArgument('schemaVersion')
         );
 
         $output->writeln(
-            sprintf('Schema is %s', $data['is_compatible'] ? 'Compatible' : 'NOT Compatible')
+            sprintf('Schema is %s', $compatible ? 'Compatible' : 'NOT Compatible')
         );
 
-        return (int) $data['is_compatible'];
+        return (int) $compatible;
     }
 }
