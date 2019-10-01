@@ -63,7 +63,12 @@ EOF
     }
 
     public function testReadSchemaFromFile():void {
-        $contents = json_decode(SchemaFileHelper::readSchemaFromFile(self::SCHEMA_FILE), true);
+        $contents = json_decode(
+            SchemaFileHelper::readSchemaFromFile(self::SCHEMA_FILE),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
 
         self::assertArrayHasKey('fields', $contents);
         self::assertArrayHasKey('type', $contents);

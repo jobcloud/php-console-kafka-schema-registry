@@ -4,7 +4,7 @@ namespace Jobcloud\SchemaConsole;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 use function FlixTech\SchemaRegistryApi\Requests\allSubjectsRequest;
 use function FlixTech\SchemaRegistryApi\Requests\allSubjectVersionsRequest;
@@ -18,12 +18,15 @@ use function FlixTech\SchemaRegistryApi\Requests\subjectCompatibilityLevelReques
 
 class SchemaRegistryApi
 {
+
     /**
      * @var ClientInterface
      */
     private $client;
 
-
+    /**
+     * @param ClientInterface $client
+     */
     public function __construct(ClientInterface $client)
     {
         $this->client = $client;
@@ -40,7 +43,6 @@ class SchemaRegistryApi
 
     /**
      * @return array
-     * @throws GuzzleException
      */
     public function getAllSchemas(): array
     {
@@ -50,7 +52,6 @@ class SchemaRegistryApi
     /**
      * @param string $schemaName
      * @return array
-     * @throws GuzzleException
      */
     public function getAllSchemaVersions(string $schemaName): array
     {
@@ -64,23 +65,23 @@ class SchemaRegistryApi
     /**
      * @param string $schemaName
      * @param string $version
-     * @return array
-     * @throws GuzzleException
+     * @return string
      */
-    public function getSchemaByVersion(string $schemaName, string $version): array
+    public function getSchemaByVersion(string $schemaName, string $version): string
     {
-        return $this->parseJsonResponse(
+        $result = $this->parseJsonResponse(
             $this->client->send(
                 singleSubjectVersionRequest($schemaName, $version)
             )
         );
+
+        return $result['schema'];
     }
 
     /**
      * @param string $schema
      * @param string $schemaName
      * @return array
-     * @throws GuzzleException
      */
     public function createNewSchemaVersion(string $schema, string $schemaName): array
     {
@@ -95,15 +96,13 @@ class SchemaRegistryApi
      * @param string $schema
      * @param string $schemaName
      * @param string $version
-     * @return bool
-     * @throws GuzzleException
+     * @return boolean
      */
     public function checkSchemaCompatibilityForVersion(
         string $schema,
         string $schemaName,
         string $version
-    ): bool
-    {
+    ): bool {
         $result = $this->parseJsonResponse(
             $this->client->send(
                 checkSchemaCompatibilityAgainstVersionRequest($schema, $schemaName, $version)
@@ -116,8 +115,9 @@ class SchemaRegistryApi
     /**
      * @param string $schemaName
      * @param string $schema
-     * @return int|null
-     * @throws GuzzleException
+     * @return integer|null
+     * @throws ClientException
+     * @throws RequestException
      */
     public function getVersionForSchema(string $schemaName, string $schema): ?int
     {
@@ -125,12 +125,12 @@ class SchemaRegistryApi
             $result = $this->parseJsonResponse(
                 $this->client->send(
                     checkIfSubjectHasSchemaRegisteredRequest($schemaName, $schema)
-                ));
+                )
+            );
 
             return (int) $result['version'];
-
         } catch (ClientException $e) {
-            if( $e->getCode() !== 40403){
+            if ($e->getCode() !== 40403) {
                 return null;
             }
 
@@ -141,17 +141,17 @@ class SchemaRegistryApi
     /**
      * @param string $schemaName
      * @return void
-     * @throws GuzzleException
      */
-    public function deleteSchema(string $schemaName): void {
+    public function deleteSchema(string $schemaName): void
+    {
         $this->client->send(deleteSubjectRequest($schemaName));
     }
 
     /**
      * @return string
-     * @throws GuzzleException
      */
-    public function getDefaultCompatibilityLevel(): string {
+    public function getDefaultCompatibilityLevel(): string
+    {
         $result = $this->parseJsonResponse(
             $this->client->send(
                 defaultCompatibilityLevelRequest()
@@ -164,7 +164,6 @@ class SchemaRegistryApi
     /**
      * @param string $schemaName
      * @return string
-     * @throws GuzzleException
      */
     public function getSchemaCompatibilityLevel(string $schemaName): string
     {
@@ -175,5 +174,25 @@ class SchemaRegistryApi
         );
 
         return $result['compatibilityLevel'];
+    }
+
+    /**
+     * @param string $schemaName
+     * @return string|null
+     * @throws RequestException
+     */
+    public function getLatestSchemaVersion(string $schemaName): ?string
+    {
+        try {
+            $schemaVersions = $this->getAllSchemaVersions($schemaName);
+            $lastKey = array_key_last($schemaVersions);
+            return $schemaVersions[$lastKey];
+        } catch (RequestException $e) {
+            if (404 === $e->getCode()) {
+                return null;
+            }
+
+            throw $e;
+        }
     }
 }

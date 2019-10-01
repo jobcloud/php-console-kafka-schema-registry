@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Jobcloud\SchemaConsole\Command;
 
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,19 +27,20 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int
-     * @throws GuzzleException
+     * @return integer
+     * @throws ClientException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var string $schemaName */
         $schemaName = $input->getArgument('schemaName');
 
         try {
-            $data = $this->schemaRegistryApi->getSchemaByVersion($schemaName, VERSION_LATEST);
+            $schema = $this->schemaRegistryApi->getSchemaByVersion($schemaName, VERSION_LATEST);
         } catch (ClientException $e) {
-            if( $e->getCode() !== 404){
+            if ($e->getCode() !== 404) {
                 throw $e;
             }
 
@@ -48,9 +48,10 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
             return 1;
         }
 
+        /** @var string $outputFile */
         $outputFile = $input->getArgument('outputFile');
 
-        if (false === file_put_contents($outputFile, $data['schema'])) {
+        if (false === file_put_contents($outputFile, $schema)) {
             $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));
             return -1;
         }

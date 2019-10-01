@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -23,10 +22,9 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int
-     * @throws GuzzleException
+     * @return integer
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {

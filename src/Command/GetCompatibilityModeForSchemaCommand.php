@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,14 +24,16 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      * @return integer
-     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $compatibilityLevel = $this->schemaRegistryApi->getSchemaCompatibilityLevel($input->getArgument('schemaName'));
+        /** @var string $schemaName */
+        $schemaName = $input->getArgument('schemaName');
+
+        $compatibilityLevel = $this->schemaRegistryApi->getSchemaCompatibilityLevel($schemaName);
 
         $output->writeln(
             sprintf('The schema\'s compatibility mode is %s', $compatibilityLevel)

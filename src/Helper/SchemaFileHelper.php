@@ -14,23 +14,26 @@ class SchemaFileHelper
      * @return AvroSchema
      * @throws AvroSchemaParseException
      */
-    public static function readAvroSchemaFromFile(string $filePath): AvroSchema {
+    public static function readAvroSchemaFromFile(string $filePath): AvroSchema
+    {
         return AvroSchema::parse(static::readSchemaFromFile($filePath));
     }
 
     /**
      * @param string $filePath
      * @return string
+     * @throws RuntimeException
      */
-    public static function readSchemaFromFile(string $filePath): string {
+    public static function readSchemaFromFile(string $filePath): string
+    {
 
-        if(!is_readable($filePath)) {
+        if (!is_readable($filePath)) {
             throw new RuntimeException(
                 sprintf('Cannot access file %s. Check file path and/or file permissions', $filePath)
             );
         }
 
-        return file_get_contents(realpath($filePath));
+        return (string) file_get_contents((string) realpath($filePath));
     }
 
     /**

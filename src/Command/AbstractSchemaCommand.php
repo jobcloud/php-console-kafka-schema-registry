@@ -7,6 +7,7 @@ use Symfony\Component\Console\Command\Command;
 
 abstract class AbstractSchemaCommand extends Command
 {
+
     /**
      * @var SchemaRegistryApi
      */

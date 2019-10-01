@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Jobcloud\SchemaConsole\Command;
 
 use AvroSchemaParseException;
-use GuzzleHttp\Exception\GuzzleException;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,21 +26,25 @@ class RegisterSchemaVersionCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return void
+     * @return integer
      * @throws AvroSchemaParseException
-     * @throws GuzzleException
      */
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var string $schemaFile */
+        $schemaFile = $input->getArgument('schemaFile');
+
         $output->writeln('Add new schema version to registry');
 
-        $avroSchema = SchemaFileHelper::readAvroSchemaFromFile($input->getArgument('schemaFile'));
-        $schemaName = SchemaFileHelper::getSchemaName($input->getArgument('schemaFile'));
+        $avroSchema = SchemaFileHelper::readAvroSchemaFromFile($schemaFile);
+        $schemaName = SchemaFileHelper::getSchemaName($schemaFile);
 
         $result = $this->schemaRegistryApi->createNewSchemaVersion((string) $avroSchema, $schemaName);
 
         $output->writeln(sprintf('Successfully registered new schema with id: %d', $result['id']));
+
+        return 0;
     }
 }

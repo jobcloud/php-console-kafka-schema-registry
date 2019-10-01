@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,21 +26,28 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int
-     * @throws GuzzleException
+     * @return integer
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
 
+        /** @var string $outputFile */
         $outputFile = $input->getArgument('outputFile');
-        $data = $this->schemaRegistryApi->getSchemaByVersion(
-            $input->getArgument('schemaName'),
-            $input->getArgument('schemaVersion'),
+
+        /** @var string $schemaName */
+        $schemaName = $input->getArgument('schemaName');
+
+        /** @var string $schemaVersion */
+        $schemaVersion = $input->getArgument('schemaVersion');
+
+        $schema = $this->schemaRegistryApi->getSchemaByVersion(
+            $schemaName,
+            $schemaVersion,
         );
 
-        if (false === file_put_contents($outputFile, $data['schema'])) {
+        if (false === file_put_contents($outputFile, $schema)) {
             $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));
             return -1;
         }
