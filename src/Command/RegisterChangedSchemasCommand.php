@@ -126,7 +126,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                     continue;
                 }
 
-                $this->registry->register($schemaName, AvroSchema::parse($localSchema));
+                $this->registry->register($schemaName, $schema);
 
                 $output->writeln(sprintf('Successfully registered new version of schema %s', $schemaName));
 
