@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Jobcloud\SchemaConsole\Command;
 
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\singleSubjectVersionRequest;
 use const FlixTech\SchemaRegistryApi\Constants\VERSION_LATEST;
 
 class GetLatestSchemaCommand extends AbstractSchemaCommand
@@ -31,15 +31,14 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $schemaName = $input->getArgument('schemaName');
 
         try {
-            $response = $this->client->send(
-                singleSubjectVersionRequest($schemaName, VERSION_LATEST)
-            );
+            $data = $this->schemaRegistryApi->singleSubjectVersionRequest($schemaName, VERSION_LATEST);
         } catch (ClientException $e) {
             if( $e->getCode() !== 404){
                 throw $e;
@@ -49,7 +48,6 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
             return 1;
         }
 
-        $data = $this->getJsonDataFromResponse($response);
         $outputFile = $input->getArgument('outputFile');
 
         if (false === file_put_contents($outputFile, $data['schema'])) {

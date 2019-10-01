@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\allSubjectsRequest;
-use function FlixTech\SchemaRegistryApi\Requests\deleteSubjectRequest;
 
 class DeleteAllSchemasCommand extends AbstractSchemaCommand
 {
@@ -27,15 +26,15 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $response = $this->client->send(allSubjectsRequest());
-        $schemas = $this->getJsonDataFromResponse($response);
+        $schemas = $this->schemaRegistryApi->allSubjectsRequest();
 
-        foreach ($schemas as $schema) {
-            $this->client->send(deleteSubjectRequest($schema));
+        foreach ($schemas as $schemaName) {
+            $this->schemaRegistryApi->deleteSubjectRequest($schemaName);
         }
 
         $output->writeln(sprintf('All schemas deleted.'));

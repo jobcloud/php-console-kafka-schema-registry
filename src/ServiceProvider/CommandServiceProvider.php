@@ -13,48 +13,56 @@ use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
+use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use \RuntimeException;
+use GuzzleHttp\Client;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
+
+    public const COMMANDS = 'kafka.schema.registry.commands';
+    public const CLIENT = 'kafka.schema.registry.client';
+    public const REGISTRY_URL = 'kafka.schema.registry.url';
+    public const USERNAME = 'kafka.schema.registry.username';
+    public const PASSWORD = 'kafka.schema.registry.password';
 
     /**
      * @param Container $container
      */
     public function register(Container $container)
     {
-        $container['kafka_schema_commands'] = static function ($container) {
+        $container[self::COMMANDS] = static function (Container $container) {
 
-            if (false === isset($container['kafka.schema.registry.url'])) {
-                throw new RuntimeException('Missing setting kafka.schema.registry.url in your container');
+            if (!$container->offsetExists(self::CLIENT)) {
+
+                if (!$container->offsetExists(self::REGISTRY_URL)) {
+                    throw new RuntimeException('Missing setting kafka.schema.registry.url in your container');
+                }
+
+                $clientConfig = ['base_uri' => $container[self::REGISTRY_URL]];
+                if ($container->offsetExists(self::USERNAME) && $container->offsetExists(self::PASSWORD)) {
+                    $clientConfig['auth'] = [$container[self::USERNAME], $container[self::PASSWORD]];
+                }
+
+                $container[self::CLIENT] = new Client($clientConfig);
             }
 
-            $auth = null;
-
-            if (true === isset($container['kafka.schema.registry.auth'])) {
-                $auth = $container['kafka.schema.registry.auth'];
-            }
-
-            $retries = 10;
-
-            if (true === isset($container['kafka.schema.registry.retries'])) {
-                $retries = $container['kafka.schema.registry.retries'];
-            }
+            $schemaRegistryApi = new SchemaRegistryApi($container[self::CLIENT]);
 
             return [
-                new CheckCompatibilityCommand($container['kafka.schema.registry.url'], $auth),
-                new CheckIsRegistredCommand($container['kafka.schema.registry.url'], $auth),
-                new DeleteAllSchemasCommand($container['kafka.schema.registry.url'], $auth),
-                new GetCompatibilityModeCommand($container['kafka.schema.registry.url'], $auth),
-                new GetCompatibilityModeForSchemaCommand($container['kafka.schema.registry.url'], $auth),
-                new GetLatestSchemaCommand($container['kafka.schema.registry.url'], $auth),
-                new GetSchemaByVersionCommand($container['kafka.schema.registry.url'], $auth),
-                new ListAllSchemasCommand($container['kafka.schema.registry.url'], $auth),
-                new ListVersionsForSchemaCommand($container['kafka.schema.registry.url'], $auth),
-                new RegisterChangedSchemasCommand($container['kafka.schema.registry.url'], $retries, $auth),
-                new RegisterSchemaVersionCommand($container['kafka.schema.registry.url'], $auth),
+                new CheckCompatibilityCommand($schemaRegistryApi),
+                new CheckIsRegistredCommand($schemaRegistryApi),
+                new DeleteAllSchemasCommand($schemaRegistryApi),
+                new GetCompatibilityModeCommand($schemaRegistryApi),
+                new GetCompatibilityModeForSchemaCommand($schemaRegistryApi),
+                new GetLatestSchemaCommand($schemaRegistryApi),
+                new GetSchemaByVersionCommand($schemaRegistryApi),
+                new ListAllSchemasCommand($schemaRegistryApi),
+                new ListVersionsForSchemaCommand($schemaRegistryApi),
+                new RegisterChangedSchemasCommand($schemaRegistryApi),
+                new RegisterSchemaVersionCommand($schemaRegistryApi),
             ];
         };
     }

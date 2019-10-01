@@ -4,6 +4,7 @@ namespace Jobcloud\SchemaConsole\Command;
 
 use GuzzleHttp\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\Avro;
+use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use \RecursiveIteratorIterator;
 use \RecursiveDirectoryIterator;
 use \FilesystemIterator;
@@ -13,11 +14,6 @@ use \AvroSchemaParseException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\allSubjectVersionsRequest;
-use function FlixTech\SchemaRegistryApi\Requests\checkSchemaCompatibilityAgainstVersionRequest;
-use function FlixTech\SchemaRegistryApi\Requests\singleSubjectVersionRequest;
-use const FlixTech\SchemaRegistryApi\Constants\VERSION_LATEST;
-
 
 class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 {
@@ -27,9 +23,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      */
     private $maxRetries;
 
-    public function __construct(string $registryUrl, int $maxRetries = 10, array $auth = null)
+    public function __construct(SchemaRegistryApi $schemaRegistryApi, int $maxRetries = 10)
     {
-        parent::__construct($registryUrl, $auth);
+        parent::__construct($schemaRegistryApi);
         $this->maxRetries = $maxRetries;
     }
 
@@ -84,13 +80,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $localSchema = json_encode(json_decode(file_get_contents($avroFile)));
 
                 try {
-                    $response = $this->client->send(
-                        allSubjectVersionsRequest(
-                            $schemaName
-                        )
-                    );
-
-                    $schemaVersions = $this->getJsonDataFromResponse($response);
+                    $schemaVersions = $this->schemaRegistryApi->allSubjectVersionsRequest($schemaName);
 
                     $lastKey = array_key_last($schemaVersions);
                     $latestVersion = $schemaVersions[$lastKey];
@@ -103,10 +93,10 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 }
 
                 if (true === $isRegistered) {
-                    $response = $this->client->send(
-                        singleSubjectVersionRequest($schemaName, $latestVersion)
-                    );
-                    $latestSchema = $this->getJsonDataFromResponse($response)['schema'];
+                    $latestSchema = $this->schemaRegistryApi->singleSubjectVersionRequest(
+                        $schemaName,
+                        $latestVersion
+                    )['schema'];
                 }
 
                 if (true === $isRegistered && $latestSchema === $localSchema) {
@@ -116,15 +106,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 }
 
                 if (true === $isRegistered) {
-                    $response = $this->client->send(
-                        checkSchemaCompatibilityAgainstVersionRequest(
-                            $localSchema,
-                            $schemaName,
-                            $latestVersion
-                        )
-                    );
 
-                    $result = $this->getJsonDataFromResponse($response);
+                    $result = $this->schemaRegistryApi->checkSchemaCompatibilityAgainstVersionRequest(
+                        $localSchema,
+                        $schemaName,
+                        $latestVersion
+                    );
 
                     if (false === $result['is_compatible']) {
                         $output->writeln(sprintf('Schema %s has an incompatible change', $schemaName));

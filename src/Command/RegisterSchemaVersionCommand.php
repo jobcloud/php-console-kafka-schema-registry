@@ -20,7 +20,7 @@ class RegisterSchemaVersionCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:register')
+            ->setName('schema:registry:register:version')
             ->setDescription('Add new schema version to registry')
             ->setHelp('Add new schema version to registry')
             ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to avro schema file');
@@ -31,7 +31,6 @@ class RegisterSchemaVersionCommand extends AbstractSchemaCommand
      * @param OutputInterface $output
      * @return void
      * @throws AvroSchemaParseException
-     * @throws SchemaRegistryException
      */
     public function execute(InputInterface $input, OutputInterface $output): void
     {

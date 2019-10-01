@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\allSubjectsRequest;
 
 class ListAllSchemasCommand extends AbstractSchemaCommand
 {
@@ -26,12 +26,12 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $response = $this->client->send(allSubjectsRequest());
-        $schemas = $this->getJsonDataFromResponse($response);
+        $schemas = $this->schemaRegistryApi->allSubjectsRequest();
 
         foreach ($schemas as $schema) {
             $output->writeln($schema);

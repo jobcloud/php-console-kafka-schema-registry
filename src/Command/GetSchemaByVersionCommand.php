@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\singleSubjectVersionRequest;
 
 class GetSchemaByVersionCommand extends AbstractSchemaCommand
 {
@@ -30,19 +30,16 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $response = $this->client->send(
-            singleSubjectVersionRequest(
-                $input->getArgument('schemaName'),
-                $input->getArgument('schemaVersion'),
-            )
-        );
-
         $outputFile = $input->getArgument('outputFile');
-        $data = $this->getJsonDataFromResponse($response);
+        $data = $this->schemaRegistryApi->singleSubjectVersionRequest(
+            $input->getArgument('schemaName'),
+            $input->getArgument('schemaVersion'),
+        );
 
         if (false === file_put_contents($outputFile, $data['schema'])) {
             $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));

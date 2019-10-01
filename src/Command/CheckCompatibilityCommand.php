@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\checkSchemaCompatibilityAgainstVersionRequest;
 
 class CheckCompatibilityCommand extends AbstractSchemaCommand
 {
@@ -31,18 +31,15 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $response = $this->client->send(
-            checkSchemaCompatibilityAgainstVersionRequest(
-                SchemaFileHelper::readSchemaFromFile($input->getArgument('schemaFile')),
-                SchemaFileHelper::getSchemaName($input->getArgument('schemaFile')),
-                $input->getArgument('schemaVersion')
-            )
+        $data = $this->schemaRegistryApi->checkSchemaCompatibilityAgainstVersionRequest(
+            SchemaFileHelper::readSchemaFromFile($input->getArgument('schemaFile')),
+            SchemaFileHelper::getSchemaName($input->getArgument('schemaFile')),
+            $input->getArgument('schemaVersion')
         );
-
-        $data = $this->getJsonDataFromResponse($response);
 
         $output->writeln(
             sprintf('Schema is %s', $data['is_compatible'] ? 'Compatible' : 'NOT Compatible')

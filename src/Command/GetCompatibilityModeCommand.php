@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\defaultCompatibilityLevelRequest;
 
 class GetCompatibilityModeCommand extends AbstractSchemaCommand
 {
@@ -23,15 +23,14 @@ class GetCompatibilityModeCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $response = $this->client->send(defaultCompatibilityLevelRequest());
-
-        $data = $this->getJsonDataFromResponse($response);
+        $data = $this->schemaRegistryApi->defaultCompatibilityLevelRequest();
 
         $output->writeln(
             sprintf('The registry\'s default compatibility mode is %s', $data['compatibilityLevel'])

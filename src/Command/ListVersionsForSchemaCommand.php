@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\allSubjectVersionsRequest;
 
 class ListVersionsForSchemaCommand extends AbstractSchemaCommand
 {
@@ -29,21 +29,15 @@ class ListVersionsForSchemaCommand extends AbstractSchemaCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return int
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $response = $this->client->send(
-            allSubjectVersionsRequest(
-                $input->getArgument('schemaName')
-            )
-        );
-
-        $schemaVersions = $this->getJsonDataFromResponse($response);
+        $schemaVersions = $this->schemaRegistryApi->allSubjectVersionsRequest($input->getArgument('schemaName'));
 
         foreach($schemaVersions as $schemaVersion) {
             $output->writeln($schemaVersion);
-        };
+        }
 
         return 0;
     }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use function FlixTech\SchemaRegistryApi\Requests\subjectCompatibilityLevelRequest;
 
 class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
 {
@@ -25,15 +25,14 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $response = $this->client->send(subjectCompatibilityLevelRequest($input->getArgument('schemaName')));
-
-        $data = $this->getJsonDataFromResponse($response);
+        $data = $this->schemaRegistryApi->subjectCompatibilityLevelRequest($input->getArgument('schemaName'));
 
         $output->writeln(
             sprintf('The schema\'s compatibility mode is %s', $data['compatibilityLevel'])
