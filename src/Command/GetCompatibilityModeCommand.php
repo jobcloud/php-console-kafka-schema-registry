@@ -16,7 +16,7 @@ class GetCompatibilityModeCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:get:compatibility:mode')
+            ->setName('kafka-schema-registry:get:compatibility:mode')
             ->setDescription('Get the default compatibility mode of the registry')
             ->setHelp('Get the default compatibility mode of the registry');
     }

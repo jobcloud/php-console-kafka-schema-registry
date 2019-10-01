@@ -44,7 +44,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:register:changed')
+            ->setName('kafka-schema-registry:register:changed')
             ->setDescription('Register all changed schemas from a path')
             ->setHelp('Register all changed schemas from a path')
             ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to avro schema directory');

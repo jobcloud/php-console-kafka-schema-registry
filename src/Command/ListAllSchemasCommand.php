@@ -16,7 +16,7 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:list')
+            ->setName('kafka-schema-registry:list')
             ->setDescription('List all schemas')
             ->setHelp('List all schemas');
     }
