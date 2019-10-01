@@ -35,16 +35,16 @@ class CommandServiceProvider implements ServiceProviderInterface
     {
         $container[self::COMMANDS] = static function (Container $container) {
 
-            if (!$container->offsetExists(self::CLIENT)) {
+            if (false === $container->offsetExists(self::CLIENT)) {
 
-                if (!$container->offsetExists(self::REGISTRY_URL)) {
+                if (false === $container->offsetExists(self::REGISTRY_URL)) {
                     throw new RuntimeException(
                         sprintf("Missing setting '%s' in your container", self::REGISTRY_URL)
                     );
                 }
 
                 $clientConfig = ['base_uri' => $container[self::REGISTRY_URL]];
-                if ($container->offsetExists(self::USERNAME) && $container->offsetExists(self::PASSWORD)) {
+                if (true === $container->offsetExists(self::USERNAME) && true === $container->offsetExists(self::PASSWORD)) {
                     $clientConfig['auth'] = [$container[self::USERNAME], $container[self::PASSWORD]];
                 }
 
