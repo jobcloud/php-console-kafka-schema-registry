@@ -38,7 +38,9 @@ class CommandServiceProvider implements ServiceProviderInterface
             if (!$container->offsetExists(self::CLIENT)) {
 
                 if (!$container->offsetExists(self::REGISTRY_URL)) {
-                    throw new RuntimeException('Missing setting kafka.schema.registry.url in your container');
+                    throw new RuntimeException(
+                        sprintf("Missing setting '%s' in your container", self::REGISTRY_URL)
+                    );
                 }
 
                 $clientConfig = ['base_uri' => $container[self::REGISTRY_URL]];
