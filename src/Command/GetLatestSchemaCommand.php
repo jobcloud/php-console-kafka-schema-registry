@@ -20,7 +20,7 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:get:schema:latest')
+            ->setName('kafka-schema-registry:get:schema:latest')
             ->setDescription('Get latest schema')
             ->setHelp('Get latest schema')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema')

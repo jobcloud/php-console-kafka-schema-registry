@@ -20,7 +20,7 @@ class RegisterSchemaVersionCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:register:version')
+            ->setName('kafka-schema-registry:register:version')
             ->setDescription('Add new schema version to registry')
             ->setHelp('Add new schema version to registry')
             ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file');

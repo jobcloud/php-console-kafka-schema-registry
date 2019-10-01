@@ -18,7 +18,7 @@ class ListVersionsForSchemaCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:list:versions')
+            ->setName('kafka-schema-registry:list:versions')
             ->setDescription('List all versions for given schema')
             ->setHelp('List all versions for given schema')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema');

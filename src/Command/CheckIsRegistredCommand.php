@@ -19,7 +19,7 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:entry:exists')
+            ->setName('kafka-schema-registry:entry:exists')
             ->setDescription('Check if schema already exists')
             ->setHelp('Check if schema already exists')
             ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file')

@@ -18,7 +18,7 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:get:schema:compatibility:mode')
+            ->setName('kafka-schema-registry:get:schema:compatibility:mode')
             ->setDescription('Get the compatibility mode for a given schema')
             ->setHelp('Get the compatibility mode for a given schema')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema');

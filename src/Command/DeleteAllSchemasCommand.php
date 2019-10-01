@@ -17,7 +17,7 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:delete:all')
+            ->setName('kafka-schema-registry:delete:all')
             ->setDescription('Delete all schemas')
             ->setHelp('Delete all schemas');
     }

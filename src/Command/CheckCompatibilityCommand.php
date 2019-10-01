@@ -19,7 +19,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
     protected function configure(): void
     {
         $this
-            ->setName('schema:registry:check:compatibility')
+            ->setName('kafka-schema-registry:check:compatibility')
             ->setDescription('Check Schema Compatibility against version')
             ->setHelp('Check Schema Compatibility against version')
             ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file')
@@ -35,7 +35,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $compatible = $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
+        $compatible = $this->schemaRegistrfyApi->checkSchemaCompatibilityForVersion(
             SchemaFileHelper::readSchemaFromFile($input->getArgument('schemaFile')),
             SchemaFileHelper::getSchemaName($input->getArgument('schemaFile')),
             $input->getArgument('schemaVersion')
