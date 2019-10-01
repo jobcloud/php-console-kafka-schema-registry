@@ -1,0 +1,72 @@
+version: '3.2'
+services:
+  php:
+    build:
+      context: dev/php
+      args:
+        HOST_USER: ${USER}
+        HOST_USER_ID: ${USER_ID}
+    container_name: console-kafka-schema-registry-php
+    hostname: console-kafka-schema-registry-php
+    volumes:
+      - ../:/app/
+    working_dir: /app
+    tty: true
+    secrets:
+      - ssh_host_key
+
+  # KAFKA Related
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.1.0
+    hostname: console-kafka-schema-registry-zookeeper
+    container_name: console-kafka-schema-registry-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka1:
+    image: confluentinc/cp-kafka:5.3.0
+    hostname: console-kafka-schema-registry-kafka1
+    container_name: console-kafka-schema-registry-kafka1
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'console-kafka-schema-registry-zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://console-kafka-schema-registry-kafka1:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_LOG_CLEANER_MAX_COMPACTION_LAG_MS: 30000
+      KAFKA_MIN_CLEANABLE_DIRTY_RATIO: 0
+    volumes:
+      - ./kafka/files/mounted/1/:/exchange
+    tty: true
+
+  kafka-schema-registry:
+    image: confluentinc/cp-schema-registry:5.3.0
+    container_name: console-kafka-schema-registry
+    hostname: console-kafka-schema-registry
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://console-kafka-schema-registry-kafka1:9092
+      SCHEMA_REGISTRY_HOST_NAME: console-kafka-schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    depends_on:
+      - kafka1
+
+  schema-registry-ui:
+    image: landoop/schema-registry-ui:0.9.4
+    hostname: console-kafka-schema-registry-ui
+    container_name: console-kafka-schema-registry-ui
+    ports:
+      - "8001:8000"
+    environment:
+      SCHEMAREGISTRY_URL: http://console-kafka-schema-registry:8081/
+      PROXY: "true"
+    depends_on:
+      - kafka-schema-registry
+
+secrets:
+  ssh_host_key:
+    file: ~/.ssh/id_rsa
