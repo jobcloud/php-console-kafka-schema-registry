@@ -2,6 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\Avro;
 use Jobcloud\SchemaConsole\SchemaRegistryApi;
@@ -43,9 +44,11 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
+     * @throws AvroSchemaParseException
+     * @throws GuzzleException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -87,9 +90,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 } catch (RequestException $e) {
                     if (404 !== $e->getCode()) {
                         throw $e;
-                    } else {
-                        $isRegistered = false;
                     }
+
+                    $isRegistered = false;
                 }
 
                 if (true === $isRegistered) {

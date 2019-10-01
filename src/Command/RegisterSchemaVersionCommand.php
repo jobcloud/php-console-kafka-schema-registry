@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Jobcloud\SchemaConsole\Command;
 
 use AvroSchemaParseException;
-use FlixTech\SchemaRegistryApi\Exception\SchemaRegistryException;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
