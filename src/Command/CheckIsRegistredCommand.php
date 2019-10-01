@@ -23,7 +23,7 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
             ->setName('schema:registry:entry:exists')
             ->setDescription('Check if schema already exists')
             ->setHelp('Check if schema already exists')
-            ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to avro schema file')
+            ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file')
         ;
     }
 

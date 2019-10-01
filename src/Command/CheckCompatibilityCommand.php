@@ -22,7 +22,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
             ->setName('schema:registry:check:compatibility')
             ->setDescription('Check Schema Compatibility against version')
             ->setHelp('Check Schema Compatibility against version')
-            ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to avro schema file')
+            ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file')
             ->addArgument('schemaVersion', InputArgument::REQUIRED, 'Version of the schema')
         ;
     }
