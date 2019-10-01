@@ -54,14 +54,15 @@ help:
 	#
 	# Targets:
 	#   clean                   Cleans the coverage and the vendor directory
-	#   code-check              Check code style using phpcs & Code analysis
-	#   code-fix                PHP Code fix using phpcbf
+	#   code-check              For Developer machine, to check code style using phpcs & Code analysis
+	#   code-fix                For Developer machine, to fix code-style automatcially using phpcbf
 	#   code-style              Check code style using phpcs
 	#   coverage                Code Coverage display
 	#   help                    You're looking at it!
 	#   install-dependencies    Install dependencies
 	#   update-dependencies     Run composer update
 	#   static-analysis         Run static analysis using phpstan
+	#   ci-static-analysis      Run static analysis using phpstan for CI only.
 	#   test                    Run tests
 	#   xdebug-enable           Enable xdebug
 	#   xdebug-disable          Disable xdebug
