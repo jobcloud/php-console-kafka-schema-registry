@@ -10,15 +10,34 @@
          processIsolation            = "false"
          stopOnFailure               = "false">
 
+    <php>
+        <ini name="max_execution_time" value="-1"/>
+        <ini name="html_errors" value="false"/>
+        <ini name="memory_limit" value="1G"/>
+
+        <ini name="xdebug.default_enable" value="1" />
+        <ini name="xdebug.enable_coverage" value="1" />
+        <ini name="xdebug.remote_autostart" value="0" />
+        <ini name="xdebug.remote_enable" value="0" />
+        <ini name="xdebug.overload_var_dump" value="0" />
+        <ini name="xdebug.show_mem_delta" value="0" />
+    </php>
+
     <testsuites>
         <testsuite name="Schema Console Registry Commands Test Suite">
-            <directory>tests</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
 
+    <logging>
+        <log type="coverage-text" target="php://stdout" showOnlySummary="true"/>
+        <log type="coverage-html" target="build/logs/phpunit/coverage"/>
+        <log type="junit" target="build/logs/phpunit/junit.xml"/>
+    </logging>
+
     <filter>
         <whitelist>
-            <directory suffix=".php">src/</directory>
+            <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
 </phpunit>
