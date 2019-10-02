@@ -67,8 +67,8 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         while (false === $this->abortRegister) {
             $failed = [];
 
-            if (!$this->registerFiles($avroFiles, $output, $failed)) {
-                return -1;
+            if (false === $this->registerFiles($avroFiles, $output, $failed)) {
+                return 1;
             }
 
             $this->abortRegister = (0 === count($failed)) || ($this->maxRetries === ++$retries);
@@ -76,7 +76,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
         if (isset($failed)) {
             $output->writeln(sprintf('Was unable to register the following schemas %s', implode(', ', $failed)));
-            return -1;
+            return 1;
         }
 
         return 0;

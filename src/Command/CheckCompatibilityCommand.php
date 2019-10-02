@@ -43,13 +43,14 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
         $compatible = $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
             SchemaFileHelper::readSchemaFromFile($schemaFile),
             SchemaFileHelper::getSchemaName($schemaFile),
-            $schemaVersion
+            (string) $schemaVersion
         );
 
         $output->writeln(
             sprintf('Schema is %s', $compatible ? 'Compatible' : 'NOT Compatible')
         );
 
-        return (int) $compatible;
+        // Program exits 1 (fail) when FALSE, 0 if TRUE (success)
+        return (int) !$compatible;
     }
 }

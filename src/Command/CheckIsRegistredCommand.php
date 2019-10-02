@@ -41,10 +41,10 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
 
         if (null === $version) {
             $output->writeln('Schema does not exist in any version');
-            return -1;
+            return 1;
         }
 
-            $output->writeln(sprintf('Schema exists in version %d', $version));
-            return 0;
+        $output->writeln(sprintf('Schema exists in version %d', $version));
+        return 0;
     }
 }

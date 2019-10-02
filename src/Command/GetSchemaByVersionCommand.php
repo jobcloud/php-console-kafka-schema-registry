@@ -7,6 +7,7 @@ namespace Jobcloud\SchemaConsole\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class GetSchemaByVersionCommand extends AbstractSchemaCommand
 {
@@ -47,9 +48,11 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
             $schemaVersion,
         );
 
-        if (false === file_put_contents($outputFile, $schema)) {
+        try {
+            file_put_contents($outputFile, $schema);
+        } catch (Throwable $e) {
             $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));
-            return -1;
+            return 1;
         }
 
         $output->writeln(sprintf('Schema successfully written to %s.', $outputFile));

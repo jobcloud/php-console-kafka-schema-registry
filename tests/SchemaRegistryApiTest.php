@@ -3,6 +3,7 @@
 namespace Jobcloud\SchemaConsole\Tests;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Jobcloud\SchemaConsole\SchemaRegistryApi;
@@ -131,6 +132,45 @@ class SchemaRegistryApiTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(45, $result);
     }
 
+    public function testGetVersionForSchemaNotFound(): void
+    {
+
+        $schemaName = 'some-schema';
+
+        $clientException = new ClientException('', new Request('POST', '/'));
+
+        $this->setProperty($clientException, 'code', 40403);
+
+        $result = $this
+            ->getSchemaRegistryApiWithClientCallExpectations(
+                sprintf('/subjects/%s', $schemaName),
+                $clientException
+            )
+            ->getVersionForSchema($schemaName, '{}')
+        ;
+
+        self::assertEquals(null, $result);
+    }
+
+    public function testGetVersionForSchemaUnknownException(): void
+    {
+
+        $schemaName = 'some-schema';
+
+        $clientException = new ClientException('ERROR MESSAGE', new Request('POST', '/'));;
+
+        self::expectException(ClientException::class);
+        self::expectExceptionMessage('ERROR MESSAGE');
+
+        $this
+            ->getSchemaRegistryApiWithClientCallExpectations(
+                sprintf('/subjects/%s', $schemaName),
+                $clientException
+            )
+            ->getVersionForSchema($schemaName, '{}')
+        ;
+    }
+
     public function testDeleteSchema(): void
     {
         $schemaName = 'some-schema';
@@ -182,6 +222,42 @@ class SchemaRegistryApiTest extends AbstractSchemaRegistryTestCase
         ;
 
         self::assertEquals(5, $result);
+    }
+
+    public function testLatestSchemaVersionNotFound(): void
+    {
+
+        $schemaName = 'some-schema';
+        $clientException = new ClientException('', new Request('POST', '/'));
+        $this->setProperty($clientException, 'code', 404);
+
+        $result = $this
+            ->getSchemaRegistryApiWithClientCallExpectations(
+                sprintf('/subjects/%s/versions', $schemaName),
+                $clientException
+            )
+            ->getLatestSchemaVersion($schemaName)
+        ;
+
+        self::assertEquals(null, $result);
+    }
+
+    public function testLatestSchemaVersionUnknownException(): void
+    {
+
+        $schemaName = 'some-schema';
+        $clientException = new ClientException('ERROR MESSAGE', new Request('POST', '/'));;
+
+        self::expectException(ClientException::class);
+        self::expectExceptionMessage('ERROR MESSAGE');
+
+        $this
+            ->getSchemaRegistryApiWithClientCallExpectations(
+                sprintf('/subjects/%s/versions', $schemaName),
+                $clientException
+            )
+            ->getLatestSchemaVersion($schemaName)
+        ;
     }
 
     /**

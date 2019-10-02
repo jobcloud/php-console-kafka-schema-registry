@@ -35,7 +35,7 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
             $this->schemaRegistryApi->deleteSchema($schemaName);
         }
 
-        $output->writeln(sprintf('All schemas deleted.'));
+        $output->writeln('All schemas deleted.');
 
         return 0;
     }

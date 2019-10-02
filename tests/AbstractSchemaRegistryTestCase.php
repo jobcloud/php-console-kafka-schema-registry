@@ -10,7 +10,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
-class AbstractSchemaRegistryTestCase extends TestCase
+abstract class AbstractSchemaRegistryTestCase extends TestCase
 {
     /**
      * @param $class
@@ -30,11 +30,27 @@ class AbstractSchemaRegistryTestCase extends TestCase
             return $mockBuilder->getMock();
         }
 
-        $mock = $mockBuilder->onlyMethods(array_keys($methodMap))->getMock();
+        $methodNames = array_merge(
+            array_keys(array_filter($methodMap, static function ($key){
+                return !is_numeric($key);
+                }, ARRAY_FILTER_USE_KEY
+            )),
+            array_values(array_filter($methodMap, static function ($key){
+                return is_numeric($key);
+                }, ARRAY_FILTER_USE_KEY
+            ))
+        );
+
+        $mock = $mockBuilder->onlyMethods($methodNames)->getMock();
 
         foreach ($methodMap as $methodName => $value) {
             if (is_callable($value)) {
                 $value($mock->method($methodName));
+                continue;
+            }
+
+            if (is_numeric($methodName)) {
+                $mock->method($value);
                 continue;
             }
 

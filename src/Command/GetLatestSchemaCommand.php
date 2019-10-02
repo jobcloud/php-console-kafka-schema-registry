@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 use const FlixTech\SchemaRegistryApi\Constants\VERSION_LATEST;
 
 class GetLatestSchemaCommand extends AbstractSchemaCommand
@@ -51,9 +52,11 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
         /** @var string $outputFile */
         $outputFile = $input->getArgument('outputFile');
 
-        if (false === file_put_contents($outputFile, $schema)) {
+        try {
+            file_put_contents($outputFile, $schema);
+        } catch (Throwable $e) {
             $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));
-            return -1;
+            return 1;
         }
 
         $output->writeln(sprintf('Schema successfully written to %s.', $outputFile));
