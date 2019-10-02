@@ -74,7 +74,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $this->abortRegister = (0 === count($failed)) || ($this->maxRetries === ++$retries);
         }
 
-        if (isset($failed)) {
+        if (isset($failed) && 0 !== count($failed)) {
             $output->writeln(sprintf('Was unable to register the following schemas %s', implode(', ', $failed)));
             return 1;
         }
@@ -167,12 +167,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $latestVersion = $this->schemaRegistryApi->getLatestSchemaVersion($schemaName);
 
             if (null !== $latestVersion) {
-                if ($this->isLocalSchemaEqualToLatestSchema($schemaName, $localSchema, $latestVersion)) {
+                if (true === $this->isLocalSchemaEqualToLatestSchema($schemaName, $localSchema, $latestVersion)) {
                     $output->writeln(sprintf('Schema %s has been skipped (no change)', $schemaName));
                     continue;
                 }
 
-                if ($this->isLocalSchemaCompatible($schemaName, $localSchema, $latestVersion)) {
+                if (false === $this->isLocalSchemaCompatible($schemaName, $localSchema, $latestVersion)) {
                     $output->writeln(sprintf('Schema %s has an incompatible change', $schemaName));
                     return false;
                 }
