@@ -49,7 +49,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: console-kafka-schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:9086
     depends_on:
-      - kafka1
+      - kafka
   schema-registry-ui:
     image: landoop/schema-registry-ui:0.9.4
     hostname: console-kafka-schema-registry-ui
