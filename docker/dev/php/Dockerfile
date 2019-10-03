@@ -13,10 +13,6 @@ COPY files/bin /usr/bin/
 RUN apk --no-cache upgrade && \
     apk --no-cache add bash git sudo nano openssh autoconf gcc g++ make gettext
 
-# PHP: Install php extensions
-RUN pecl channel-update pecl.php.net && \
-    pecl install xdebug
-
 #sadly apple users run into a problem since the AD user has a higher ID than 65k :(
 #so we do it oldschool
 RUN echo "$HOST_USER:x:$HOST_USER_ID:82:Linux User,,,:/home/$HOST_USER:" >> /etc/passwd && \

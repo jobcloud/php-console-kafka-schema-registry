@@ -16,7 +16,6 @@ use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
 use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use \RuntimeException;
 use GuzzleHttp\Client;
 
 class CommandServiceProvider implements ServiceProviderInterface
@@ -38,7 +37,7 @@ class CommandServiceProvider implements ServiceProviderInterface
 
             if (!$container->offsetExists(self::CLIENT)) {
                 if (!$container->offsetExists(self::REGISTRY_URL)) {
-                    throw new RuntimeException(
+                    throw new \RuntimeException(
                         sprintf("Missing setting '%s' in your container", self::REGISTRY_URL)
                     );
                 }

@@ -10,43 +10,37 @@ PHPCBF = ./vendor/bin/phpcbf ./src --standard=./vendor/jobcloud/unity-coding-sta
 clean:
 	rm -rf ./vendor
 
-code-check:xdebug-disable
+code-check:
 	${PHPCS}
 	${PHPSTAN}
 
-fix-code-style:xdebug-disable
+fix-code-style:
 	${PHPCBF}
 
-code-style:xdebug-disable
+code-style:
 	mkdir -p build/logs/phpcs
 	${PHPCS} --report-junit=build/logs/phpcs/junit.xml
 
-static-analysis: xdebug-disable
+static-analysis:
 	mkdir -p build/logs/phpstan
 	${PHPSTAN} --no-progress
 
-ci-static-analysis: xdebug-disable
+ci-static-analysis:
 	mkdir -p build/logs/phpstan
 	${PHPSTAN} --no-progress --error-format=junit | tee build/logs/phpstan/junit.xml
 	${PHPSTAN} --no-progress
 
-test:xdebug-disable
+test:
 	${PHPUNIT}
 
-coverage:xdebug-disable
+coverage:
 	${PHPDBG}
 
-install-dependencies:xdebug-disable
+install-dependencies:
 	composer install
 
-update-dependencies:xdebug-disable
+update-dependencies:
 	composer update
-
-xdebug-disable:
-	sudo php-ext-disable xdebug
-
-xdebug-enable:
-	sudo php-ext-enable xdebug
 
 help:
 	# Usage:
@@ -64,5 +58,3 @@ help:
 	#   static-analysis         Run static analysis using phpstan
 	#   ci-static-analysis      Run static analysis using phpstan for CI only.
 	#   test                    Run tests
-	#   xdebug-enable           Enable xdebug
-	#   xdebug-disable          Disable xdebug

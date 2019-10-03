@@ -5,12 +5,6 @@ namespace Jobcloud\SchemaConsole\Command;
 use GuzzleHttp\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\Avro;
 use Jobcloud\SchemaConsole\SchemaRegistryApi;
-use \RecursiveIteratorIterator;
-use \RecursiveDirectoryIterator;
-use \FilesystemIterator;
-use \SplFileInfo;
-use \AvroSchema;
-use \AvroSchemaParseException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -88,16 +82,16 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      */
     protected function getAvroFiles(string $directory): array
     {
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator(
                 $directory,
-                FilesystemIterator::SKIP_DOTS
+                \FilesystemIterator::SKIP_DOTS
             )
         );
 
         $files = [];
 
-        /** @var SplFileInfo $file */
+        /** @var \SplFileInfo $file */
         foreach ($iterator as $file) {
             if (Avro::FILE_EXTENSION !== $file->getExtension()) {
                 continue;
@@ -179,8 +173,8 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             }
 
             try {
-                $schema = AvroSchema::parse($localSchema);
-            } catch (AvroSchemaParseException $e) {
+                $schema = \AvroSchema::parse($localSchema);
+            } catch (\AvroSchemaParseException $e) {
                 $output->writeln(sprintf('Skipping %s for now because %s', $schemaName, $e->getMessage()));
                 $failed[] = $avroFile;
                 continue;
