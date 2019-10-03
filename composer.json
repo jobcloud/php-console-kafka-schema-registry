@@ -27,8 +27,5 @@
             "Jobcloud\\SchemaConsole\\": "src/",
             "Jobcloud\\SchemaConsole\\Tests\\": "tests/"
         }
-    },
-    "repositories": [
-        {"type": "vcs", "no-api": true, "url": "git@github.com:jobcloud/unity-coding-standards.git"}
-    ]
+    }
 }
