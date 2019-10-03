@@ -4,7 +4,7 @@
 PHPDBG = phpdbg -qrr ./vendor/bin/phpunit -c ./phpunit.xml
 PHPUNIT = ./vendor/bin/phpunit -c ./phpunit.xml
 PHPSTAN = ./vendor/bin/phpstan analyse src --level=7
-PHPCS = ./vendor/bin/phpcs ./src --extensions=php --report-full --report-gitblame --standard=./vendor/jobcloud/unity-coding-standards/ruleset.xml --exclude=Generic.Commenting.Todo
+PHPCS = ./vendor/bin/phpcs ./src --extensions=php --report-full --report-gitblame --standard=PSR2 --exclude=Generic.Commenting.Todo
 PHPCBF = ./vendor/bin/phpcbf ./src --standard=./vendor/jobcloud/unity-coding-standards/ruleset.xml
 
 clean:
