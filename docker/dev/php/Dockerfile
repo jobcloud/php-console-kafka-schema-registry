@@ -6,8 +6,6 @@ ARG HOST_USER
 ARG HOST_USER_ID
 
 COPY files/ini /phpIni
-COPY files/bin /usr/local/bin/
-COPY files/bin /usr/bin/
 
 # SYS: Install required packages
 RUN apk --no-cache upgrade && \
