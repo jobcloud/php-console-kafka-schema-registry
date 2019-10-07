@@ -16,8 +16,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
     protected const DUMMY_SCHEMA = <<<EOF
         {
           "type": "record",
-          "name": "evolution",
-          "namespace": "com.landoop",
+          "name": "test",
+          "namespace": "ch.jobcloud",
           "doc": "This is a sample Avro schema to get you started. Please edit",
           "fields": [
             {
@@ -72,6 +72,11 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
                 $contents
             );
         });
+
+        file_put_contents(
+            sprintf('%s/test.txt', self::SCHEMA_DIRECTORY),
+            'bla'
+        );
     }
 
     public function testOutputWhenCommandRegisterWithSuccess():void
@@ -113,7 +118,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
             'checkSchemaCompatibilityForVersion' => TRUE,
-            'getSchemaByVersion' => json_encode(json_decode(self::DUMMY_SCHEMA)),
+            'getVersionForSchema' => 1,
             'createNewSchemaVersion',
             'getLatestSchemaVersion' => '1'
         ]);
@@ -136,6 +141,34 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertStringContainsString('Schema test.schema.5 has been skipped (no change)', $commandOutput);
 
         self::assertEquals(0, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenCommandFailsRegisteringASchema():void
+    {
+        $this->generateFiles(1, 'asdf');
+
+        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+            'checkSchemaCompatibilityForVersion' => TRUE,
+            'getVersionForSchema' => null,
+            'createNewSchemaVersion',
+            'getLatestSchemaVersion' => '1'
+        ]);
+
+        $application = new Application();
+        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:register:changed');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString('Skipping test.schema.1 for now because  is not a schema we know about.', $commandOutput);
+
+        self::assertEquals(1, $commandTester->getStatusCode());
     }
 
     public function testOutputTotalFailDueToIncompatibility():void
