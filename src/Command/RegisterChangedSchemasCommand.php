@@ -124,7 +124,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     /**
      * @param string $schemaName
      * @param string $localSchema
-     * @param string $latestVersion
      * @return boolean
      */
     protected function isAlreadyRegistered(
@@ -139,7 +138,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $localSchema
             );
         } catch (\Throwable $e) {
-            
         }
 
         return null !== $version;
