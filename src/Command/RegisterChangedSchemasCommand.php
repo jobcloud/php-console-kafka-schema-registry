@@ -127,17 +127,22 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      * @param string $latestVersion
      * @return boolean
      */
-    protected function isLocalSchemaEqualToLatestSchema(
+    protected function isAlreadyRegistered(
         string $schemaName,
-        string $localSchema,
-        string $latestVersion
+        string $localSchema
     ): bool {
-        $schema = $this->schemaRegistryApi->getSchemaByVersion(
-            $schemaName,
-            $latestVersion
-        );
+        $version = null;
 
-        return $schema === $localSchema;
+        try {
+            $version = $this->schemaRegistryApi->getVersionForSchema(
+                $schemaName,
+                $localSchema
+            );
+        } catch (\Throwable $e) {
+            
+        }
+
+        return null !== $version;
     }
 
     /**
@@ -161,7 +166,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $latestVersion = $this->schemaRegistryApi->getLatestSchemaVersion($schemaName);
 
             if (null !== $latestVersion) {
-                if (true === $this->isLocalSchemaEqualToLatestSchema($schemaName, $localSchema, $latestVersion)) {
+                if (true === $this->isAlreadyRegistered($schemaName, $localSchema)) {
                     $output->writeln(sprintf('Schema %s has been skipped (no change)', $schemaName));
                     continue;
                 }
