@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\Avro;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -44,8 +45,7 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
 
         $failed = [];
 
-        if(false === $this->checkSchemas($avroFiles, $failed))
-        {
+        if (false === $this->checkSchemas($avroFiles, $failed)) {
             $io->error('Following schemas are not compatible:');
             $io->listing($failed);
 
@@ -125,7 +125,7 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
     /**
      * @param array $avroFiles
      * @param array $failed
-     * @return bool
+     * @return boolean
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {
@@ -141,6 +141,7 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
             /** @var string $localSchema */
             $localSchema = json_encode($jsonDecoded);
 
+            /** @var string $latestVersion */
             $latestVersion = $this->schemaRegistryApi->getLatestSchemaVersion($schemaName);
 
             if (false === $this->isLocalSchemaCompatible($schemaName, $localSchema, $latestVersion)) {
