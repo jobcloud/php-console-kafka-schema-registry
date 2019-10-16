@@ -112,13 +112,7 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
 
         foreach ($avroFiles as $schemaName => $avroFile) {
             /** @var string $fileContents */
-            $fileContents = file_get_contents($avroFile);
-
-            /** @var array $jsonDecoded */
-            $jsonDecoded = json_decode($fileContents);
-
-            /** @var string $localSchema */
-            $localSchema = json_encode($jsonDecoded);
+            $localSchema = file_get_contents($avroFile);
 
             /** @var string $latestVersion */
             $latestVersion = $this->schemaRegistryApi->getLatestSchemaVersion($schemaName);
