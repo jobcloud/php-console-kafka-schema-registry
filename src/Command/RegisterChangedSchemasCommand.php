@@ -86,12 +86,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
         if (isset($passed) && 0 !== count($passed)) {
             $io->success('Succeeded registering the following schemas:');
-            $io->listing(array_map(static function ($item){
+            $io->listing(array_map(static function ($item) {
                 return sprintf('%s (%s)', $item['name'], $item['version']);
             }, $passed));
         }
 
-        return (int) isset($failed) && 0 !== count($failed);
+        return (int) (isset($failed) && 0 !== count($failed));
     }
 
     /**
@@ -162,11 +162,10 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param array $avroFiles
+     * @param array           $avroFiles
      * @param OutputInterface $output
-     * @param array $failed
-     * @param $
-     * @param array $passed
+     * @param array           $failed
+     * @param array           $passed
      * @return boolean
      */
     private function registerFiles(
@@ -174,8 +173,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         OutputInterface $output,
         array &$failed = [],
         array &$passed = []
-    ): bool
-    {
+    ): bool {
         foreach ($avroFiles as $schemaName => $avroFile) {
             /** @var string $fileContents */
             $fileContents = file_get_contents($avroFile);
