@@ -111,7 +111,8 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
         $failed = [];
 
         foreach ($avroFiles as $schemaName => $avroFile) {
-            /** @var string $fileContents */
+
+            /** @var string $localSchema */
             $localSchema = file_get_contents($avroFile);
 
             /** @var string $latestVersion */
