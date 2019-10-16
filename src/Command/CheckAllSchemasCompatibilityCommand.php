@@ -52,6 +52,8 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
             return 1;
         }
 
+        $io->success('All schemas are compatible');
+
         return 0;
     }
 
@@ -98,28 +100,6 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
             $schemaName,
             $latestVersion
         );
-    }
-
-    /**
-     * @param string $schemaName
-     * @param string $localSchema
-     * @return boolean
-     */
-    protected function isAlreadyRegistered(
-        string $schemaName,
-        string $localSchema
-    ): bool {
-        $version = null;
-
-        try {
-            $version = $this->schemaRegistryApi->getVersionForSchema(
-                $schemaName,
-                $localSchema
-            );
-        } catch (Throwable $e) {
-        }
-
-        return null !== $version;
     }
 
     /**
