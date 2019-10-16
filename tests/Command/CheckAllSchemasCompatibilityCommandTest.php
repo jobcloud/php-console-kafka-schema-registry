@@ -106,7 +106,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertContains('All schemas are compatible', $commandOutput);
+        self::assertStringContainsString('All schemas are compatible', $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
@@ -137,12 +137,12 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertContains('Following schemas are not compatible', $commandOutput);
-        self::assertContains('* test.schema.1', $commandOutput);
-        self::assertContains('* test.schema.2', $commandOutput);
-        self::assertContains('* test.schema.3', $commandOutput);
-        self::assertContains('* test.schema.4', $commandOutput);
-        self::assertContains('* test.schema.5', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertStringContainsString('Following schemas are not compatible', $commandOutput);
+        self::assertStringContainsString('* test.schema.1', $commandOutput);
+        self::assertStringContainsString('* test.schema.2', $commandOutput);
+        self::assertStringContainsString('* test.schema.3', $commandOutput);
+        self::assertStringContainsString('* test.schema.4', $commandOutput);
+        self::assertStringContainsString('* test.schema.5', $commandOutput);
+        self::assertEquals(1, $commandTester->getStatusCode());
     }
 }
