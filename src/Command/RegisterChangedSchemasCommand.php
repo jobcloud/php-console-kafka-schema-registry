@@ -2,12 +2,19 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use AvroSchema;
+use AvroSchemaParseException;
+use FilesystemIterator;
 use GuzzleHttp\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\Avro;
 use Jobcloud\SchemaConsole\SchemaRegistryApi;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 
 class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 {
@@ -52,6 +59,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+
+        $io = new SymfonyStyle($input, $output);
+
         /** @var string $directory */
         $directory = $input->getArgument('schemaDirectory');
         $avroFiles = $this->getAvroFiles($directory);
@@ -60,8 +70,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
         while (false === $this->abortRegister) {
             $failed = [];
+            $passed = [];
 
-            if (false === $this->registerFiles($avroFiles, $output, $failed)) {
+            if (false === $this->registerFiles($avroFiles, $output, $failed, $passed)) {
                 return 1;
             }
 
@@ -69,11 +80,18 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         }
 
         if (isset($failed) && 0 !== count($failed)) {
-            $output->writeln(sprintf('Was unable to register the following schemas %s', implode(', ', $failed)));
-            return 1;
+            $io->warning('Failed schemas the following schemas:');
+            $io->listing($failed);
         }
 
-        return 0;
+        if (isset($passed) && 0 !== count($passed)) {
+            $io->success('Succeeded registering the following schemas:');
+            $io->listing(array_map(static function ($item){
+                return sprintf('%s (%s)', $item['name'], $item['version']);
+            }, $passed));
+        }
+
+        return (int) isset($failed) && 0 !== count($failed);
     }
 
     /**
@@ -82,10 +100,10 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      */
     protected function getAvroFiles(string $directory): array
     {
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
                 $directory,
-                \FilesystemIterator::SKIP_DOTS
+                FilesystemIterator::SKIP_DOTS
             )
         );
 
@@ -137,19 +155,26 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $schemaName,
                 $localSchema
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
         }
 
         return null !== $version;
     }
 
     /**
-     * @param array           $avroFiles
+     * @param array $avroFiles
      * @param OutputInterface $output
-     * @param array           $failed
+     * @param array $failed
+     * @param $
+     * @param array $passed
      * @return boolean
      */
-    private function registerFiles(array $avroFiles, OutputInterface $output, array &$failed = []): bool
+    private function registerFiles(
+        array $avroFiles,
+        OutputInterface $output,
+        array &$failed = [],
+        array &$passed = []
+    ): bool
     {
         foreach ($avroFiles as $schemaName => $avroFile) {
             /** @var string $fileContents */
@@ -176,14 +201,19 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             }
 
             try {
-                $schema = \AvroSchema::parse($localSchema);
-            } catch (\AvroSchemaParseException $e) {
+                $schema = AvroSchema::parse($localSchema);
+            } catch (AvroSchemaParseException $e) {
                 $output->writeln(sprintf('Skipping %s for now because %s', $schemaName, $e->getMessage()));
-                $failed[] = $avroFile;
+                $failed[] = $schemaName;
                 continue;
             }
 
             $this->schemaRegistryApi->createNewSchemaVersion($schema, $schemaName);
+
+            $passed[] = [
+                'name' => $schemaName,
+                'version' => $this->schemaRegistryApi->getLatestSchemaVersion($schemaName),
+            ];
 
             $output->writeln(sprintf('Successfully registered new version of schema %s', $schemaName));
         }
