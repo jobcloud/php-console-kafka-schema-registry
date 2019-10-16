@@ -2,6 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\ServiceProvider;
 
+use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
 use Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand;
@@ -58,6 +59,7 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new CheckIsRegistredCommand($schemaRegistryApi),
                 new DeleteAllSchemasCommand($schemaRegistryApi),
                 new GetCompatibilityModeCommand($schemaRegistryApi),
+                new CheckAllSchemasCompatibilityCommand($schemaRegistryApi),
                 new GetCompatibilityModeForSchemaCommand($schemaRegistryApi),
                 new GetLatestSchemaCommand($schemaRegistryApi),
                 new GetSchemaByVersionCommand($schemaRegistryApi),
