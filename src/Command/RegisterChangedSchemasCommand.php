@@ -72,8 +72,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         $succeeded = [];
 
         while (false === $this->abortRegister) {
-
-
             if (false === $this->registerFiles($avroFiles, $io, $failed, $succeeded)) {
                 return 1;
             }
@@ -164,10 +162,10 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param array $avroFiles
+     * @param array        $avroFiles
      * @param SymfonyStyle $io
-     * @param array $failed
-     * @param array $succeeded
+     * @param array        $failed
+     * @param array        $succeeded
      * @return boolean
      */
     private function registerFiles(
