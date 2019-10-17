@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "test-schema",
+  "name": "test_schema",
   "namespace": "ch.jobcloud",
   "fields": [
     {
