@@ -2,12 +2,15 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use AvroSchema;
+use AvroSchemaParseException;
 use GuzzleHttp\Exception\RequestException;
-use Jobcloud\SchemaConsole\Helper\Avro;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 {
@@ -54,7 +57,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     {
         /** @var string $directory */
         $directory = $input->getArgument('schemaDirectory');
-        $avroFiles = $this->getAvroFiles($directory);
+        $avroFiles = SchemaFileHelper::getAvroFiles($directory);
 
         $retries = 0;
 
@@ -77,51 +80,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param string $directory
-     * @return array
-     */
-    protected function getAvroFiles(string $directory): array
-    {
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator(
-                $directory,
-                \FilesystemIterator::SKIP_DOTS
-            )
-        );
-
-        $files = [];
-
-        /** @var \SplFileInfo $file */
-        foreach ($iterator as $file) {
-            if (Avro::FILE_EXTENSION !== $file->getExtension()) {
-                continue;
-            }
-
-            $files[$file->getBasename('.' . Avro::FILE_EXTENSION)] = $file->getRealPath();
-        }
-
-        return $files;
-    }
-
-    /**
-     * @param string $schemaName
-     * @param string $localSchema
-     * @param string $latestVersion
-     * @return boolean
-     */
-    protected function isLocalSchemaCompatible(
-        string $schemaName,
-        string $localSchema,
-        string $latestVersion
-    ): bool {
-        return $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
-            $localSchema,
-            $schemaName,
-            $latestVersion
-        );
-    }
-
-    /**
      * @param string $schemaName
      * @param string $localSchema
      * @return boolean
@@ -137,7 +95,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $schemaName,
                 $localSchema
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
         }
 
         return null !== $version;
@@ -169,15 +127,20 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                     continue;
                 }
 
-                if (false === $this->isLocalSchemaCompatible($schemaName, $localSchema, $latestVersion)) {
+                if (false === $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
+                    $localSchema,
+                    $schemaName,
+                    $latestVersion
+                )
+                ) {
                     $output->writeln(sprintf('Schema %s has an incompatible change', $schemaName));
                     return false;
                 }
             }
 
             try {
-                $schema = \AvroSchema::parse($localSchema);
-            } catch (\AvroSchemaParseException $e) {
+                $schema = AvroSchema::parse($localSchema);
+            } catch (AvroSchemaParseException $e) {
                 $output->writeln(sprintf('Skipping %s for now because %s', $schemaName, $e->getMessage()));
                 $failed[] = $avroFile;
                 continue;

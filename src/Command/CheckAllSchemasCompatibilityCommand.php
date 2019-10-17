@@ -2,12 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use FilesystemIterator;
 use GuzzleHttp\Exception\RequestException;
-use Jobcloud\SchemaConsole\Helper\Avro;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use SplFileInfo;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -38,7 +34,7 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
     {
         /** @var string $directory */
         $directory = $input->getArgument('schemaDirectory');
-        $avroFiles = $this->getAvroFiles($directory);
+        $avroFiles = SchemaFileHelper::getAvroFiles($directory);
 
         $io = new SymfonyStyle($input, $output);
 
@@ -56,50 +52,6 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
         return 0;
     }
 
-    /**
-     * @param string $directory
-     * @return array
-     */
-    protected function getAvroFiles(string $directory): array
-    {
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(
-                $directory,
-                FilesystemIterator::SKIP_DOTS
-            )
-        );
-
-        $files = [];
-
-        /** @var SplFileInfo $file */
-        foreach ($iterator as $file) {
-            if (Avro::FILE_EXTENSION !== $file->getExtension()) {
-                continue;
-            }
-
-            $files[$file->getBasename('.' . Avro::FILE_EXTENSION)] = $file->getRealPath();
-        }
-
-        return $files;
-    }
-
-    /**
-     * @param string $schemaName
-     * @param string $localSchema
-     * @param string $latestVersion
-     * @return boolean
-     */
-    protected function isLocalSchemaCompatible(
-        string $schemaName,
-        string $localSchema,
-        string $latestVersion
-    ): bool {
-        return $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
-            $localSchema,
-            $schemaName,
-            $latestVersion
-        );
-    }
 
     /**
      * @param array $avroFiles
@@ -115,10 +67,12 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
             /** @var string $localSchema */
             $localSchema = file_get_contents($avroFile);
 
-            /** @var string $latestVersion */
-            $latestVersion = $this->schemaRegistryApi->getLatestSchemaVersion($schemaName);
-
-            if (false === $this->isLocalSchemaCompatible($schemaName, $localSchema, $latestVersion)) {
+            if (false === $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
+                $localSchema,
+                $schemaName,
+                'latest'
+            )
+            ) {
                 $failed[] = $schemaName;
             }
         }

@@ -4,7 +4,11 @@ namespace Jobcloud\SchemaConsole\Helper;
 
 use AvroSchema;
 use AvroSchemaParseException;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use RuntimeException;
+use SplFileInfo;
 
 class SchemaFileHelper
 {
@@ -43,5 +47,32 @@ class SchemaFileHelper
     public static function getSchemaName(string $filePath): string
     {
         return basename($filePath, '.' . Avro::FILE_EXTENSION);
+    }
+
+    /**
+     * @param string $directory
+     * @return array
+     */
+    public static function getAvroFiles(string $directory): array
+    {
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                $directory,
+                FilesystemIterator::SKIP_DOTS
+            )
+        );
+
+        $files = [];
+
+        /** @var SplFileInfo $file */
+        foreach ($iterator as $file) {
+            if (Avro::FILE_EXTENSION !== $file->getExtension()) {
+                continue;
+            }
+
+            $files[$file->getBasename('.' . Avro::FILE_EXTENSION)] = $file->getRealPath();
+        }
+
+        return $files;
     }
 }
