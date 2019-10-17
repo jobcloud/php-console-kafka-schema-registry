@@ -2,6 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\ServiceProvider;
 
+use Jobcloud\SchemaConsole\Command\CheckAllSchemasHaveValidStructureCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
@@ -18,6 +19,7 @@ use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use GuzzleHttp\Client;
+use RuntimeException;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
@@ -38,7 +40,7 @@ class CommandServiceProvider implements ServiceProviderInterface
 
             if (!$container->offsetExists(self::CLIENT)) {
                 if (!$container->offsetExists(self::REGISTRY_URL)) {
-                    throw new \RuntimeException(
+                    throw new RuntimeException(
                         sprintf("Missing setting '%s' in your container", self::REGISTRY_URL)
                     );
                 }
@@ -67,6 +69,7 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new ListVersionsForSchemaCommand($schemaRegistryApi),
                 new RegisterChangedSchemasCommand($schemaRegistryApi),
                 new RegisterSchemaVersionCommand($schemaRegistryApi),
+                new CheckAllSchemasHaveValidStructureCommand(),
             ];
         };
     }

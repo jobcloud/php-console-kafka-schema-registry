@@ -3,6 +3,8 @@
 namespace Jobcloud\SchemaConsole\Tests;
 
 use GuzzleHttp\Client;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemasHaveValidStructureCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
 use Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand;
@@ -98,6 +100,7 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         $commands = $container[CommandServiceProvider::COMMANDS];
 
         self::assertArrayHasInstanceOf(CheckCompatibilityCommand::class, $commands);
+        self::assertArrayHasInstanceOf(CheckAllSchemasCompatibilityCommand::class, $commands);
         self::assertArrayHasInstanceOf(CheckIsRegistredCommand::class, $commands);
         self::assertArrayHasInstanceOf(DeleteAllSchemasCommand::class, $commands);
         self::assertArrayHasInstanceOf(GetCompatibilityModeCommand::class, $commands);
@@ -108,5 +111,6 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         self::assertArrayHasInstanceOf(ListVersionsForSchemaCommand::class, $commands);
         self::assertArrayHasInstanceOf(RegisterChangedSchemasCommand::class, $commands);
         self::assertArrayHasInstanceOf(RegisterSchemaVersionCommand::class, $commands);
+        self::assertArrayHasInstanceOf(CheckAllSchemasHaveValidStructureCommand::class, $commands);
     }
 }
