@@ -98,11 +98,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
             ->willReturn('{}')
         ;
 
-        $schemaRegistryApi
-            ->expects(self::exactly($numFiles * 2))
-            ->method('getVersionForSchema')
-            ->willReturnOnConsecutiveCalls(null, null, null, null, null, 1);
-
         $application = new Application();
         $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
