@@ -102,7 +102,7 @@ class SchemaRegistryApi
     public function checkSchemaCompatibilityForVersion(
         string $schema,
         string $schemaName,
-        string $version
+        string $version = 'latest'
     ): bool {
         $result = $this->parseJsonResponse(
             $this->client->send(
