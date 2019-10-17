@@ -68,11 +68,11 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
         $retries = 0;
 
-        while (false === $this->abortRegister) {
-            $failed = [];
-            $passed = [];
+        $failed = [];
+        $succeeded = [];
 
-            if (false === $this->registerFiles($avroFiles, $output, $failed, $passed)) {
+        while (false === $this->abortRegister) {
+            if (false === $this->registerFiles($avroFiles, $io, $failed, $succeeded)) {
                 return 1;
             }
 
@@ -84,11 +84,11 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $io->listing($failed);
         }
 
-        if (isset($passed) && 0 !== count($passed)) {
+        if (isset($succeeded) && 0 !== count($succeeded)) {
             $io->success('Succeeded registering the following schemas:');
             $io->listing(array_map(static function ($item) {
                 return sprintf('%s (%s)', $item['name'], $item['version']);
-            }, $passed));
+            }, $succeeded));
         }
 
         return (int) (isset($failed) && 0 !== count($failed));
@@ -162,17 +162,17 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param array           $avroFiles
-     * @param OutputInterface $output
-     * @param array           $failed
-     * @param array           $passed
+     * @param array        $avroFiles
+     * @param SymfonyStyle $io
+     * @param array        $failed
+     * @param array        $succeeded
      * @return boolean
      */
     private function registerFiles(
         array $avroFiles,
-        OutputInterface $output,
+        SymfonyStyle $io,
         array &$failed = [],
-        array &$passed = []
+        array &$succeeded = []
     ): bool {
         foreach ($avroFiles as $schemaName => $avroFile) {
             /** @var string $fileContents */
@@ -188,12 +188,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
             if (null !== $latestVersion) {
                 if (true === $this->isAlreadyRegistered($schemaName, $localSchema)) {
-                    $output->writeln(sprintf('Schema %s has been skipped (no change)', $schemaName));
+                    $io->writeln(sprintf('Schema %s has been skipped (no change)', $schemaName));
                     continue;
                 }
 
                 if (false === $this->isLocalSchemaCompatible($schemaName, $localSchema, $latestVersion)) {
-                    $output->writeln(sprintf('Schema %s has an incompatible change', $schemaName));
+                    $io->error(sprintf('Schema %s has an incompatible change', $schemaName));
                     return false;
                 }
             }
@@ -201,19 +201,20 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             try {
                 $schema = AvroSchema::parse($localSchema);
             } catch (AvroSchemaParseException $e) {
-                $output->writeln(sprintf('Skipping %s for now because %s', $schemaName, $e->getMessage()));
-                $failed[] = $schemaName;
+                $io->writeln(sprintf('Skipping %s for now because %s', $schemaName, $e->getMessage()));
+                $failed[$schemaName] = $schemaName;
                 continue;
             }
 
             $this->schemaRegistryApi->createNewSchemaVersion($schema, $schemaName);
 
-            $passed[] = [
+            $succeeded[$schemaName] = [
                 'name' => $schemaName,
                 'version' => $this->schemaRegistryApi->getLatestSchemaVersion($schemaName),
             ];
+            unset($failed[$schemaName]);
 
-            $output->writeln(sprintf('Successfully registered new version of schema %s', $schemaName));
+            $io->writeln(sprintf('Successfully registered new version of schema %s', $schemaName));
         }
 
         return true;
