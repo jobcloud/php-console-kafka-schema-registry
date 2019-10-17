@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class CheckAllSchemasHaveValidStructureCommand extends Command
+class CheckAllSchemasAreValidAvroCommand extends Command
 {
 
     /**
@@ -21,10 +21,10 @@ class CheckAllSchemasHaveValidStructureCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('kafka-schema-registry:check:structure:all')
-            ->setDescription('Checks structure for all schemas in folder')
-            ->setHelp('Checks structure for all schemas in folder')
-            ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to avro schema directory');
+            ->setName('kafka-schema-registry:check:valid:avro:all')
+            ->setDescription('Checks that all schemas are valid Avro')
+            ->setHelp('Checks that all schemas are valid Avro')
+            ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to Avro schema directory');
     }
 
     /**
@@ -44,13 +44,13 @@ class CheckAllSchemasHaveValidStructureCommand extends Command
         $failed = [];
 
         if (false === $this->checkSchemas($avroFiles, $failed)) {
-            $io->error('Following schemas have invalid structure:');
+            $io->error('Following schemas are not valid Avro:');
             $io->listing($failed);
 
             return 1;
         }
 
-        $io->success('All schemas are well structured');
+        $io->success('All schemas are valid Avro');
 
         return 0;
     }

@@ -2,12 +2,12 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
-use Jobcloud\SchemaConsole\Command\CheckAllSchemasHaveValidStructureCommand;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class CheckAllSchemasHaveValidStructureCommandTest extends AbstractSchemaRegistryTestCase
+class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
@@ -107,13 +107,13 @@ class CheckAllSchemasHaveValidStructureCommandTest extends AbstractSchemaRegistr
         });
     }
 
-    public function testOutputWhenAllCompatible():void
+    public function testOutputWhenAllValid():void
     {
         $this->generateFiles(5);
 
         $application = new Application();
-        $application->add(new CheckAllSchemasHaveValidStructureCommand());
-        $command = $application->find('kafka-schema-registry:check:structure:all');
+        $application->add(new CheckAllSchemasAreValidAvroCommand());
+        $command = $application->find('kafka-schema-registry:check:valid:avro:all');
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
@@ -122,17 +122,17 @@ class CheckAllSchemasHaveValidStructureCommandTest extends AbstractSchemaRegistr
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertStringContainsString('All schemas are well structured', $commandOutput);
+        self::assertStringContainsString('All schemas are valid Avro', $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenAllNotCompatible():void
+    public function testOutputWhenAllNotInvalid():void
     {
         $this->generateFiles(5, true);
 
         $application = new Application();
-        $application->add(new CheckAllSchemasHaveValidStructureCommand());
-        $command = $application->find('kafka-schema-registry:check:structure:all');
+        $application->add(new CheckAllSchemasAreValidAvroCommand());
+        $command = $application->find('kafka-schema-registry:check:valid:avro:all');
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
@@ -141,7 +141,7 @@ class CheckAllSchemasHaveValidStructureCommandTest extends AbstractSchemaRegistr
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertStringContainsString('Following schemas have invalid structure', $commandOutput);
+        self::assertStringContainsString('Following schemas are not valid Avro', $commandOutput);
         self::assertStringContainsString('* test.schema.bad1', $commandOutput);
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());

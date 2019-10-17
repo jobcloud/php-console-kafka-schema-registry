@@ -2,7 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\ServiceProvider;
 
-use Jobcloud\SchemaConsole\Command\CheckAllSchemasHaveValidStructureCommand;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
@@ -69,7 +69,7 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new ListVersionsForSchemaCommand($schemaRegistryApi),
                 new RegisterChangedSchemasCommand($schemaRegistryApi),
                 new RegisterSchemaVersionCommand($schemaRegistryApi),
-                new CheckAllSchemasHaveValidStructureCommand(),
+                new CheckAllSchemasAreValidAvroCommand(),
             ];
         };
     }
