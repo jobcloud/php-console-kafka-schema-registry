@@ -210,7 +210,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
             $succeeded[$schemaName] = [
                 'name' => $schemaName,
-                'version' => $this->schemaRegistryApi->getLatestSchemaVersion($schemaName),
+                'version' => $this->schemaRegistryApi->getVersionForSchema($schemaName, $schema),
             ];
             unset($failed[$schemaName]);
 
