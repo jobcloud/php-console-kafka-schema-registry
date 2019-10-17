@@ -104,11 +104,23 @@ class SchemaRegistryApi
         string $schemaName,
         string $version = 'latest'
     ): bool {
-        $result = $this->parseJsonResponse(
-            $this->client->send(
-                checkSchemaCompatibilityAgainstVersionRequest($schema, $schemaName, $version)
-            )
-        );
+
+        try {
+            $result = $this->parseJsonResponse(
+                $this->client->send(
+                    checkSchemaCompatibilityAgainstVersionRequest($schema, $schemaName, $version)
+                )
+            );
+        } catch (RequestException $e) {
+            if (null !== $e->getResponse()) {
+                $errorResponseData = $this->parseJsonResponse($e->getResponse());
+                if ($errorResponseData['error_code'] === 40401) {
+                    return true;
+                }
+            }
+
+            throw $e;
+        }
 
         return (bool) $result['is_compatible'];
     }

@@ -4,6 +4,7 @@ namespace Jobcloud\SchemaConsole\Tests;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Jobcloud\SchemaConsole\SchemaRegistryApi;
@@ -114,6 +115,54 @@ class SchemaRegistryApiTest extends AbstractSchemaRegistryTestCase
         ;
 
         self::assertFalse($result);
+    }
+
+    public function testCheckSchemaCompatibilityForVersionNotFoundReturnTrue(): void
+    {
+
+        $schemaName = 'some-schema';
+        $clientException = new ClientException(
+            '',
+            new Request('POST', '/'),
+            new Response(404, [], '{"error_code":40401,"message":"Subject not found."}')
+        );
+
+        $schema = '{}';
+        $version = '3';
+
+        $result = $this
+            ->getSchemaRegistryApiWithClientCallExpectations(
+                sprintf('/compatibility/subjects/%s/versions/%s', $schemaName, $version),
+                $clientException
+            )
+            ->checkSchemaCompatibilityForVersion($schema, $schemaName, $version)
+        ;
+
+        self::assertTrue($result);
+    }
+
+    public function testCheckSchemaCompatibilityForVersionPassesException(): void
+    {
+
+        $schemaName = 'some-schema';
+        $clientException = new RequestException(
+            '',
+            new Request('POST', '/'),
+            new Response(500, [], '{}')
+        );
+
+        $schema = '{}';
+        $version = '3';
+
+        self::expectException(RequestException::class);
+
+        $this
+            ->getSchemaRegistryApiWithClientCallExpectations(
+                sprintf('/compatibility/subjects/%s/versions/%s', $schemaName, $version),
+                $clientException
+            )
+            ->checkSchemaCompatibilityForVersion($schema, $schemaName, $version)
+        ;
     }
 
     public function testGetVersionForSchema(): void
