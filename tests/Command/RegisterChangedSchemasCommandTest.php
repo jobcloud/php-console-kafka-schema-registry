@@ -81,20 +81,27 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
     public function testOutputWhenCommandRegisterWithSuccess():void
     {
-        $this->generateFiles(5);
+        $numFiles = 5;
+        $this->generateFiles($numFiles);
 
         /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
             'checkSchemaCompatibilityForVersion' => TRUE,
             'getSchemaByVersion',
+            'getVersionForSchema',
             'createNewSchemaVersion',
-            'getLatestSchemaVersion' => '1'
+            'getLatestSchemaVersion' => '1',
         ]);
 
         $schemaRegistryApi
             ->method('getSchemaByVersion')
             ->willReturn('{}')
         ;
+
+        $schemaRegistryApi
+            ->expects(self::exactly($numFiles * 2))
+            ->method('getVersionForSchema')
+            ->willReturnOnConsecutiveCalls(null, null, null, null, null, 1);
 
         $application = new Application();
         $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
@@ -113,6 +120,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
     public function testOutputWhenCommandSuccessWithSkipping():void
     {
+
         $this->generateFiles(5);
 
         /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
