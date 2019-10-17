@@ -143,7 +143,7 @@ class SchemaRegistryApi
 
             return (int) $result['version'];
         } catch (ClientException $e) {
-            if ($e->getCode() === 40403) {
+            if (40403 === $e->getCode() || 40401 === $e->getCode()) {
                 return null;
             }
 

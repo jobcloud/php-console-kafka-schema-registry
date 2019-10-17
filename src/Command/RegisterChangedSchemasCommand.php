@@ -158,7 +158,16 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 continue;
             }
 
-            $this->schemaRegistryApi->createNewSchemaVersion($schema, $schemaName);
+            // https://github.com/confluentinc/schema-registry/issues/173
+            for ($retries = 0; $retries < 20; ++$retries) {
+                try {
+                    $this->schemaRegistryApi->createNewSchemaVersion($schema, $schemaName);
+                } catch (Throwable $e) {
+                    usleep(800);
+                    continue;
+                }
+            }
+
 
             $succeeded[$schemaName] = [
                 'name' => $schemaName,
