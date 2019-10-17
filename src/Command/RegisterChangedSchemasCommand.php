@@ -87,7 +87,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         if (isset($succeeded) && 0 !== count($succeeded)) {
             $io->success('Succeeded registering the following schemas:');
             $io->listing(array_map(static function ($item) {
-                return sprintf('%s (%s)', $item['name'], $item['version']);
+                return sprintf('%s with new version: %s', $item['name'], $item['version']);
             }, $succeeded));
         }
 
