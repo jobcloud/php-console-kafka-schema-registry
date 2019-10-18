@@ -161,7 +161,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                     $schemaRegistered = true;
                     break;
                 } catch (Throwable $e) {
-                    usleep(800);
+                    usleep(80000);
                     continue;
                 }
             }
