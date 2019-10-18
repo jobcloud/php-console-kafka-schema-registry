@@ -89,6 +89,7 @@ class SchemaRegistryApi
         return $this->parseJsonResponse(
             $this->client->send(
                 registerNewSchemaVersionWithSubjectRequest($schema, $schemaName)
+                    ->withAddedHeader('Content-Type', 'application/vnd.schemaregistry.v1+json')
             )
         );
     }
