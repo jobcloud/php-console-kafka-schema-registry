@@ -139,6 +139,7 @@ class SchemaRegistryApi
             $result = $this->parseJsonResponse(
                 $this->client->send(
                     checkIfSubjectHasSchemaRegisteredRequest($schemaName, $schema)
+                        ->withAddedHeader('Content-Type', 'application/vnd.schemaregistry.v1+json')
                 )
             );
 
