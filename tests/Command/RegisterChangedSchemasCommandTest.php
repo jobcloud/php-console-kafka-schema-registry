@@ -183,7 +183,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
             'checkSchemaCompatibilityForVersion' => FALSE,
             'getSchemaByVersion',
             'createNewSchemaVersion',
-            'getLatestSchemaVersion' => '1'
+            'getLatestSchemaVersion' => '1',
+            'getVersionForSchema' => null
         ]);
 
         $application = new Application();

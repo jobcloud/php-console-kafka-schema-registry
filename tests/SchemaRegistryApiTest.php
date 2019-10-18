@@ -148,7 +148,7 @@ class SchemaRegistryApiTest extends AbstractSchemaRegistryTestCase
         $clientException = new RequestException(
             '',
             new Request('POST', '/'),
-            new Response(500, [], '{}')
+            new Response(500, [], '{"error_code": 404}')
         );
 
         $schema = '{}';
@@ -186,10 +186,12 @@ class SchemaRegistryApiTest extends AbstractSchemaRegistryTestCase
 
         $schemaName = 'some-schema';
 
-        $clientException = new ClientException('', new Request('POST', '/'));
-
-        $this->setProperty($clientException, 'code', 40403);
-
+        $clientException = new ClientException(
+            '',
+            new Request('POST', '/'),
+            new Response(500, [], '{"error_code": 40403}')
+        );
+        
         $result = $this
             ->getSchemaRegistryApiWithClientCallExpectations(
                 sprintf('/subjects/%s', $schemaName),
