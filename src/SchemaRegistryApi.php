@@ -114,7 +114,7 @@ class SchemaRegistryApi
         } catch (RequestException $e) {
             if (null !== $e->getResponse()) {
                 $errorResponseData = $this->parseJsonResponse($e->getResponse());
-                if ($errorResponseData['error_code'] === 40401) {
+                if (40401 === $errorResponseData['error_code']) {
                     return true;
                 }
             }
@@ -143,8 +143,11 @@ class SchemaRegistryApi
 
             return (int) $result['version'];
         } catch (ClientException $e) {
-            if (40403 === $e->getCode() || 40401 === $e->getCode()) {
-                return null;
+            if (null !== $e->getResponse()) {
+                $errorResponseData = $this->parseJsonResponse($e->getResponse());
+                if (40401 === $errorResponseData['error_code'] || 40403 === $errorResponseData['error_code']) {
+                    return null;
+                }
             }
 
             throw $e;

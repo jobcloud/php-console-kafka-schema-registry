@@ -100,15 +100,10 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         string $schemaName,
         string $localSchema
     ): bool {
-        $version = null;
-
-        try {
-            $version = $this->schemaRegistryApi->getVersionForSchema(
-                $schemaName,
-                $localSchema
-            );
-        } catch (Throwable $e) {
-        }
+        $version = $this->schemaRegistryApi->getVersionForSchema(
+            $schemaName,
+            $localSchema
+        );
 
         return null !== $version;
     }
