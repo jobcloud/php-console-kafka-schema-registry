@@ -2,6 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\ServiceProvider;
 
+use Jobcloud\KafkaSchemaRegistryClient\Interfaces\KafkaSchemaRegistryApiClientInterface;
+use Jobcloud\KafkaSchemaRegistryClient\Pimple\KafkaSchemaRegistryApiClientProvider;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
@@ -15,20 +17,13 @@ use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
-use GuzzleHttp\Client;
-use RuntimeException;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
 
     public const COMMANDS = 'kafka.schema.registry.commands';
-    public const CLIENT = 'kafka.schema.registry.client';
-    public const REGISTRY_URL = 'kafka.schema.registry.url';
-    public const USERNAME = 'kafka.schema.registry.username';
-    public const PASSWORD = 'kafka.schema.registry.password';
 
     /**
      * @param Container $container
@@ -36,25 +31,12 @@ class CommandServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
+        $container->register(new KafkaSchemaRegistryApiClientProvider());
+
         $container[self::COMMANDS] = static function (Container $container) {
 
-            if (!$container->offsetExists(self::CLIENT)) {
-                if (!$container->offsetExists(self::REGISTRY_URL)) {
-                    throw new RuntimeException(
-                        sprintf("Missing setting '%s' in your container", self::REGISTRY_URL)
-                    );
-                }
-
-                $clientConfig = ['base_uri' => $container[self::REGISTRY_URL]];
-
-                if ($container->offsetExists(self::USERNAME) && $container->offsetExists(self::PASSWORD)) {
-                    $clientConfig['auth'] = [$container[self::USERNAME], $container[self::PASSWORD]];
-                }
-
-                $container[self::CLIENT] = new Client($clientConfig);
-            }
-
-            $schemaRegistryApi = new SchemaRegistryApi($container[self::CLIENT]);
+            /** @var KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
+            $schemaRegistryApi = $container[KafkaSchemaRegistryApiClientProvider::API_CLIENT];
 
             return [
                 new CheckCompatibilityCommand($schemaRegistryApi),

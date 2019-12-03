@@ -41,8 +41,8 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
         $schemaVersion = $input->getArgument('schemaVersion');
 
         $compatible = $this->schemaRegistryApi->checkSchemaCompatibilityForVersion(
-            SchemaFileHelper::readSchemaFromFile($schemaFile),
             SchemaFileHelper::getSchemaName($schemaFile),
+            SchemaFileHelper::readSchemaFromFile($schemaFile),
             (string) $schemaVersion
         );
 

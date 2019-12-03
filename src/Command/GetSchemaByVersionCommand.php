@@ -43,10 +43,7 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
         /** @var string $schemaVersion */
         $schemaVersion = $input->getArgument('schemaVersion');
 
-        $schema = $this->schemaRegistryApi->getSchemaByVersion(
-            $schemaName,
-            $schemaVersion,
-        );
+        $schema = $this->schemaRegistryApi->getSchemaByVersion($schemaName, $schemaVersion);
 
         try {
             file_put_contents($outputFile, $schema);

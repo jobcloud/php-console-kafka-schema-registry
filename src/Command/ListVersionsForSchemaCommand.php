@@ -34,7 +34,7 @@ class ListVersionsForSchemaCommand extends AbstractSchemaCommand
         /** @var string $schemaName */
         $schemaName = $input->getArgument('schemaName');
 
-        $schemaVersions = $this->schemaRegistryApi->getAllSchemaVersions($schemaName);
+        $schemaVersions = $this->schemaRegistryApi->getAllSubjectVersions($schemaName);
 
         foreach ($schemaVersions as $schemaVersion) {
             $output->writeln($schemaVersion);

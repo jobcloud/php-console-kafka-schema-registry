@@ -67,7 +67,7 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
             /** @var string $localSchema */
             $localSchema = file_get_contents($avroFile);
 
-            if (false === $this->schemaRegistryApi->checkSchemaCompatibilityForVersion($localSchema, $schemaName)) {
+            if (false === $this->schemaRegistryApi->checkSchemaCompatibilityForVersion($schemaName, $localSchema)) {
                 $failed[] = $schemaName;
             }
         }

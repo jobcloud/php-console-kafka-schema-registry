@@ -2,21 +2,21 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
+use Jobcloud\KafkaSchemaRegistryClient\Interfaces\KafkaSchemaRegistryApiClientInterface;
 use Symfony\Component\Console\Command\Command;
 
 abstract class AbstractSchemaCommand extends Command
 {
 
     /**
-     * @var SchemaRegistryApi
+     * @var KafkaSchemaRegistryApiClientInterface
      */
     protected $schemaRegistryApi;
 
     /**
-     * @param SchemaRegistryApi $schemaRegistryApi
+     * @param KafkaSchemaRegistryApiClientInterface $schemaRegistryApi
      */
-    public function __construct(SchemaRegistryApi $schemaRegistryApi)
+    public function __construct(KafkaSchemaRegistryApiClientInterface $schemaRegistryApi)
     {
         parent::__construct();
         $this->schemaRegistryApi = $schemaRegistryApi;

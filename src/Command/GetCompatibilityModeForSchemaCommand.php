@@ -33,7 +33,7 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
         /** @var string $schemaName */
         $schemaName = $input->getArgument('schemaName');
 
-        $compatibilityLevel = $this->schemaRegistryApi->getSchemaCompatibilityLevel($schemaName);
+        $compatibilityLevel = $this->schemaRegistryApi->getSubjectCompatibilityLevel($schemaName);
 
         $output->writeln(
             sprintf('The schema\'s compatibility mode is %s', $compatibilityLevel)

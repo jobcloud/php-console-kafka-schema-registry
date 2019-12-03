@@ -5,8 +5,8 @@ namespace Jobcloud\SchemaConsole\Command;
 use AvroSchema;
 use AvroSchemaParseException;
 use GuzzleHttp\Exception\RequestException;
+use Jobcloud\KafkaSchemaRegistryClient\Interfaces\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -27,10 +27,10 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     private $abortRegister = false;
 
     /**
-     * @param SchemaRegistryApi $schemaRegistryApi
+     * @param KafkaSchemaRegistryApiClientInterface $schemaRegistryApi
      * @param integer           $maxRetries
      */
-    public function __construct(SchemaRegistryApi $schemaRegistryApi, int $maxRetries = 10)
+    public function __construct(KafkaSchemaRegistryApiClientInterface $schemaRegistryApi, int $maxRetries = 10)
     {
         parent::__construct($schemaRegistryApi);
         $this->maxRetries = $maxRetries;
@@ -100,10 +100,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         string $schemaName,
         string $localSchema
     ): bool {
-        $version = $this->schemaRegistryApi->getVersionForSchema(
-            $schemaName,
-            $localSchema
-        );
+        $version = null;
+
+        try {
+            $version = $this->schemaRegistryApi->getVersionForSchema($schemaName, $localSchema);
+        } catch (Throwable $e) {
+        }
 
         return null !== $version;
     }
@@ -131,7 +133,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             /** @var string $localSchema */
             $localSchema = json_encode($jsonDecoded);
 
-            $latestVersion = $this->schemaRegistryApi->getLatestSchemaVersion($schemaName);
+            $latestVersion = $this->schemaRegistryApi->getLatestSubjectVersion($schemaName);
 
             if (null !== $latestVersion) {
                 if (true === $this->isAlreadyRegistered($schemaName, $localSchema)) {
@@ -153,7 +155,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 continue;
             }
 
-            $this->schemaRegistryApi->createNewSchemaVersion($schema, $schemaName);
+            $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, $schema);
 
             $succeeded[$schemaName] = [
                 'name' => $schemaName,

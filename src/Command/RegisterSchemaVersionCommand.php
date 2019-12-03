@@ -41,7 +41,7 @@ class RegisterSchemaVersionCommand extends AbstractSchemaCommand
         $avroSchema = SchemaFileHelper::readAvroSchemaFromFile($schemaFile);
         $schemaName = SchemaFileHelper::getSchemaName($schemaFile);
 
-        $result = $this->schemaRegistryApi->createNewSchemaVersion((string) $avroSchema, $schemaName);
+        $result = $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, (string) $avroSchema);
 
         $output->writeln(sprintf('Successfully registered new schema with id: %d', $result['id']));
 
