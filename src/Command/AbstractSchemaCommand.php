@@ -2,7 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use Jobcloud\KafkaSchemaRegistryClient\Interfaces\KafkaSchemaRegistryApiClientInterface;
+use Jobcloud\KafkaSchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Symfony\Component\Console\Command\Command;
 
 abstract class AbstractSchemaCommand extends Command

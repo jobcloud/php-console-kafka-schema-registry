@@ -29,7 +29,7 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
     public function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $schemas = $this->schemaRegistryApi->getAllSubjects();
+        $schemas = $this->schemaRegistryApi->getSubjects();
 
         foreach ($schemas as $schema) {
             $output->writeln($schema);
