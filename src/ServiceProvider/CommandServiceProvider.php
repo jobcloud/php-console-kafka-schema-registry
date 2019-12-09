@@ -2,8 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\ServiceProvider;
 
-use Jobcloud\KafkaSchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
-use Jobcloud\KafkaSchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
+use Jobcloud\Kafka\SchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
