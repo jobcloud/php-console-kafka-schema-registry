@@ -2,8 +2,9 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\Exception\SubjectNotFoundException;
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
@@ -84,18 +85,18 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         $numFiles = 5;
         $this->generateFiles($numFiles);
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'checkSchemaCompatibilityForVersion' => TRUE,
-            'getSchemaByVersion',
+            'getSchemaDefinitionByVersion',
             'getVersionForSchema',
-            'createNewSchemaVersion',
-            'getLatestSchemaVersion' => '1',
+            'registerNewSchemaVersion',
+            'getLatestSubjectVersion' => '1',
         ]);
 
         $schemaRegistryApi
-            ->method('getSchemaByVersion')
-            ->willReturn('{}')
+            ->method('getSchemaDefinitionByVersion')
+            ->willReturn([])
         ;
 
         $application = new Application();
@@ -118,12 +119,12 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         $this->generateFiles(5);
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'checkSchemaCompatibilityForVersion' => TRUE,
-            'getVersionForSchema' => 1,
-            'createNewSchemaVersion',
-            'getLatestSchemaVersion' => '1'
+            'getVersionForSchema' => '1',
+            'registerNewSchemaVersion',
+            'getLatestSubjectVersion' => '1'
         ]);
 
         $application = new Application();
@@ -146,16 +147,55 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
+    public function testOutputWhenCommandSuccessWithAllNew():void
+    {
+
+        $this->generateFiles(5);
+
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'checkSchemaCompatibilityForVersion' => TRUE,
+            'getVersionForSchema' => '1',
+            'registerNewSchemaVersion',
+            'getLatestSubjectVersion' => new SubjectNotFoundException()
+        ]);
+
+        $application = new Application();
+        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:register:changed');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString('Successfully registered new version of schema test.schema.1', $commandOutput);
+        self::assertStringContainsString('Successfully registered new version of schema test.schema.2', $commandOutput);
+        self::assertStringContainsString('Successfully registered new version of schema test.schema.3', $commandOutput);
+        self::assertStringContainsString('Successfully registered new version of schema test.schema.4', $commandOutput);
+        self::assertStringContainsString('Successfully registered new version of schema test.schema.5', $commandOutput);
+
+        self::assertStringContainsString('test.schema.1 with new version: 1', $commandOutput);
+        self::assertStringContainsString('test.schema.2 with new version: 1', $commandOutput);
+        self::assertStringContainsString('test.schema.3 with new version: 1', $commandOutput);
+        self::assertStringContainsString('test.schema.4 with new version: 1', $commandOutput);
+        self::assertStringContainsString('test.schema.5 with new version: 1', $commandOutput);
+
+        self::assertEquals(0, $commandTester->getStatusCode());
+    }
+
     public function testOutputWhenCommandFailsRegisteringASchema():void
     {
         $this->generateFiles(1, 'asdf');
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'checkSchemaCompatibilityForVersion' => TRUE,
             'getVersionForSchema' => null,
-            'createNewSchemaVersion',
-            'getLatestSchemaVersion' => '1'
+            'registerNewSchemaVersion',
+            'getLatestSubjectVersion' => '1'
         ]);
 
         $application = new Application();
@@ -178,12 +218,12 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
     {
         $this->generateFiles(5);
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'checkSchemaCompatibilityForVersion' => FALSE,
-            'getSchemaByVersion',
-            'createNewSchemaVersion',
-            'getLatestSchemaVersion' => '1',
+            'getSchemaDefinitionByVersion',
+            'registerNewSchemaVersion',
+            'getLatestSubjectVersion' => '1',
             'getVersionForSchema' => null
         ]);
 

@@ -2,8 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
@@ -83,16 +83,16 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
     {
         $this->generateFiles(5);
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'checkSchemaCompatibilityForVersion' => TRUE,
-            'getSchemaByVersion',
-            'getLatestSchemaVersion' => '1'
+            'getSchemaDefinitionByVersion',
+            'getLatestSubjectVersion' => '1'
         ]);
 
         $schemaRegistryApi
-            ->method('getSchemaByVersion')
-            ->willReturn('{}')
+            ->method('getSchemaDefinitionByVersion')
+            ->willReturn([])
         ;
 
         $application = new Application();
@@ -114,16 +114,16 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
     {
         $this->generateFiles(5);
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'checkSchemaCompatibilityForVersion' => false,
-            'getSchemaByVersion',
-            'getLatestSchemaVersion' => '1'
+            'getSchemaDefinitionByVersion',
+            'getLatestSubjectVersion' => '1'
         ]);
 
         $schemaRegistryApi
-            ->method('getSchemaByVersion')
-            ->willReturn('{}')
+            ->method('getSchemaDefinitionByVersion')
+            ->willReturn([])
         ;
 
         $application = new Application();

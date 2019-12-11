@@ -2,8 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
@@ -20,23 +20,23 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
     {
         return [
             [null, 'Schema does not exist in any version', 1],
-            [1, 'Schema exists in version 1', 0],
-            [2, 'Schema exists in version 2', 0],
-            [3, 'Schema exists in version 3', 0],
-            [999, 'Schema exists in version 999', 0],
+            ['1', 'Schema exists in version 1', 0],
+            ['2', 'Schema exists in version 2', 0],
+            ['3', 'Schema exists in version 3', 0],
+            ['999', 'Schema exists in version 999', 0],
         ];
     }
 
     /**
      * @dataProvider argumentsDataProvider
-     * @param int|null $actualVersion
+     * @param string|null $actualVersion
      * @param string $expectedOutput
      * @param int $expectedExitCode
      */
-    public function testCommand(?int $actualVersion, string $expectedOutput, int $expectedExitCode):void
+    public function testCommand(?string $actualVersion, string $expectedOutput, int $expectedExitCode):void
     {
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'getVersionForSchema' => $actualVersion,
         ]);
 

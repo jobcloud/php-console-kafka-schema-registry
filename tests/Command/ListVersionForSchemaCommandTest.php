@@ -2,8 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
@@ -14,9 +14,9 @@ class ListVersionForSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
     public function testCommand():void
     {
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
-            'getAllSchemaVersions' => [1,2,3,4],
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'getAllSubjectVersions' => [1,2,3,4],
         ]);
 
         $application = new Application();

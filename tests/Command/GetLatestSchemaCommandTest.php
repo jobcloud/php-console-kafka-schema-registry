@@ -5,8 +5,8 @@ namespace Jobcloud\SchemaConsole\Tests\Command;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\GetLatestSchemaCommand;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
@@ -18,11 +18,11 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
     public function testCommand():void
     {
-        $schema = '{}';
+        $schema = ['a' => 'b'];
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
-            'getSchemaByVersion' => $schema,
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'getSchemaDefinitionByVersion' => $schema,
         ]);
 
         $application = new Application();
@@ -41,7 +41,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(0, $commandTester->getStatusCode());
 
         $outputFileContents = file_get_contents(self::SCHEMA_TEST_FILE);
-        self::assertEquals($schema, $outputFileContents);
+        self::assertEquals(json_encode($schema, JSON_THROW_ON_ERROR), $outputFileContents);
     }
 
     public function testMissingSchema():void
@@ -54,9 +54,9 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $expectedSchemaName = 'SomeSchemaName';
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
-            'getSchemaByVersion' => $clientException
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'getSchemaDefinitionByVersion' => $clientException
         ]);
 
         $application = new Application();
@@ -83,9 +83,9 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
             new Response(401)
         );
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
-            'getSchemaByVersion' => $clientException
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'getSchemaDefinitionByVersion' => $clientException
         ]);
 
         $application = new Application();
@@ -106,9 +106,9 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
     {
         $failurePath = '..';
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
-            'getSchemaByVersion' => '{}',
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'getSchemaDefinitionByVersion' => [],
         ]);
 
         $application = new Application();

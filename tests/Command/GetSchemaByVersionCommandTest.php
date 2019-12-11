@@ -2,8 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand;
-use Jobcloud\SchemaConsole\SchemaRegistryApi;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
@@ -16,11 +16,11 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 
     public function testCommand():void
     {
-        $schema = '{}';
+        $schema = [];
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
-            'getSchemaByVersion' => $schema,
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'getSchemaDefinitionByVersion' => $schema,
         ]);
 
         $application = new Application();
@@ -40,16 +40,16 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 
         self::assertEquals(sprintf('Schema successfully written to %s.', self::SCHEMA_TEST_FILE), $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
-        self::assertEquals($schema, $fileContents);
+        self::assertEquals(json_encode($schema, JSON_THROW_ON_ERROR), $fileContents);
     }
 
     public function testCommandFailToReadFile():void
     {
         $failurePath = '..';
 
-        /** @var MockObject|SchemaRegistryApi $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(SchemaRegistryApi::class, [
-            'getSchemaByVersion' => '{}',
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'getSchemaDefinitionByVersion' => [],
         ]);
 
         $application = new Application();

@@ -2,7 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\Tests;
 
-use GuzzleHttp\Client;
+use Jobcloud\Kafka\SchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
@@ -18,7 +18,6 @@ use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
 use Jobcloud\SchemaConsole\ServiceProvider\CommandServiceProvider;
 use Pimple\Container;
-use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 
 class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
@@ -28,59 +27,25 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         $container = new Container();
 
         self::assertArrayNotHasKey(CommandServiceProvider::COMMANDS, $container);
-        self::assertArrayNotHasKey(CommandServiceProvider::REGISTRY_URL, $container);
-        self::assertArrayNotHasKey(CommandServiceProvider::PASSWORD, $container);
-        self::assertArrayNotHasKey(CommandServiceProvider::USERNAME, $container);
-        self::assertArrayNotHasKey(CommandServiceProvider::CLIENT, $container);
 
-        $container[CommandServiceProvider::REGISTRY_URL] = 'http://registry-url';
+        $container[KafkaSchemaRegistryApiClientProvider::CONTAINER_KEY] = [
+            KafkaSchemaRegistryApiClientProvider::SETTING_KEY_BASE_URL => 'http://registry-url'
+        ];
 
         $container->register(new CommandServiceProvider());
 
         $container[CommandServiceProvider::COMMANDS]; // We instantiate service creation by this
 
         self::assertArrayHasKey(CommandServiceProvider::COMMANDS, $container);
-        self::assertArrayHasKey(CommandServiceProvider::CLIENT, $container);
-
-        self::assertArrayNotHasKey(CommandServiceProvider::PASSWORD, $container);
-        self::assertArrayNotHasKey(CommandServiceProvider::USERNAME, $container);
-    }
-
-    public function testThrowExceptionOnMissingRegistryUrl():void
-    {
-        $container = new Container();
-
-        self::expectException(RuntimeException::class);
-        self::expectExceptionMessage(
-            sprintf("Missing setting '%s' in your container", CommandServiceProvider::REGISTRY_URL)
-        );
-
-        $container->register(new CommandServiceProvider());
-        $container[CommandServiceProvider::COMMANDS];
-    }
-
-    public function testPuttingUsernameAndPasswordIntoClient():void
-    {
-        $container = new Container();
-
-        $container[CommandServiceProvider::USERNAME] = 'username';
-        $container[CommandServiceProvider::PASSWORD] = 'password';
-        $container[CommandServiceProvider::REGISTRY_URL] = 'http://registry-url';
-
-        $container->register(new CommandServiceProvider());
-        $container[CommandServiceProvider::COMMANDS];
-
-        /** @var Client $client */
-        $client = $container[CommandServiceProvider::CLIENT];
-
-        self::assertEquals(['username', 'password'], $client->getConfig('auth'));
     }
 
     public function testAllCommandsThereAreInstancesOfCommand():void
     {
         $container = new Container();
 
-        $container[CommandServiceProvider::REGISTRY_URL] = 'http://registry-url';
+        $container[KafkaSchemaRegistryApiClientProvider::CONTAINER_KEY] = [
+            KafkaSchemaRegistryApiClientProvider::SETTING_KEY_BASE_URL => 'http://registry-url'
+        ];
 
         $container->register(new CommandServiceProvider());
         $commands = $container[CommandServiceProvider::COMMANDS];
@@ -94,7 +59,9 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
     {
         $container = new Container();
 
-        $container[CommandServiceProvider::REGISTRY_URL] = 'http://registry-url';
+        $container[KafkaSchemaRegistryApiClientProvider::CONTAINER_KEY] = [
+            KafkaSchemaRegistryApiClientProvider::SETTING_KEY_BASE_URL => 'http://registry-url'
+        ];
 
         $container->register(new CommandServiceProvider());
         $commands = $container[CommandServiceProvider::COMMANDS];
