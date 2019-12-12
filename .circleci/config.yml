@@ -5,7 +5,7 @@ orbs:
   ci-php: jobcloud/ci-php@0.5
 
 workflows:
-  test-messaging-lib:
+  test-console-kafka-schema-registry:
     jobs:
       - ci-caching/build-docker-images:
           dockerComposeFile: "./docker/docker-compose.yml"
