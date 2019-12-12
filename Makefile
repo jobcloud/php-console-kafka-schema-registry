@@ -34,7 +34,7 @@ test:
 	${PHPUNIT}
 
 coverage:
-	${PHPDBG}
+	${PHPDBG} && ./vendor/bin/coverage-check build/logs/phpunit/clover.xml 100
 
 install-dependencies:
 	composer install
