@@ -30,6 +30,7 @@ workflows:
           requires:
             - ci-php/install-dependencies
       - ci-php/infection-testing:
+          dockerComposeFile: "./docker/docker-compose.yml"
           dependencyCheckSumFile: "./composer.json"
           minMsi: 89
           requires:
