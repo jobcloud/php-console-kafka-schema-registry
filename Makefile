@@ -5,7 +5,7 @@ INFECTION = ./vendor/bin/infection
 PHPDBG = phpdbg -qrr ./vendor/bin/phpunit -c ./phpunit.xml
 PHPUNIT = ./vendor/bin/phpunit -c ./phpunit.xml
 PHPSTAN = ./vendor/bin/phpstan analyse src --level=7
-PHPCS = ./vendor/bin/phpcs ./src --extensions=php --report-full --report-gitblame --standard=PSR12 --exclude=Generic.Commenting.Todo
+PHPCS = ./vendor/bin/phpcs
 PHPCBF = ./vendor/bin/phpcbf ./src --standard=PSR12
 
 clean:
