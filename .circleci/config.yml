@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   ci-caching: jobcloud/ci-caching@0.6
-  ci-php: jobcloud/ci-php@0.11
+  ci-php: jobcloud/ci-php@0.12
 
 workflows:
   test-console-kafka-schema-registry:
