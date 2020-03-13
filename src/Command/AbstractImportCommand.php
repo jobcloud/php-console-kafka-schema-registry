@@ -17,7 +17,7 @@ abstract class AbstractImportCommand extends AbstractSchemaCommand implements Im
     protected function configure(): void
     {
         $this
-            ->setName(sprintf('kafka-schema-registry:set:mode:%s', $this->getMode()))
+            ->setName(sprintf('kafka-schema-registry:set:mode:%s', strtolower($this->getMode())))
             ->setDescription(sprintf("Sets import mode to %s", $this->getMode()))
             ->setHelp(sprintf("Sets import mode to %s", $this->getMode()));
     }
