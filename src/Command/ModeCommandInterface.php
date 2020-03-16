@@ -7,7 +7,7 @@ namespace Jobcloud\SchemaConsole\Command;
 /**
  * @package Jobcloud\SchemaConsole\Command
  */
-interface ImportCommandInterface
+interface ModeCommandInterface
 {
     /**
      * Gets name of Import Mode

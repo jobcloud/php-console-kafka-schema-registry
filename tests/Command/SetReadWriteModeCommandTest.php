@@ -3,13 +3,13 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
-use Jobcloud\SchemaConsole\Command\SetImportModeReadOnlyCommand;
+use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class SetImportModeReadOnlyCommandTest extends AbstractSchemaRegistryTestCase
+class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     /**
      * @return MockObject|KafkaSchemaRegistryApiClientInterface
@@ -30,19 +30,19 @@ class SetImportModeReadOnlyCommandTest extends AbstractSchemaRegistryTestCase
         $schemaRegistryApi
             ->expects(self::once())
             ->method('setImportMode')
-            ->with(KafkaSchemaRegistryApiClientInterface::MODE_READONLY)
+            ->with(KafkaSchemaRegistryApiClientInterface::MODE_READWRITE)
             ->willReturn(true);
 
         $application = new Application();
-        $application->add(new SetImportModeReadOnlyCommand($schemaRegistryApi));
-        $command = $application->find('kafka-schema-registry:set:mode:readonly');
+        $application->add(new SetReadWriteModeCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:set:mode:readwrite');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertEquals(
-            sprintf("Import mode set to %s", KafkaSchemaRegistryApiClientInterface::MODE_READONLY), $commandOutput
+            sprintf("Import mode set to %s", KafkaSchemaRegistryApiClientInterface::MODE_READWRITE), $commandOutput
         );
         self::assertEquals(0, $commandTester->getStatusCode());
     }
@@ -58,12 +58,12 @@ class SetImportModeReadOnlyCommandTest extends AbstractSchemaRegistryTestCase
         $schemaRegistryApi
             ->expects(self::once())
             ->method('setImportMode')
-            ->with(KafkaSchemaRegistryApiClientInterface::MODE_READONLY)
+            ->with(KafkaSchemaRegistryApiClientInterface::MODE_READWRITE)
             ->willReturn(false);
 
         $application = new Application();
-        $application->add(new SetImportModeReadOnlyCommand($schemaRegistryApi));
-        $command = $application->find('kafka-schema-registry:set:mode:readonly');
+        $application->add(new SetReadWriteModeCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:set:mode:readwrite');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 

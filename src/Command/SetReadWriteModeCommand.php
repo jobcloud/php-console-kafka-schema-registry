@@ -6,7 +6,7 @@ namespace Jobcloud\SchemaConsole\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 
-class SetImportModeReadWriteCommand extends AbstractImportCommand
+class SetReadWriteModeCommand extends AbstractModeCommand
 {
     /**
      * @inheritDoc

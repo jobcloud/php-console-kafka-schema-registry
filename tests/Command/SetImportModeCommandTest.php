@@ -3,13 +3,13 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
-use Jobcloud\SchemaConsole\Command\SetImportModeImportCommand;
+use Jobcloud\SchemaConsole\Command\SetImportModeCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class SetImportModeImportCommandTest extends AbstractSchemaRegistryTestCase
+class SetImportModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     /**
      * @return MockObject|KafkaSchemaRegistryApiClientInterface
@@ -34,7 +34,7 @@ class SetImportModeImportCommandTest extends AbstractSchemaRegistryTestCase
             ->willReturn(true);
 
         $application = new Application();
-        $application->add(new SetImportModeImportCommand($schemaRegistryApi));
+        $application->add(new SetImportModeCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:set:mode:import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -62,7 +62,7 @@ class SetImportModeImportCommandTest extends AbstractSchemaRegistryTestCase
             ->willReturn(false);
 
         $application = new Application();
-        $application->add(new SetImportModeImportCommand($schemaRegistryApi));
+        $application->add(new SetImportModeCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:set:mode:import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);

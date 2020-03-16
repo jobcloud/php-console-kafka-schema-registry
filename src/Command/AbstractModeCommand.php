@@ -8,7 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class AbstractImportCommand extends AbstractSchemaCommand implements ImportCommandInterface
+abstract class AbstractModeCommand extends AbstractSchemaCommand implements ModeCommandInterface
 {
 
     /**
