@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jobcloud\SchemaConsole\Command;
 
 use GuzzleHttp\Exception\ClientException;
+use Jobcloud\Kafka\SchemaRegistryClient\Exception\ImportException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,14 +31,14 @@ abstract class AbstractImportCommand extends AbstractSchemaCommand implements Im
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $outcome = $this->schemaRegistryApi->setImportMode($this->getMode());
-
-        if (true === $outcome) {
-            $output->writeln(
-                sprintf('Import mode set to %s', $this->getMode())
-            );
+        try {
+            $this->schemaRegistryApi->setImportMode($this->getMode());
+        } catch (ImportException $e) {
+            return 1;
         }
 
-        return (int) !$outcome;
+        $output->writeln(sprintf('Import mode set to %s', $this->getMode()));
+
+        return 0;
     }
 }

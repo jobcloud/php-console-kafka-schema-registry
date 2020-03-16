@@ -2,6 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\Exception\ImportException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\SchemaConsole\Command\SetImportModeReadWriteCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
@@ -30,8 +31,7 @@ class SetImportModeReadWriteCommandTest extends AbstractSchemaRegistryTestCase
         $schemaRegistryApi
             ->expects(self::once())
             ->method('setImportMode')
-            ->with(KafkaSchemaRegistryApiClientInterface::MODE_READWRITE)
-            ->willReturn(true);
+            ->with(KafkaSchemaRegistryApiClientInterface::MODE_READWRITE);
 
         $application = new Application();
         $application->add(new SetImportModeReadWriteCommand($schemaRegistryApi));
@@ -59,7 +59,7 @@ class SetImportModeReadWriteCommandTest extends AbstractSchemaRegistryTestCase
             ->expects(self::once())
             ->method('setImportMode')
             ->with(KafkaSchemaRegistryApiClientInterface::MODE_READWRITE)
-            ->willReturn(false);
+            ->willThrowException(new ImportException());
 
         $application = new Application();
         $application->add(new SetImportModeReadWriteCommand($schemaRegistryApi));
