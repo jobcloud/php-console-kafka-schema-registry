@@ -30,7 +30,7 @@ abstract class AbstractImportCommand extends AbstractSchemaCommand implements Im
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (true === $this->schemaRegistryApi->setImportMode($this->getMode())){
+        if (true === $this->schemaRegistryApi->setImportMode($this->getMode())) {
             $output->writeln(sprintf('Import mode set to %s', $this->getMode()));
             return 0;
         }
