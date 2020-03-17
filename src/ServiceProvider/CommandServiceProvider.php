@@ -17,6 +17,9 @@ use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
+use Jobcloud\SchemaConsole\Command\SetImportModeCommand;
+use Jobcloud\SchemaConsole\Command\SetReadOnlyModeCommand;
+use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -51,6 +54,9 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new ListVersionsForSchemaCommand($schemaRegistryApi),
                 new RegisterChangedSchemasCommand($schemaRegistryApi),
                 new RegisterSchemaVersionCommand($schemaRegistryApi),
+                new SetImportModeCommand($schemaRegistryApi),
+                new SetReadOnlyModeCommand($schemaRegistryApi),
+                new SetReadWriteModeCommand($schemaRegistryApi),
                 new CheckAllSchemasAreValidAvroCommand(),
             ];
         };

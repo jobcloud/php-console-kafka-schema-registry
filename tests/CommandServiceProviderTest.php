@@ -16,6 +16,9 @@ use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
+use Jobcloud\SchemaConsole\Command\SetImportModeCommand;
+use Jobcloud\SchemaConsole\Command\SetReadOnlyModeCommand;
+use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
 use Jobcloud\SchemaConsole\ServiceProvider\CommandServiceProvider;
 use Pimple\Container;
 use Symfony\Component\Console\Command\Command;
@@ -79,5 +82,8 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         self::assertArrayHasInstanceOf(RegisterChangedSchemasCommand::class, $commands);
         self::assertArrayHasInstanceOf(RegisterSchemaVersionCommand::class, $commands);
         self::assertArrayHasInstanceOf(CheckAllSchemasAreValidAvroCommand::class, $commands);
+        self::assertArrayHasInstanceOf(SetImportModeCommand::class, $commands);
+        self::assertArrayHasInstanceOf(SetReadOnlyModeCommand::class, $commands);
+        self::assertArrayHasInstanceOf(SetReadWriteModeCommand::class, $commands);
     }
 }
