@@ -2,7 +2,6 @@
 .DEFAULT_GOAL := test
 
 INFECTION = ./vendor/bin/infection
-PHPDBG = phpdbg -qrr ./vendor/bin/phpunit -c ./phpunit.xml
 PHPUNIT = ./vendor/bin/phpunit -c ./phpunit.xml
 PHPSTAN = ./vendor/bin/phpstan
 PHPCS = ./vendor/bin/phpcs
@@ -35,7 +34,7 @@ test:
 	${PHPUNIT}
 
 coverage:
-	${PHPDBG} && ./vendor/bin/coverage-check build/logs/phpunit/coverage/coverage.xml 100
+	${PHPUNIT} && ./vendor/bin/coverage-check build/logs/phpunit/coverage/coverage.xml 100
 
 infection-testing:
 	make coverage
