@@ -17,6 +17,7 @@ services:
     tty: true
     secrets:
       - ssh_host_key
+
 secrets:
   ssh_host_key:
     file: ~/.ssh/id_rsa
