@@ -5,7 +5,7 @@ INFECTION = ./vendor/bin/infection
 PHPUNIT = ./vendor/bin/phpunit -c ./phpunit.xml
 PHPSTAN = ./vendor/bin/phpstan
 PHPCS = ./vendor/bin/phpcs
-PHPCBF = ./vendor/bin/phpcbf ./src
+PHPCBF = ./vendor/bin/phpcbf
 COVCHK = ./vendor/bin/coverage-check
 
 clean:
