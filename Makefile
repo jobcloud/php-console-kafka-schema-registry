@@ -5,7 +5,8 @@ INFECTION = ./vendor/bin/infection
 PHPUNIT = ./vendor/bin/phpunit -c ./phpunit.xml
 PHPSTAN = ./vendor/bin/phpstan
 PHPCS = ./vendor/bin/phpcs
-PHPCBF = ./vendor/bin/phpcbf ./src --standard=PSR12
+PHPCBF = ./vendor/bin/phpcbf ./src
+COVCHK = ./vendor/bin/coverage-check
 
 clean:
 	rm -rf ./vendor
@@ -34,7 +35,7 @@ test:
 	${PHPUNIT}
 
 coverage:
-	${PHPUNIT} && ./vendor/bin/coverage-check build/logs/phpunit/coverage/coverage.xml 100
+	${PHPUNIT} && ${COVCHK} build/logs/phpunit/coverage/coverage.xml 100
 
 infection-testing:
 	make coverage
