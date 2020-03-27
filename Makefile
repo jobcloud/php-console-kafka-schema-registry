@@ -24,7 +24,7 @@ code-style:
 
 static-analysis:
 	mkdir -p build/logs/phpstan
-	${PHPSTAN} --no-progress
+	${PHPSTAN} analyse --no-progress
 
 ci-static-analysis:
 	mkdir -p build/logs/phpstan
