@@ -4,7 +4,7 @@
 INFECTION = ./vendor/bin/infection
 PHPDBG = phpdbg -qrr ./vendor/bin/phpunit -c ./phpunit.xml
 PHPUNIT = ./vendor/bin/phpunit -c ./phpunit.xml
-PHPSTAN = ./vendor/bin/phpstan analyse src --level=7
+PHPSTAN = ./vendor/bin/phpstan
 PHPCS = ./vendor/bin/phpcs
 PHPCBF = ./vendor/bin/phpcbf ./src --standard=PSR12
 
@@ -20,7 +20,7 @@ fix-code-style:
 
 code-style:
 	mkdir -p build/logs/phpcs
-	${PHPCS} --report-junit=build/logs/phpcs/junit.xml
+	${PHPCS}
 
 static-analysis:
 	mkdir -p build/logs/phpstan
@@ -28,8 +28,8 @@ static-analysis:
 
 ci-static-analysis:
 	mkdir -p build/logs/phpstan
-	${PHPSTAN} --no-progress --error-format=junit | tee build/logs/phpstan/junit.xml
-	${PHPSTAN} --no-progress
+	${PHPSTAN} analyse --no-progress --error-format=junit | tee build/logs/phpstan/junit.xml
+	${PHPSTAN} analyse --no-progress
 
 test:
 	${PHPUNIT}
@@ -40,7 +40,7 @@ coverage:
 infection-testing:
 	make coverage
 	cp -f build/logs/phpunit/junit.xml build/logs/phpunit/coverage/junit.xml
-	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=65 --threads=`nproc`
+	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=82 --threads=`nproc`
 
 install-dependencies:
 	composer install
