@@ -4,7 +4,6 @@ FROM php:7.3-cli-alpine3.10
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ARG HOST_USER_ID
 
-COPY files/php /phpIni
 COPY files/bin/ /usr/local/bin/
 
 # SYS: Install required packages
@@ -45,9 +44,9 @@ RUN pecl channel-update pecl.php.net && \
 # COMPOSER: install binary
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
+USER 'www-data'
+
 # COMPOSER: install dependencies
 RUN composer global require hirak/prestissimo
-
-USER 'www-data'
 
 WORKDIR /app
