@@ -4,7 +4,7 @@ FROM php:7.3-cli-alpine3.10
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ARG HOST_USER_ID
 
-COPY files/ini /phpIni
+COPY files/php /phpIni
 COPY files/bin/ /usr/local/bin/
 
 # SYS: Install required packages
