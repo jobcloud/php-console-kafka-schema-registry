@@ -3,7 +3,7 @@
 
 INFECTION = ./vendor/bin/infection
 PHPUNIT = ./vendor/bin/phpunit -c ./phpunit.xml
-PHPSTAN = ./vendor/bin/phpstan
+PHPSTAN = ./vendor/bin/phpstan --no-progress
 PHPCS = ./vendor/bin/phpcs
 PHPCBF = ./vendor/bin/phpcbf
 COVCHK = ./vendor/bin/coverage-check
@@ -24,12 +24,12 @@ code-style:
 
 static-analysis:
 	mkdir -p build/logs/phpstan
-	${PHPSTAN} analyse --no-progress
+	${PHPSTAN} analyse
 
 ci-static-analysis:
 	mkdir -p build/logs/phpstan
-	${PHPSTAN} analyse --no-progress --error-format=junit | tee build/logs/phpstan/junit.xml
-	${PHPSTAN} analyse --no-progress
+	${PHPSTAN} analyse --error-format=junit | tee build/logs/phpstan/junit.xml
+	${PHPSTAN} analyse
 
 test:
 	${PHPUNIT}
