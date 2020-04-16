@@ -126,7 +126,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                     continue;
                 }
 
-                if (false === $this->schemaRegistryApi->checkSchemaCompatibilityForVersion($localSchema, $schemaName)) {
+                if (false === $this->schemaRegistryApi->checkSchemaCompatibilityForVersion($schemaName, $localSchema)) {
                     $io->error(sprintf('Schema %s has an incompatible change', $schemaName));
                     return false;
                 }
