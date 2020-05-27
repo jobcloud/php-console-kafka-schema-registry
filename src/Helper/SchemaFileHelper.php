@@ -9,7 +9,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 use SplFileInfo;
-use stdClass;
 
 class SchemaFileHelper
 {
@@ -98,10 +97,6 @@ class SchemaFileHelper
             $doc = $field[self::DOC_FIELD_KEY] ?? null;
 
             if (!is_string($doc) || trim($doc) === '') {
-                return false;
-            }
-
-            if (false === self::hasDocCommentsOnAllFields($field)) {
                 return false;
             }
         }

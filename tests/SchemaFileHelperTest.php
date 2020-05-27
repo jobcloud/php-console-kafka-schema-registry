@@ -167,43 +167,5 @@ EOF
         self::assertTrue(
             SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
-
-        file_put_contents(self::SCHEMA_FILE,
-            <<<EOF
-{
-  "type": "record",
-  "name": "evolution",
-  "namespace": "com.landoop",
-  "doc": "This is a sample Avro schema to get you started. Please edit",
-  "fields": [
-    {
-      "name": "name",
-      "type": "string",
-      "doc": "some desc"
-    },
-    {
-      "name": "number1",
-      "type": "int",
-      "doc": "some desc"
-    },
-    {
-      "name": "number2",
-      "type": "float",
-      "doc": "some desc",
-      "fields": [
-        {
-          "name": "name",
-          "type": "string"
-        }
-      ]
-    }
-  ]
-}
-EOF
-        );
-
-        self::assertFalse(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
-        );
     }
 }

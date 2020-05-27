@@ -88,7 +88,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             }, $succeeded));
         }
 
-        return (int) (isset($failed) && 0 !== count($failed));
+        return count($failed) ? 1 : 0;
     }
 
     /**

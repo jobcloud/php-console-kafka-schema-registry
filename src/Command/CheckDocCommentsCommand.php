@@ -47,11 +47,9 @@ class CheckDocCommentsCommand extends Command
         /** @var string $localSchema */
         $localSchema = file_get_contents($schemaFile);
 
-        $schema = json_decode(trim($localSchema), true);
+        $schema = json_decode($localSchema, true, 512, JSON_THROW_ON_ERROR);
 
-        $decodeError = json_last_error();
-
-        if ($decodeError !== JSON_ERROR_NONE || false === SchemaFileHelper::hasDocCommentsOnAllFields($schema)) {
+        if (false === SchemaFileHelper::hasDocCommentsOnAllFields($schema)) {
             $io->error($errorMessage);
 
             return 1;
