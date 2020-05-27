@@ -46,7 +46,7 @@ class CheckAllSchemasDocCommentsCommand extends Command
         $failed = [];
 
         if (false === $this->checkDocCommentsOnSchemas($avroFiles, $failed)) {
-            $io->error('Following schemas do not have doc comments on all fields:');
+            $io->error('Following schemas do not have doc comments on all fields');
             $io->listing($failed);
 
             return 1;
@@ -69,18 +69,10 @@ class CheckAllSchemasDocCommentsCommand extends Command
 
         foreach ($avroFiles as $schemaName => $avroFile) {
 
-            /** @var string|false $localSchema */
+            /** @var string $localSchema */
             $localSchema = file_get_contents($avroFile);
 
-            if (false === $localSchema) {
-                $failed[] = $schemaName;
-
-                continue;
-            }
-
-            $localSchema = trim($localSchema);
-
-            $schema = json_decode($localSchema, true);
+            $schema = json_decode(trim($localSchema), true);
 
             $decodeError = json_last_error();
 

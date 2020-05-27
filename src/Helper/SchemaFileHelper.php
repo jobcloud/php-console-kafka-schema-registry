@@ -9,6 +9,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 use SplFileInfo;
+use stdClass;
 
 class SchemaFileHelper
 {

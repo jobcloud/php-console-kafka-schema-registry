@@ -44,18 +44,10 @@ class CheckDocCommentsCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
-        /** @var string|false $localSchema */
+        /** @var string $localSchema */
         $localSchema = file_get_contents($schemaFile);
 
-        if (false === $localSchema) {
-            $io->error($errorMessage);
-
-            return 1;
-        }
-
-        $localSchema = trim($localSchema);
-
-        $schema = json_decode($localSchema, true);
+        $schema = json_decode(trim($localSchema), true);
 
         $decodeError = json_last_error();
 

@@ -84,9 +84,9 @@ EOF
         self::assertEquals('test', SchemaFileHelper::getSchemaName(self::SCHEMA_FILE));
     }
 
-    public function hasDocCommentsOnAllFields(): void {
+    public function testHasDocCommentsOnAllFields(): void {
         self::assertFalse(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE)))
+            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -95,13 +95,13 @@ EOF
   "type": "record",
   "name": "evolution",
   "namespace": "com.landoop",
-  "doc": "This is a sample Avro schema to get you started. Please edit",
+  "doc": "This is a sample Avro schema to get you started. Please edit"
 }
 EOF
         );
 
         self::assertTrue(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE)))
+            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -133,7 +133,7 @@ EOF
         );
 
         self::assertFalse(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE)))
+            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -165,7 +165,7 @@ EOF
         );
 
         self::assertTrue(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE)))
+            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -189,7 +189,7 @@ EOF
     {
       "name": "number2",
       "type": "float",
-      "doc": "some desc"
+      "doc": "some desc",
       "fields": [
         {
           "name": "name",
@@ -203,7 +203,7 @@ EOF
         );
 
         self::assertFalse(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE)))
+            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
     }
 }
