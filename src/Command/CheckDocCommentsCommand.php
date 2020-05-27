@@ -23,10 +23,10 @@ class CheckDocCommentsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('kafka-schema-registry:check:doc:comments')
-            ->setDescription('Checks schema doc comments')
-            ->setHelp('Checks schema doc comments')
-            ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file');
+            ->setName('kafka-schema-registry:check:template:doc')
+            ->setDescription('Checks schema template doc comments')
+            ->setHelp('Checks schema template doc comments')
+            ->addArgument('schemaTemplateFile', InputArgument::REQUIRED, 'Path to Avro template schema file');
     }
 
     /**
@@ -37,10 +37,10 @@ class CheckDocCommentsCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $errorMessage = 'Schema does not have doc comments on all fields';
+        $errorMessage = 'Schema template does not have doc comments on all fields';
 
         /** @var string $schemaFile */
-        $schemaFile = $input->getArgument('schemaFile');
+        $schemaFile = $input->getArgument('schemaTemplateFile');
 
         $io = new SymfonyStyle($input, $output);
 
@@ -49,13 +49,13 @@ class CheckDocCommentsCommand extends Command
 
         $schema = json_decode($localSchema, true, 512, JSON_THROW_ON_ERROR);
 
-        if (false === SchemaFileHelper::hasDocCommentsOnAllFields($schema)) {
+        if (false === SchemaFileHelper::checkDocCommentsOnSchemaTemplates($schema)) {
             $io->error($errorMessage);
 
             return 1;
         }
 
-        $io->success('Schema has doc comments on all fields');
+        $io->success('Schema template has doc comments on all fields');
 
         return 0;
     }

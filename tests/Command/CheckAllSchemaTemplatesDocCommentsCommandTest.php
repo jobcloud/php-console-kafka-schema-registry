@@ -2,13 +2,13 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
-use Jobcloud\SchemaConsole\Command\CheckAllSchemasDocCommentsCommand;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use JsonException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class CheckAllSchemasDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
+class CheckAllSchemaTemplatesDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
@@ -101,17 +101,17 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemasDocCommentsCommand());
-        $command = $application->find('kafka-schema-registry:check:doc:comments:all');
+        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            'schemaDirectory' => self::SCHEMA_DIRECTORY
+            'schemaTemplatesDirectory' => self::SCHEMA_DIRECTORY
         ]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertStringContainsString('All schemas have doc comments on all fields', $commandOutput);
+        self::assertStringContainsString('All schema templates have doc comments on all fields', $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
@@ -128,17 +128,20 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemasDocCommentsCommand());
-        $command = $application->find('kafka-schema-registry:check:doc:comments:all');
+        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            'schemaDirectory' => self::SCHEMA_DIRECTORY
+            'schemaTemplatesDirectory' => self::SCHEMA_DIRECTORY
         ]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertStringContainsString('Following schemas do not have doc comments on all fields', $commandOutput);
+        self::assertStringContainsString(
+            'Following schema templates do not have doc comments on all fields',
+            $commandOutput
+        );
         self::assertStringContainsString('* test.schema.bad', $commandOutput);
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());
@@ -152,14 +155,14 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemasDocCommentsCommand());
-        $command = $application->find('kafka-schema-registry:check:doc:comments:all');
+        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
         self::expectException(JsonException::class);
 
         $commandTester->execute([
-            'schemaDirectory' => self::SCHEMA_DIRECTORY
+            'schemaTemplatesDirectory' => self::SCHEMA_DIRECTORY
         ]);
     }
 }

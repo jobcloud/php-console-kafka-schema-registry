@@ -85,7 +85,7 @@ class SchemaFileHelper
      * @param array $schema
      * @return bool
      */
-    public static function hasDocCommentsOnAllFields(array $schema): bool
+    public static function checkDocCommentsOnSchemaTemplates(array $schema): bool
     {
         $fields = $schema[self::FIELDS_FIELD_KEY] ?? null;
 

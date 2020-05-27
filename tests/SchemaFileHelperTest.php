@@ -86,7 +86,7 @@ EOF
 
     public function testHasDocCommentsOnAllFields(): void {
         self::assertFalse(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -101,7 +101,7 @@ EOF
         );
 
         self::assertTrue(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -133,7 +133,7 @@ EOF
         );
 
         self::assertFalse(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -165,7 +165,7 @@ EOF
         );
 
         self::assertTrue(
-            SchemaFileHelper::hasDocCommentsOnAllFields(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
     }
 }

@@ -13,9 +13,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Command\Command;
 
 /**
- * Class CheckAllSchemasDocCommentsCommand
+ * Class CheckAllSchemaTemplatesDocCommentsCommand
  */
-class CheckAllSchemasDocCommentsCommand extends Command
+class CheckAllSchemaTemplatesDocCommentsCommand extends Command
 {
     /**
      * @return void
@@ -23,10 +23,14 @@ class CheckAllSchemasDocCommentsCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('kafka-schema-registry:check:doc:comments:all')
-            ->setDescription('Checks for doc comments for all schemas in folder')
-            ->setHelp('Checks for doc comments for all schemas in folder')
-            ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to avro schema directory');
+            ->setName('kafka-schema-registry:check:template:doc:all')
+            ->setDescription('Checks for doc comments for all schema templates in folder')
+            ->setHelp('Checks for doc comments for all schema templates in folder')
+            ->addArgument(
+                'schemaTemplatesDirectory',
+                InputArgument::REQUIRED,
+                'Path to avro schema template directory'
+            );
     }
 
     /**
@@ -38,7 +42,7 @@ class CheckAllSchemasDocCommentsCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
-        $directory = $input->getArgument('schemaDirectory');
+        $directory = $input->getArgument('schemaTemplatesDirectory');
         $avroFiles = SchemaFileHelper::getAvroFiles($directory);
 
         $io = new SymfonyStyle($input, $output);
@@ -46,13 +50,13 @@ class CheckAllSchemasDocCommentsCommand extends Command
         $failed = [];
 
         if (false === $this->checkDocCommentsOnSchemas($avroFiles, $failed)) {
-            $io->error('Following schemas do not have doc comments on all fields');
+            $io->error('Following schema templates do not have doc comments on all fields');
             $io->listing($failed);
 
             return 1;
         }
 
-        $io->success('All schemas have doc comments on all fields');
+        $io->success('All schema templates have doc comments on all fields');
 
         return 0;
     }
@@ -74,7 +78,7 @@ class CheckAllSchemasDocCommentsCommand extends Command
 
             $schema = json_decode($localSchema, true, 512, JSON_THROW_ON_ERROR);
 
-            if (false === SchemaFileHelper::hasDocCommentsOnAllFields($schema)) {
+            if (false === SchemaFileHelper::checkDocCommentsOnSchemaTemplates($schema)) {
                 $failed[] = $schemaName;
             }
         }

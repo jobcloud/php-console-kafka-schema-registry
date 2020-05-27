@@ -5,7 +5,7 @@ namespace Jobcloud\SchemaConsole\Tests;
 use Jobcloud\Kafka\SchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
-use Jobcloud\SchemaConsole\Command\CheckAllSchemasDocCommentsCommand;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckDocCommentsCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
@@ -88,6 +88,6 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         self::assertArrayHasInstanceOf(SetReadOnlyModeCommand::class, $commands);
         self::assertArrayHasInstanceOf(SetReadWriteModeCommand::class, $commands);
         self::assertArrayHasInstanceOf(CheckDocCommentsCommand::class, $commands);
-        self::assertArrayHasInstanceOf(CheckAllSchemasDocCommentsCommand::class, $commands);
+        self::assertArrayHasInstanceOf(CheckAllSchemaTemplatesDocCommentsCommand::class, $commands);
     }
 }
