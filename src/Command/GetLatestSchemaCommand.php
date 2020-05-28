@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jobcloud\SchemaConsole\Command;
 
 use GuzzleHttp\Exception\ClientException;
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,8 +13,6 @@ use Throwable;
 
 class GetLatestSchemaCommand extends AbstractSchemaCommand
 {
-
-    public const VERSION_LATEST = 'latest';
 
     /**
      * @return void
@@ -40,7 +39,7 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
         $schemaName = $input->getArgument('schemaName');
 
         try {
-            $schema = $this->schemaRegistryApi->getSchemaDefinitionByVersion($schemaName, self::VERSION_LATEST);
+            $schema = $this->schemaRegistryApi->getSchemaDefinitionByVersion($schemaName, KafkaSchemaRegistryApiClientInterface::VERSION_LATEST);
         } catch (ClientException $e) {
             if ($e->getCode() !== 404) {
                 throw $e;
