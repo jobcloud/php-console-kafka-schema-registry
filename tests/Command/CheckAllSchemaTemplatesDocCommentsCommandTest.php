@@ -106,7 +106,7 @@ EOF;
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            'schemaTemplatesDirectory' => self::SCHEMA_DIRECTORY
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
         ]);
 
         $commandOutput = trim($commandTester->getDisplay());
@@ -133,7 +133,7 @@ EOF;
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
-            'schemaTemplatesDirectory' => self::SCHEMA_DIRECTORY
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
         ]);
 
         $commandOutput = trim($commandTester->getDisplay());
@@ -162,7 +162,7 @@ EOF;
         self::expectException(JsonException::class);
 
         $commandTester->execute([
-            'schemaTemplatesDirectory' => self::SCHEMA_DIRECTORY
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
         ]);
     }
 }

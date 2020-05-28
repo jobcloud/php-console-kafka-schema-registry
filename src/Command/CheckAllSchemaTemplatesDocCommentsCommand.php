@@ -27,7 +27,7 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
             ->setDescription('Checks for doc comments for all schema templates in folder')
             ->setHelp('Checks for doc comments for all schema templates in folder')
             ->addArgument(
-                'schemaTemplatesDirectory',
+                'schemaTemplateDirectory',
                 InputArgument::REQUIRED,
                 'Path to avro schema template directory'
             );
@@ -42,14 +42,14 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
-        $directory = $input->getArgument('schemaTemplatesDirectory');
+        $directory = $input->getArgument('schemaTemplateDirectory');
         $avroFiles = SchemaFileHelper::getAvroFiles($directory);
 
         $io = new SymfonyStyle($input, $output);
 
         $failed = [];
 
-        if (false === $this->checkDocCommentsOnSchemas($avroFiles, $failed)) {
+        if (false === $this->checkDocCommentsOnSchemaTemplates($avroFiles, $failed)) {
             $io->error('Following schema templates do not have doc comments on all fields');
             $io->listing($failed);
 
@@ -67,7 +67,7 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
      * @param array $failed
      * @return boolean
      */
-    private function checkDocCommentsOnSchemas(array $avroFiles, array &$failed = []): bool
+    private function checkDocCommentsOnSchemaTemplates(array $avroFiles, array &$failed = []): bool
     {
         $failed = [];
 

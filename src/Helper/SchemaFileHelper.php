@@ -89,14 +89,14 @@ class SchemaFileHelper
     {
         $fields = $schema[self::FIELDS_FIELD_KEY] ?? null;
 
-        if (!is_array($fields) || count($fields) === 0) {
+        if (false === is_array($fields) || 0 === count($fields)) {
             return true;
         }
 
         foreach ($fields as $field) {
             $doc = $field[self::DOC_FIELD_KEY] ?? null;
 
-            if (!is_string($doc) || trim($doc) === '') {
+            if (false === is_string($doc) || '' === trim($doc)) {
                 return false;
             }
         }
