@@ -39,7 +39,10 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
         $schemaName = $input->getArgument('schemaName');
 
         try {
-            $schema = $this->schemaRegistryApi->getSchemaDefinitionByVersion($schemaName, KafkaSchemaRegistryApiClientInterface::VERSION_LATEST);
+            $schema = $this->schemaRegistryApi->getSchemaDefinitionByVersion(
+                $schemaName,
+                KafkaSchemaRegistryApiClientInterface::VERSION_LATEST
+            );
         } catch (ClientException $e) {
             if ($e->getCode() !== 404) {
                 throw $e;
