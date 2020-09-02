@@ -2,7 +2,7 @@
 
 ## Installation
 ```
-composer require jobcloud/php-console-kafka-schema-registry "~1.0"
+composer require jobcloud/php-console-kafka-schema-registry "^1.1"
 ```
 
 ## Register commands
