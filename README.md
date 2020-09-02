@@ -1,5 +1,11 @@
 # php-console-kafka-schema-registry
 
+## Installation
+```
+composer require jobcloud/php-console-kafka-schema-registry "~1.0"
+```
+
+## Register commands
 You can register each command separately like this:
 ```php
 <?php
