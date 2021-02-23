@@ -1,4 +1,4 @@
-.PHONY: clean fix-code-style test coverage install-dependencies code-style static-analysis xdebug-disable xdebug-enable update-dependencies
+.PHONY: clean code-check fix-code-style test coverage help install-dependencies code-style static-analysis ci-static-analysis infection-testing pcov-disable pcov-enable update-dependencies
 .DEFAULT_GOAL := test
 
 INFECTION = ./vendor/bin/infection
@@ -9,7 +9,7 @@ PHPCBF = ./vendor/bin/phpcbf
 COVCHK = ./vendor/bin/coverage-check
 
 clean:
-	rm -rf ./vendor
+	rm -rf ./vendor ./build
 
 code-check:
 	${PHPCS}
@@ -32,7 +32,7 @@ ci-static-analysis:
 	${PHPSTAN} analyse
 
 test:
-	${PHPUNIT}
+	${PHPUNIT} --no-coverage
 
 coverage:
 	${PHPUNIT} && ${COVCHK} build/logs/phpunit/coverage/coverage.xml 100
@@ -40,13 +40,21 @@ coverage:
 infection-testing:
 	make coverage
 	cp -f build/logs/phpunit/junit.xml build/logs/phpunit/coverage/junit.xml
-	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=82 --threads=`nproc`
+	sudo php-ext-disable pcov
+	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=90 --threads=`nproc`
+	sudo php-ext-enable pcov
 
 install-dependencies:
 	composer install
 
 update-dependencies:
 	composer update
+
+pcov-enable:
+	sudo php-ext-enable pcov
+
+pcov-disable:
+	sudo php-ext-disable pcov
 
 help:
 	# Usage:
@@ -64,3 +72,5 @@ help:
 	#   static-analysis         Run static analysis using phpstan
 	#   ci-static-analysis      Run static analysis using phpstan for CI only.
 	#   test                    Run tests
+	#   pcov-enable         	Enable pcov
+	#   pcov-disable        	Disable pcov
