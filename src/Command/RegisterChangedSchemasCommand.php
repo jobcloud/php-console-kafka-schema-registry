@@ -92,10 +92,10 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param array        $avroFiles
-     * @param SymfonyStyle $io
-     * @param array        $failed
-     * @param array        $succeeded
+     * @param array<string, mixed> $avroFiles
+     * @param SymfonyStyle         $io
+     * @param array<string, mixed> $failed
+     * @param array<string, mixed> $succeeded
      * @return boolean
      */
     private function registerFiles(
@@ -104,12 +104,14 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         array &$failed = [],
         array &$succeeded = []
     ): bool {
+        var_dump($succeeded);
         foreach ($avroFiles as $schemaName => $avroFile) {
             /** @var string $fileContents */
             $fileContents = file_get_contents($avroFile);
 
-            /** @var array $jsonDecoded */
+            /** @var array<string, mixed> $jsonDecoded */
             $jsonDecoded = json_decode($fileContents);
+            var_dump($jsonDecoded);
 
             /** @var string $localSchema */
             $localSchema = json_encode($jsonDecoded);

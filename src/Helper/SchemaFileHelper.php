@@ -56,7 +56,7 @@ class SchemaFileHelper
 
     /**
      * @param string $directory
-     * @return array
+     * @return array<string, mixed>
      */
     public static function getAvroFiles(string $directory): array
     {
@@ -82,7 +82,7 @@ class SchemaFileHelper
     }
 
     /**
-     * @param array $schema
+     * @param array<string, mixed> $schema
      * @return bool
      */
     public static function checkDocCommentsOnSchemaTemplates(array $schema): bool

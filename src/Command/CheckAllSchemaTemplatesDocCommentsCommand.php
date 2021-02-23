@@ -63,8 +63,8 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
 
 
     /**
-     * @param array $avroFiles
-     * @param array $failed
+     * @param array<string, mixed> $avroFiles
+     * @param array<string, mixed> $failed
      * @return boolean
      */
     private function checkDocCommentsOnSchemaTemplates(array $avroFiles, array &$failed = []): bool
