@@ -1,45 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit bootstrap = "vendor/autoload.php"
-         backupGlobals               = "false"
-         backupStaticAttributes      = "false"
-         colors                      = "true"
-         convertErrorsToExceptions   = "true"
-         convertNoticesToExceptions  = "true"
-         convertWarningsToExceptions = "true"
-         processIsolation            = "false"
-         stopOnFailure               = "false">
-
-    <php>
-        <ini name="max_execution_time" value="-1"/>
-        <ini name="html_errors" value="false"/>
-        <ini name="memory_limit" value="1G"/>
-
-        <ini name="xdebug.default_enable" value="1" />
-        <ini name="xdebug.enable_coverage" value="1" />
-        <ini name="xdebug.remote_autostart" value="0" />
-        <ini name="xdebug.remote_enable" value="0" />
-        <ini name="xdebug.overload_var_dump" value="0" />
-        <ini name="xdebug.show_mem_delta" value="0" />
-    </php>
-
-    <testsuites>
-        <testsuite name="Schema Console Registry Commands Test Suite">
-            <directory>./tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <logging>
-        <log type="coverage-text" target="php://stdout" showOnlySummary="true"/>
-        <log type="coverage-html" target="build/logs/phpunit/coverage"/>
-        <log type="coverage-xml" target="build/logs/phpunit/coverage/coverage-xml"/>
-        <log type="coverage-clover" target="build/logs/phpunit/coverage/coverage.xml"/>
-        <log type="junit" target="build/logs/phpunit/junit.xml"/>
-    </logging>
-
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="vendor/autoload.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+    <report>
+      <clover outputFile="build/logs/phpunit/coverage/coverage.xml"/>
+      <html outputDirectory="build/logs/phpunit/coverage"/>
+      <text outputFile="php://stdout" showOnlySummary="true"/>
+      <xml outputDirectory="build/logs/phpunit/coverage/coverage-xml"/>
+    </report>
+  </coverage>
+  <php>
+    <ini name="max_execution_time" value="-1"/>
+    <ini name="html_errors" value="false"/>
+    <ini name="memory_limit" value="1G"/>
+  </php>
+  <testsuites>
+    <testsuite name="Schema Console Registry Commands Test Suite">
+      <directory>./tests</directory>
+    </testsuite>
+  </testsuites>
+  <logging>
+    <junit outputFile="build/logs/phpunit/junit.xml"/>
+  </logging>
 </phpunit>
