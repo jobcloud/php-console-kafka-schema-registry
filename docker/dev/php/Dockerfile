@@ -1,8 +1,9 @@
-FROM php:7.3-cli-alpine3.10
+FROM php:7.3-cli-alpine3.13
 
 ARG HOST_USER_ID
 
 COPY files/bin/ /usr/local/bin/
+COPY files/php/ /phpIni
 
 # SYS: Install required packages
 RUN apk --no-cache upgrade && \
@@ -21,6 +22,9 @@ RUN chown -R www-data:www-data /home/www-data && \
 RUN /bin/bash -c 'if [ -n "$HOST_USER_ID" ] && [ "$HOST_USER_ID" -lt 60000 ]; then \
         usermod -u ${HOST_USER_ID} www-data; \
     fi'
+
+RUN usermod -s /bin/bash www-data && \
+    echo 'www-data ALL=(ALL) NOPASSWD: ALL' > '/etc/sudoers.d/www-data'
 
 COPY files/user-home /home/www-data
 
