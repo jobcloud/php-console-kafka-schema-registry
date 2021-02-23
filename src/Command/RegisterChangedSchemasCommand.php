@@ -104,14 +104,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         array &$failed = [],
         array &$succeeded = []
     ): bool {
-        var_dump($succeeded);
         foreach ($avroFiles as $schemaName => $avroFile) {
             /** @var string $fileContents */
             $fileContents = file_get_contents($avroFile);
 
             /** @var array<string, mixed> $jsonDecoded */
             $jsonDecoded = json_decode($fileContents);
-            var_dump($jsonDecoded);
 
             /** @var string $localSchema */
             $localSchema = json_encode($jsonDecoded);
