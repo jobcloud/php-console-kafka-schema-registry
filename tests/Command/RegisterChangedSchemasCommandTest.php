@@ -110,7 +110,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertRegExp('/^Successfully registered new version of schema /', $commandOutput);
+        self::assertMatchesRegularExpression('/^Successfully registered new version of schema /', $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
