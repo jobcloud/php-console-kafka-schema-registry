@@ -9,6 +9,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ * @covers \Jobcloud\SchemaConsole\Command\AbstractModeCommand
+ */
 class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     /**

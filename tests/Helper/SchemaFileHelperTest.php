@@ -1,17 +1,17 @@
 <?php
 
-namespace Jobcloud\SchemaConsole\Tests;
+namespace Jobcloud\SchemaConsole\Tests\Helper;
 
 use AvroSchema;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ */
 class SchemaFileHelperTest extends TestCase
 {
-    /**
-     *
-     */
     private const SCHEMA_FILE = '/tmp/test.avsc';
 
     /**

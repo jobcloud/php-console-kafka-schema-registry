@@ -9,6 +9,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\SetImportModeCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ * @covers \Jobcloud\SchemaConsole\Command\AbstractModeCommand
+ */
 class SetImportModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     /**

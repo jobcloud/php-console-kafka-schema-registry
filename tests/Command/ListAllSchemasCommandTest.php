@@ -9,9 +9,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\ListAllSchemasCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
+ */
 class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
 {
-
     public function testCommand():void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */

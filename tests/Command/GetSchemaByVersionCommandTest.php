@@ -9,9 +9,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
+ */
 class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 {
-
     protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     public function testCommand():void

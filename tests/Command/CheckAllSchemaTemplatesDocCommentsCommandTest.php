@@ -8,6 +8,10 @@ use JsonException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ */
 class CheckAllSchemaTemplatesDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';

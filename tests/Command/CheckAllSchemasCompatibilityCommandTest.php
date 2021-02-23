@@ -9,6 +9,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
+ */
 class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';

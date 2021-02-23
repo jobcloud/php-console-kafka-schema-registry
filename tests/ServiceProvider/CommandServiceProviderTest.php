@@ -1,6 +1,6 @@
 <?php
 
-namespace Jobcloud\SchemaConsole\Tests;
+namespace Jobcloud\SchemaConsole\Tests\ServiceProvider;
 
 use Jobcloud\Kafka\SchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
@@ -22,9 +22,13 @@ use Jobcloud\SchemaConsole\Command\SetImportModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadOnlyModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
 use Jobcloud\SchemaConsole\ServiceProvider\CommandServiceProvider;
+use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use Pimple\Container;
 use Symfony\Component\Console\Command\Command;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\ServiceProvider\CommandServiceProvider
+ */
 class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
 {
     public function testMakesServicesInContainer():void

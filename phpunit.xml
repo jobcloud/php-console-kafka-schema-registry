@@ -9,6 +9,7 @@
          convertWarningsToExceptions="true"
          processIsolation="false"
          stopOnFailure="false"
+         forceCoversAnnotation="true"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd">
   <coverage>
     <include>

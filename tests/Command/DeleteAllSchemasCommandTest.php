@@ -10,9 +10,13 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
+ */
 class DeleteAllSchemasCommandTest extends TestCase
 {
-
     public function testCommand(): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
