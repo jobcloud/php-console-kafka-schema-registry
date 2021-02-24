@@ -28,8 +28,18 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
             },
             {
               "name": "name2",
-              "type": ["null","string"],
+              "type": ["null","float"],
               "default": null
+            },
+            {
+              "name": "name3",
+              "type": ["null","string"],
+              "default": ""
+            },
+            {
+              "name": "bool1",
+              "type": ["null","boolean"],
+              "default": false
             },
             {
               "name": "number1",
@@ -38,6 +48,16 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
             {
               "name": "number2",
               "type": "float"
+            },
+            {
+              "name": "number3",
+              "type": "int",
+              "default": 0
+            },
+            {
+              "name": "number4",
+              "type": ["double","float"],
+              "default": 0.5
             }
           ]
         }
@@ -58,7 +78,17 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
               "name": "name2",
               "type": "string",
               "default": null
-            }
+            },
+            {
+              "name": "name3",
+              "type": "null",
+              "default": ""
+            },
+            {
+              "name": "bool1",
+              "type": ["null","string"],
+              "default": false
+            },
             {
               "name": "number1",
               "type": "int"
@@ -66,6 +96,64 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
             {
               "name": "number2",
               "type": "float"
+            },
+            {
+              "name": "number3",
+              "type": "double",
+              "default": 0
+            },
+            {
+              "name": "number4",
+              "type": "int",
+              "default": 0.5
+            }
+          ]
+        }
+        EOF;
+
+    protected const DEFAULT_VALUE_SCHEMA = <<<EOF
+        {
+          "type": "record",
+          "name": "test",
+          "namespace": "ch.jobcloud",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "name2",
+              "type": ["null","float"],
+              "default": null
+            },
+            {
+              "name": "name3",
+              "type": ["null","string"],
+              "default": ""
+            },
+            {
+              "name": "bool1",
+              "type": ["null","boolean"],
+              "default": false
+            },
+            {
+              "name": "number1",
+              "type": "int"
+            },
+            {
+              "name": "number2",
+              "type": "float"
+            },
+            {
+              "name": "number3",
+              "type": "float",
+              "default": 0
+            },
+            {
+              "name": "number4",
+              "type": ["double","float"],
+              "default": 0.5
             }
           ]
         }
@@ -138,6 +226,29 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
 
         self::assertStringContainsString('All schemas are valid Avro', $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWithDefaultTypeParsingException():void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.default.avsc', self::SCHEMA_DIRECTORY),
+            self::DEFAULT_VALUE_SCHEMA
+        );
+
+        $application = new Application();
+        $application->add(new CheckAllSchemasAreValidAvroCommand());
+        $command = $application->find('kafka-schema-registry:check:valid:avro:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString('Following schemas are not valid Avro', $commandOutput);
+        self::assertStringContainsString('* test.schema.default', $commandOutput);
+        self::assertEquals(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotInvalid():void

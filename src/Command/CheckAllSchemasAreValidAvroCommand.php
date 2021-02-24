@@ -14,6 +14,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemasAreValidAvroCommand extends Command
 {
+    private const TYPE_MAP = [
+        "null" => "null",
+        "boolean" => "boolean",
+        "integer" => "int",
+        "string" => "string",
+        "double" => "double",
+    ];
 
     /**
      * @return void
@@ -92,9 +99,10 @@ class CheckAllSchemasAreValidAvroCommand extends Command
         $decodedSchema = json_decode($localSchema);
         foreach ($decodedSchema->fields as $field) {
             if (property_exists($field, 'default')) {
+                $defaultType = strtolower(gettype($field->default));
                 if (
-                    is_array($field->type) && !in_array(strtolower(gettype($field->default)), $field->type)
-                    || !is_array($field->type) && $field->type !== strtolower(gettype($field->default))
+                    is_array($field->type) && !in_array(self::TYPE_MAP[$defaultType], $field->type)
+                    || !is_array($field->type) && $field->type !== self::TYPE_MAP[$defaultType]
                 ) {
                     throw new AvroSchemaParseException("Default is not in type");
                 }
