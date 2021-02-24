@@ -72,5 +72,5 @@ help:
 	#   static-analysis         Run static analysis using phpstan
 	#   ci-static-analysis      Run static analysis using phpstan for CI only.
 	#   test                    Run tests
-	#   pcov-enable         	Enable pcov
-	#   pcov-disable        	Disable pcov
+	#   pcov-enable             Enable pcov
+	#   pcov-disable            Disable pcov

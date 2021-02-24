@@ -72,6 +72,8 @@ class CheckAllSchemasAreValidAvroCommand extends Command
 
             try {
                 AvroSchema::parse($localSchema);
+
+                $this->checkDefaultType($localSchema);
             } catch (AvroSchemaParseException $e) {
                 $failed[] = $schemaName;
                 continue;
@@ -79,5 +81,24 @@ class CheckAllSchemasAreValidAvroCommand extends Command
         }
 
         return 0 === count($failed);
+    }
+
+    /**
+     * @param string $localSchema
+     * @throws AvroSchemaParseException
+     */
+    private function checkDefaultType(string $localSchema): void
+    {
+        $decodedSchema = json_decode($localSchema);
+        foreach ($decodedSchema->fields as $field) {
+            if (property_exists($field, 'default')) {
+                if (
+                    is_array($field->type) && !in_array(strtolower(gettype($field->default)), $field->type)
+                    || !is_array($field->type) && $field->type !== strtolower(gettype($field->default))
+                ) {
+                    throw new AvroSchemaParseException("Default is not in type");
+                }
+            }
+        }
     }
 }

@@ -27,6 +27,11 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
               "type": "string"
             },
             {
+              "name": "name2",
+              "type": ["null","string"],
+              "default": null
+            },
+            {
               "name": "number1",
               "type": "int"
             },
@@ -49,6 +54,11 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
               "name": "name",
               "type": "string"
             },
+            {
+              "name": "name2",
+              "type": "string",
+              "default": null
+            }
             {
               "name": "number1",
               "type": "int"
