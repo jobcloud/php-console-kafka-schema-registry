@@ -133,7 +133,7 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
                             "items": "string"
                         }
                     ],
-                    "default": null,
+                    "default": [],
                     "doc": "List of auctions Bidders"
                 },
                 {
