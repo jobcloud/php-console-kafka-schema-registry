@@ -111,51 +111,60 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
         }
         EOF;
 
+    protected const KEY_SCHEMA = <<<EOF
+        {
+          "type": "string"
+        }
+        EOF;
+
+
     protected const DEFAULT_VALUE_SCHEMA = <<<EOF
         {
-          "type": "record",
-          "name": "test",
-          "namespace": "ch.jobcloud",
-          "doc": "This is a sample Avro schema to get you started. Please edit",
-          "fields": [
-            {
-              "name": "name",
-              "type": "string"
-            },
-            {
-              "name": "name2",
-              "type": ["null","float"],
-              "default": null
-            },
-            {
-              "name": "name3",
-              "type": ["null","string"],
-              "default": ""
-            },
-            {
-              "name": "bool1",
-              "type": ["null","boolean"],
-              "default": false
-            },
-            {
-              "name": "number1",
-              "type": "int"
-            },
-            {
-              "name": "number2",
-              "type": "float"
-            },
-            {
-              "name": "number3",
-              "type": "float",
-              "default": 0
-            },
-            {
-              "name": "number4",
-              "type": ["double","float"],
-              "default": 0.5
-            }
-          ]
+            "type": "record",
+            "name": "test",
+            "namespace": "ch.jobcloud",
+            "fields": [
+                {
+                    "name": "array1",
+                    "type": [
+                        "null",
+                        {
+                            "type": "array",
+                            "items": "string"
+                        }
+                    ],
+                    "default": null,
+                    "doc": "List of auctions Bidders"
+                },
+                {
+                    "name": "name1",
+                    "type": [
+                        "null",
+                        "string"
+                    ],
+                    "default": null,
+                    "doc": "Sample doc"
+                },
+                {
+                  "name": "number1",
+                  "type": "double",
+                  "default": 0.5
+                },
+                {
+                  "name": "benefits",
+                  "type": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "default": [],
+                  "doc": "List of id's of related benefits which the company provides"
+                },
+                {
+                  "name": "number2",
+                  "type": "double",
+                  "default": null
+                }
+            ]
         }
         EOF;
 
@@ -249,6 +258,28 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
         self::assertStringContainsString('Following schemas are not valid Avro', $commandOutput);
         self::assertStringContainsString('* test.schema.default', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWithKeySchema():void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.key.avsc', self::SCHEMA_DIRECTORY),
+            self::KEY_SCHEMA
+        );
+
+        $application = new Application();
+        $application->add(new CheckAllSchemasAreValidAvroCommand());
+        $command = $application->find('kafka-schema-registry:check:valid:avro:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString('All schemas are valid Avro', $commandOutput);
+        self::assertEquals(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotInvalid():void

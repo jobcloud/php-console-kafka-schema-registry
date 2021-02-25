@@ -20,6 +20,7 @@ class CheckAllSchemasAreValidAvroCommand extends Command
         "integer" => "int",
         "string" => "string",
         "double" => "double",
+        "array" => "array",
     ];
 
     /**
@@ -97,13 +98,39 @@ class CheckAllSchemasAreValidAvroCommand extends Command
     private function checkDefaultType(string $localSchema): void
     {
         $decodedSchema = json_decode($localSchema);
+        if (!property_exists($decodedSchema, 'fields')) {
+            return;
+        }
+
         foreach ($decodedSchema->fields as $field) {
             if (property_exists($field, 'default')) {
                 $defaultType = strtolower(gettype($field->default));
-                if (
-                    is_array($field->type) && !in_array(self::TYPE_MAP[$defaultType], $field->type)
-                    || !is_array($field->type) && $field->type !== self::TYPE_MAP[$defaultType]
-                ) {
+                $fieldTypes = $field->type;
+                $found = 0;
+
+                if (is_array($fieldTypes)) {
+                    foreach ($fieldTypes as $fieldType) {
+                        if (is_string($fieldType) && self::TYPE_MAP[$defaultType] === $fieldType) {
+                            $found++;
+                        }
+                        if (property_exists($fieldType, "type")) {
+                            if ($fieldType->type === $defaultType) {
+                                $found++;
+                            }
+                        }
+                    }
+                }
+
+                if (!is_array($fieldTypes)) {
+                    if (property_exists($fieldTypes, "type") && $fieldTypes->type === self::TYPE_MAP[$defaultType]) {
+                        $found++;
+                    }
+                    if (is_string($fieldTypes) && $fieldTypes === self::TYPE_MAP[$defaultType]) {
+                        $found++;
+                    }
+                }
+
+                if (0 === $found) {
                     throw new AvroSchemaParseException("Default is not in type");
                 }
             }
