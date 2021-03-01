@@ -102,38 +102,103 @@ class CheckAllSchemasAreValidAvroCommand extends Command
             return;
         }
 
-        foreach ($decodedSchema->fields as $field) {
+        $result = [
+            'found' => 0,
+            'default' => 0,
+        ];
+
+        $result = $this->checkAllFields($decodedSchema->fields, $result);
+
+        if ($result['found'] !== $result['default']) {
+            throw new AvroSchemaParseException('Type of default value is not in field type.');
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $schemaFields
+     * @param array<string, mixed> $result
+     * @return array<string, mixed>
+     * @throws AvroSchemaParseException
+     */
+    private function checkAllFields(array $schemaFields, array $result): array
+    {
+        foreach ($schemaFields as $field) {
+            $fieldTypes = $field->type;
             if (property_exists($field, 'default')) {
-                $defaultType = strtolower(gettype($field->default));
-                $fieldTypes = $field->type;
-                $found = 0;
+                $result['default']++;
+            }
 
-                if (is_array($fieldTypes)) {
-                    foreach ($fieldTypes as $fieldType) {
-                        if (is_string($fieldType) && self::TYPE_MAP[$defaultType] === $fieldType) {
-                            $found++;
-                        }
-                        if (property_exists($fieldType, "type")) {
-                            if ($fieldType->type === $defaultType) {
-                                $found++;
-                            }
-                        }
-                    }
+            if (is_array($fieldTypes)) {
+                foreach ($fieldTypes as $fieldType) {
+                    $result = $this->checkSingleField($fieldType, $field, $result);
                 }
+            }
 
-                if (!is_array($fieldTypes)) {
-                    if (property_exists($fieldTypes, "type") && $fieldTypes->type === self::TYPE_MAP[$defaultType]) {
-                        $found++;
-                    }
-                    if (is_string($fieldTypes) && $fieldTypes === self::TYPE_MAP[$defaultType]) {
-                        $found++;
-                    }
-                }
+            if (!is_array($fieldTypes)) {
+                $result = $this->checkSingleField($fieldTypes, $field, $result);
+            }
+        }
 
-                if (0 === $found) {
-                    throw new AvroSchemaParseException("Default is not in type");
+        return $result;
+    }
+
+    /**
+     * @param mixed $fieldType
+     * @param mixed $field
+     * @param array<string, mixed> $result
+     * @return array<string, mixed>
+     * @throws AvroSchemaParseException
+     */
+    private function checkSingleField($fieldType, $field, array $result): array
+    {
+        $defaultType = null;
+
+        if (property_exists($field, 'default')) {
+            $defaultType = strtolower(gettype($field->default));
+
+            if (is_string($fieldType)) {
+                if (
+                    self::TYPE_MAP[$defaultType] === $fieldType
+                    || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
+                ) {
+                    $result['found']++;
                 }
             }
         }
+
+        if (property_exists($fieldType, 'type')) {
+            if ($fieldType->type === 'record') {
+                $result = $this->checkAllFields($fieldType->fields, $result);
+            }
+
+            if ($fieldType->type === 'array') {
+                if (is_string($defaultType) && self::TYPE_MAP[$defaultType] === $fieldType->type) {
+                    $result['found']++;
+                }
+                if (!is_array($fieldType->items) && property_exists($fieldType->items, "type")) {
+                    $result = $this->checkAllFields($fieldType->items->fields, $result);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param string $defaultType
+     * @param string $currentType
+     * @return bool
+     */
+    private function isContainedInBiggerType(string $defaultType, string $currentType): bool
+    {
+        if ($currentType === 'double' && ($defaultType === 'int' || $defaultType === 'float')) {
+            return true;
+        }
+
+        if ($currentType === 'float' && $defaultType === 'int') {
+            return true;
+        }
+
+        return false;
     }
 }

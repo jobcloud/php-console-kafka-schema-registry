@@ -133,8 +133,7 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
                             "items": "string"
                         }
                     ],
-                    "default": [],
-                    "doc": "List of auctions Bidders"
+                    "default": []
                 },
                 {
                     "name": "name1",
@@ -142,13 +141,60 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
                         "null",
                         "string"
                     ],
-                    "default": null,
-                    "doc": "Sample doc"
+                    "default": null
+                },
+                {
+                    "name": "name2",
+                    "type": [
+                        "null",
+                        {
+                            "type": "record",
+                            "name": "demo",
+                            "namespace": "ch.jobcloud",
+                            "fields": [
+                                {
+                                    "name": "name",
+                                    "type": [
+                                        "null",
+                                        "string"
+                                    ],
+                                    "default": null
+                                },
+                                {
+                                    "name": "name3",
+                                    "type": [
+                                        "null",
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "record",
+                                                "name": "example",
+                                                "namespace": "ch.jobcloud",
+                                                "fields": [
+                                                    {
+                                                        "name": "name4",
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "name": "number",
+                                                        "type": "float",
+                                                        "default": 0
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "default": []
+                                }
+                            ]
+                        }
+                    ],
+                    "default": null
                 },
                 {
                   "name": "number1",
                   "type": "double",
-                  "default": 0.5
+                  "default": 0
                 },
                 {
                   "name": "benefits",
