@@ -283,7 +283,7 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWithDefaultTypeParsingException():void
+    public function testOutputWithDefaultTypeParsingError():void
     {
         file_put_contents(
             sprintf('%s/test.schema.default.avsc', self::SCHEMA_DIRECTORY),
@@ -302,7 +302,7 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('Following schemas are not valid Avro', $commandOutput);
-        self::assertStringContainsString('* test.schema.default', $commandOutput);
+        self::assertStringContainsString('ch.jobcloud.test.number2', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 

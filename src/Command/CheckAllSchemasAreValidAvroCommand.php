@@ -81,7 +81,13 @@ class CheckAllSchemasAreValidAvroCommand extends Command
             try {
                 AvroSchema::parse($localSchema);
 
-                $this->checkDefaultType($localSchema);
+                $invalidFields = $this->checkDefaultType($localSchema);
+
+                if (count($invalidFields)) {
+                    foreach ($invalidFields as $invalidField) {
+                        $failed[] = $invalidField;
+                    }
+                }
             } catch (AvroSchemaParseException $e) {
                 $failed[] = $schemaName;
                 continue;
@@ -93,49 +99,50 @@ class CheckAllSchemasAreValidAvroCommand extends Command
 
     /**
      * @param string $localSchema
+     * @return array<string, mixed>
      * @throws AvroSchemaParseException
      */
-    private function checkDefaultType(string $localSchema): void
+    private function checkDefaultType(string $localSchema): array
     {
         $decodedSchema = json_decode($localSchema);
         if (!property_exists($decodedSchema, 'fields')) {
-            return;
+            return [];
         }
 
         $result = [
-            'found' => 0,
-            'default' => 0,
+            'found' => [],
+            'default' => [],
         ];
 
-        $result = $this->checkAllFields($decodedSchema->fields, $result);
+        $result = $this->checkAllFields($decodedSchema, $result);
 
-        if ($result['found'] !== $result['default']) {
-            throw new AvroSchemaParseException('Type of default value is not in field type.');
-        }
+        $result['invalidFields'] = array_diff($result['default'], $result['found']);
+
+        return $result['invalidFields'];
     }
 
     /**
-     * @param array<string, mixed> $schemaFields
+     * @param mixed $decodedSchema
      * @param array<string, mixed> $result
      * @return array<string, mixed>
      * @throws AvroSchemaParseException
      */
-    private function checkAllFields(array $schemaFields, array $result): array
+    private function checkAllFields($decodedSchema, array $result): array
     {
-        foreach ($schemaFields as $field) {
+        foreach ($decodedSchema->fields as $field) {
             $fieldTypes = $field->type;
             if (property_exists($field, 'default')) {
-                $result['default']++;
+                $result['default'][] = $this->getFieldName($decodedSchema, $field);
             }
 
             if (is_array($fieldTypes)) {
                 foreach ($fieldTypes as $fieldType) {
-                    $result = $this->checkSingleField($fieldType, $field, $result);
+                    $result = $this->checkSingleField($fieldType, $field, $decodedSchema, $result);
                 }
             }
 
             if (!is_array($fieldTypes)) {
-                $result = $this->checkSingleField($fieldTypes, $field, $result);
+                $result = $this->checkSingleField($fieldTypes, $field, $decodedSchema, $result);
             }
         }
 
@@ -145,11 +152,12 @@ class CheckAllSchemasAreValidAvroCommand extends Command
     /**
      * @param mixed $fieldType
      * @param mixed $field
+     * @param mixed $decodedSchema
      * @param array<string, mixed> $result
      * @return array<string, mixed>
      * @throws AvroSchemaParseException
      */
-    private function checkSingleField($fieldType, $field, array $result): array
+    private function checkSingleField($fieldType, $field, $decodedSchema, array $result): array
     {
         $defaultType = null;
 
@@ -161,22 +169,23 @@ class CheckAllSchemasAreValidAvroCommand extends Command
                     self::TYPE_MAP[$defaultType] === $fieldType
                     || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
                 ) {
-                    $result['found']++;
+                    $result['found'][] = $this->getFieldName($decodedSchema, $field);
                 }
             }
         }
 
         if (property_exists($fieldType, 'type')) {
             if ($fieldType->type === 'record') {
-                $result = $this->checkAllFields($fieldType->fields, $result);
+                $result = $this->checkAllFields($fieldType, $result);
             }
 
             if ($fieldType->type === 'array') {
                 if (is_string($defaultType) && self::TYPE_MAP[$defaultType] === $fieldType->type) {
-                    $result['found']++;
+                    $result['found'][] = $this->getFieldName($decodedSchema, $field);
                 }
+
                 if (!is_array($fieldType->items) && property_exists($fieldType->items, "type")) {
-                    $result = $this->checkAllFields($fieldType->items->fields, $result);
+                    $result = $this->checkAllFields($fieldType->items, $result);
                 }
             }
         }
@@ -200,5 +209,15 @@ class CheckAllSchemasAreValidAvroCommand extends Command
         }
 
         return false;
+    }
+
+    /**
+     * @param mixed $decodedSchema
+     * @param mixed $field
+     * @return string
+     */
+    private function getFieldName($decodedSchema, $field): string
+    {
+        return $decodedSchema->namespace . '.' . $decodedSchema->name . '.' . $field->name;
     }
 }
