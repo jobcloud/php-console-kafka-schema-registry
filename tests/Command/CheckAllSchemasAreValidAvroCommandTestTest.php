@@ -117,8 +117,103 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
         }
         EOF;
 
+    protected const DEFAULT_VALUE_GOOD_SCHEMA_NESTED = <<<EOF
+        {
+            "type": "record",
+            "name": "test",
+            "namespace": "ch.jobcloud",
+            "fields": [
+                {
+                    "name": "array1",
+                    "type": [
+                        "null",
+                        {
+                            "type": "array",
+                            "items": "string"
+                        }
+                    ],
+                    "default": []
+                },
+                {
+                    "name": "name1",
+                    "type": [
+                        "null",
+                        "string"
+                    ],
+                    "default": null
+                },
+                {
+                    "name": "name2",
+                    "type": [
+                        "null",
+                        {
+                            "type": "record",
+                            "name": "demo",
+                            "namespace": "ch.jobcloud",
+                            "fields": [
+                                {
+                                    "name": "name",
+                                    "type": [
+                                        "null",
+                                        "string"
+                                    ],
+                                    "default": null
+                                },
+                                {
+                                    "name": "name3",
+                                    "type": [
+                                        "null",
+                                        {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "record",
+                                                "name": "example",
+                                                "namespace": "ch.jobcloud",
+                                                "fields": [
+                                                    {
+                                                        "name": "name4",
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "name": "number",
+                                                        "type": "float",
+                                                        "default": 0
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ],
+                                    "default": []
+                                }
+                            ]
+                        }
+                    ],
+                    "default": null
+                },
+                {
+                  "name": "number1",
+                  "type": "double",
+                  "default": 0
+                },
+                {
+                  "name": "benefits",
+                  "type": {
+                    "type": "array",
+                    "items": "string"
+                  },
+                  "default": [],
+                  "doc": "List of id's of related benefits which the company provides"
+                },
+                {
+                  "name": "number2",
+                  "type": "double",
+                  "default": 0.0
+                }
+            ]
+        }
+        EOF;
 
-    protected const DEFAULT_VALUE_SCHEMA = <<<EOF
+    protected const DEFAULT_VALUE_BAD_SCHEMA_NESTED = <<<EOF
         {
             "type": "record",
             "name": "test",
@@ -287,7 +382,7 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
     {
         file_put_contents(
             sprintf('%s/test.schema.default.avsc', self::SCHEMA_DIRECTORY),
-            self::DEFAULT_VALUE_SCHEMA
+            self::DEFAULT_VALUE_BAD_SCHEMA_NESTED
         );
 
         $application = new Application();
@@ -304,6 +399,28 @@ class CheckAllSchemasAreValidAvroCommandTestTest extends AbstractSchemaRegistryT
         self::assertStringContainsString('Following schemas are not valid Avro', $commandOutput);
         self::assertStringContainsString('ch.jobcloud.test.number2', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWithDefaultTypeParsingNestedSchema():void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.default.avsc', self::SCHEMA_DIRECTORY),
+            self::DEFAULT_VALUE_GOOD_SCHEMA_NESTED
+        );
+
+        $application = new Application();
+        $application->add(new CheckAllSchemasAreValidAvroCommand());
+        $command = $application->find('kafka-schema-registry:check:valid:avro:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString('All schemas are valid Avro', $commandOutput);
+        self::assertEquals(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWithKeySchema():void
