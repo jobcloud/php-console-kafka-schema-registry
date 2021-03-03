@@ -116,9 +116,7 @@ class CheckAllSchemasAreValidAvroCommand extends Command
 
         $result = $this->checkAllFields($decodedSchema, $result);
 
-        $result['invalidFields'] = array_diff($result['default'], $result['found']);
-
-        return $result['invalidFields'];
+        return array_diff($result['default'], $result['found']);
     }
 
     /**
