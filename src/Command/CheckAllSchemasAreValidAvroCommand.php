@@ -133,14 +133,12 @@ class CheckAllSchemasAreValidAvroCommand extends Command
                 $result['default'][] = $this->getFieldName($decodedSchema, $field);
             }
 
-            if (is_array($fieldTypes)) {
-                foreach ($fieldTypes as $fieldType) {
-                    $result = $this->checkSingleField($fieldType, $field, $decodedSchema, $result);
-                }
+            if (!is_array($fieldTypes)) {
+                $fieldTypes = [$fieldTypes];
             }
 
-            if (!is_array($fieldTypes)) {
-                $result = $this->checkSingleField($fieldTypes, $field, $decodedSchema, $result);
+            foreach ($fieldTypes as $fieldType) {
+                $result = $this->checkSingleField($fieldType, $field, $decodedSchema, $result);
             }
         }
 
