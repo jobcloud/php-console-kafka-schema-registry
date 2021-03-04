@@ -6,6 +6,7 @@ use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\Kafka\SchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckDocCommentsCommand;
@@ -60,6 +61,7 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new SetReadOnlyModeCommand($schemaRegistryApi),
                 new SetReadWriteModeCommand($schemaRegistryApi),
                 new CheckAllSchemasAreValidAvroCommand(),
+                new CheckAllSchemaTemplatesDefaultTypeCommand(),
                 new CheckDocCommentsCommand(),
                 new CheckAllSchemaTemplatesDocCommentsCommand()
             ];
