@@ -161,11 +161,9 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
         }
 
-        if (property_exists($fieldType, 'type')) {
-            if ($fieldType->type === 'array') {
-                if (is_string($defaultType) && self::TYPE_MAP[$defaultType] === $fieldType->type) {
-                    $result['found'][] = $this->getFieldName($decodedSchema, $field);
-                }
+        if (property_exists($fieldType, 'type') && $fieldType->type === 'array') {
+            if (is_string($defaultType) && self::TYPE_MAP[$defaultType] === $fieldType->type) {
+                $result['found'][] = $this->getFieldName($decodedSchema, $field);
             }
         }
 
