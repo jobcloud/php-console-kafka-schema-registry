@@ -75,16 +75,13 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         $failed = [];
 
         foreach ($avroFiles as $schemaName => $avroFile) {
-
             /** @var string $localSchema */
             $localSchema = file_get_contents($avroFile);
 
             $invalidFields = $this->checkDefaultType($localSchema);
 
-            if (count($invalidFields)) {
-                foreach ($invalidFields as $invalidField) {
-                    $failed[] = $invalidField;
-                }
+            foreach ($invalidFields as $invalidField) {
+                $failed[] = $invalidField;
             }
         }
 
@@ -102,72 +99,64 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             return [];
         }
 
-        $result = [
-            'found' => [],
-            'default' => [],
-        ];
-
-        $result = $this->checkAllFields($decodedSchema, $result);
-
-        return array_diff($result['default'], $result['found']);
+        return $this->checkAllFields($decodedSchema);
     }
 
     /**
      * @param mixed $decodedSchema
-     * @param array<string, mixed> $result
+     * @param array<mixed, mixed> $defaultFields
      * @return array<string, mixed>
      */
-    private function checkAllFields($decodedSchema, array $result): array
+    private function checkAllFields($decodedSchema, array $defaultFields = []): array
     {
         foreach ($decodedSchema->fields as $field) {
-            $fieldTypes = $field->type;
-            if (property_exists($field, 'default')) {
-                $result['default'][] = $this->getFieldName($decodedSchema, $field);
+            if (!property_exists($field, 'default')) {
+                continue;
             }
+
+            $defaultFields[$field->name] = $this->getFieldName($decodedSchema, $field);
+
+            $fieldTypes = $field->type;
 
             if (!is_array($fieldTypes)) {
                 $fieldTypes = [$fieldTypes];
             }
 
             foreach ($fieldTypes as $fieldType) {
-                $result = $this->checkSingleField($fieldType, $field, $decodedSchema, $result);
+                $defaultFields = $this->checkSingleField($fieldType, $field, $decodedSchema, $defaultFields);
             }
         }
 
-        return $result;
+        return $defaultFields;
     }
 
     /**
      * @param mixed $fieldType
      * @param mixed $field
      * @param mixed $decodedSchema
-     * @param array<string, mixed> $result
+     * @param array<mixed, mixed> $defaultFields
      * @return array<string, mixed>
      */
-    private function checkSingleField($fieldType, $field, $decodedSchema, array $result): array
+    private function checkSingleField($fieldType, $field, $decodedSchema, array $defaultFields): array
     {
-        $defaultType = null;
+        $defaultType = strtolower(gettype($field->default));
 
-        if (property_exists($field, 'default')) {
-            $defaultType = strtolower(gettype($field->default));
-
-            if (is_string($fieldType)) {
-                if (
-                    self::TYPE_MAP[$defaultType] === $fieldType
-                    || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
-                ) {
-                    $result['found'][] = $this->getFieldName($decodedSchema, $field);
-                }
+        if (is_string($fieldType)) {
+            if (
+                self::TYPE_MAP[$defaultType] === $fieldType
+                || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
+            ) {
+                unset($defaultFields[$field->name]);
             }
         }
 
         if (property_exists($fieldType, 'type') && $fieldType->type === 'array') {
             if (is_string($defaultType) && self::TYPE_MAP[$defaultType] === $fieldType->type) {
-                $result['found'][] = $this->getFieldName($decodedSchema, $field);
+                unset($defaultFields[$field->name]);
             }
         }
 
-        return $result;
+        return $defaultFields;
     }
 
     /**
