@@ -123,7 +123,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
 
             foreach ($fieldTypes as $fieldType) {
-                $defaultFields = $this->checkSingleField($fieldType, $field, $decodedSchema, $defaultFields);
+                $defaultFields = $this->checkSingleField($fieldType, $field, $defaultFields);
             }
         }
 
@@ -133,11 +133,10 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     /**
      * @param mixed $fieldType
      * @param mixed $field
-     * @param mixed $decodedSchema
      * @param array<mixed, mixed> $defaultFields
      * @return array<string, mixed>
      */
-    private function checkSingleField($fieldType, $field, $decodedSchema, array $defaultFields): array
+    private function checkSingleField($fieldType, $field, array $defaultFields): array
     {
         $defaultType = strtolower(gettype($field->default));
 
