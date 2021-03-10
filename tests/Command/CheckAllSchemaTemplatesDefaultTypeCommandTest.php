@@ -73,6 +73,18 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
               ],
               "default": [],
               "doc": "some desc"
+            },
+            {
+              "name": "array2",
+              "type": [
+                "null",
+                {
+                  "type": "array",
+                  "items": "ch.jobcloud.item"
+                }
+              ],
+              "default": null,
+              "doc": "some desc"
             }
           ]
         }
