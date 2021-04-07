@@ -18,7 +18,7 @@
         "symfony/console": "^4.3|^5.1",
         "pimple/pimple": "^3.2",
         "jobcloud/php-kafka-schema-registry-client": "^0.1",
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^6.3|^7.3",
       "ext-json": "*"
     },
     "require-dev": {
