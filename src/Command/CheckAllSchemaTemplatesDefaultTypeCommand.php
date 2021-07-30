@@ -28,8 +28,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     {
         $this
             ->setName('kafka-schema-registry:check:template:default:type:all')
-            ->setDescription('Checks for default value type for all schema templates in folder')
-            ->setHelp('Checks for default value type for all schema templates in folder')
+            ->setDescription('Checks if default value type matches the first type in union for all schema templates in folder')
+            ->setHelp('Checks if default value type matches the first type in union for all schema templates in folder')
             ->addArgument(
                 'schemaTemplateDirectory',
                 InputArgument::REQUIRED,
@@ -122,8 +122,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
                 $fieldTypes = [$fieldTypes];
             }
 
-            foreach ($fieldTypes as $fieldType) {
-                $defaultFields = $this->checkSingleField($fieldType, $field, $defaultFields);
+            if (count($fieldTypes)) {
+                $defaultFields = $this->checkSingleField($fieldTypes[0], $field, $defaultFields);
             }
         }
 

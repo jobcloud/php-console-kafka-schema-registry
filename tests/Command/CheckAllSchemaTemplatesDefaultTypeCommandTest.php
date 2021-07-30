@@ -29,13 +29,13 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
             },
             {
               "name": "name2",
-              "type": ["null","string"],
+              "type": ["string","null"],
               "default": "",
               "doc": "some desc"
             },
             {
               "name": "bool1",
-              "type": ["null","boolean"],
+              "type": ["boolean","null"],
               "default": false,
               "doc": "some desc"
             },
@@ -65,11 +65,11 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
             {
               "name": "array1",
               "type": [
-                "null",
                 {
                   "type": "array",
                   "items": "ch.jobcloud.item"
-                }
+                },
+                "null"
               ],
               "default": [],
               "doc": "some desc"
@@ -105,7 +105,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
             {
               "name": "name2",
               "type": ["null","string"],
-              "default": "",
+              "default": "VALUE",
               "doc": "some desc"
             },
             {
