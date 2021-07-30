@@ -57,8 +57,14 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
               "doc": "some desc"
             },
             {
-              "name": "number3",
+              "name": "number4",
               "type": ["double","float"],
+              "default": 0,
+              "doc": "some desc"
+            },
+            {
+              "name": "number5",
+              "type": ["float","int"],
               "default": 0,
               "doc": "some desc"
             },
