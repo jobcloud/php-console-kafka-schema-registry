@@ -19,8 +19,8 @@ class GetSchemaByVersionCommand extends AbstractSchemaCommand
     {
         $this
             ->setName('kafka-schema-registry:fetch:schema')
-            ->setDescription('List all versions for given schema')
-            ->setHelp('List all versions for given schema')
+            ->setDescription('Get schema by version number')
+            ->setHelp('Get schema by version number')
             ->addArgument('schemaName', InputArgument::REQUIRED, 'Name of the schema')
             ->addArgument('schemaVersion', InputArgument::REQUIRED, 'Version of the schema')
             ->addArgument('outputFile', InputArgument::REQUIRED, 'Path to output file');
