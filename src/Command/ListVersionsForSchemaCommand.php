@@ -10,7 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListVersionsForSchemaCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

@@ -9,7 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteAllSchemasCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

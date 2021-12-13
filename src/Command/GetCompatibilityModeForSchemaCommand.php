@@ -10,7 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

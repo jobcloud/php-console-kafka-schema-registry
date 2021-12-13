@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckIsRegistredCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

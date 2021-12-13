@@ -13,7 +13,6 @@ use Throwable;
 
 class GetLatestSchemaCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

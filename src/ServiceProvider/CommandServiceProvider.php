@@ -28,7 +28,6 @@ use Pimple\ServiceProviderInterface;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
-
     public const COMMANDS = 'kafka.schema.registry.commands';
 
     /**

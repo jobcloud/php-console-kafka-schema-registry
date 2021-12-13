@@ -12,7 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RegisterSchemaVersionCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

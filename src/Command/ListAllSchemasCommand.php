@@ -9,7 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListAllSchemasCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

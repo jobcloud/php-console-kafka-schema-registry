@@ -11,7 +11,6 @@ use Throwable;
 
 class GetSchemaByVersionCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */

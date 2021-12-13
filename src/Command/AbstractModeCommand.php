@@ -10,7 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractModeCommand extends AbstractSchemaCommand implements ModeCommandInterface
 {
-
     /**
      * @return void
      */

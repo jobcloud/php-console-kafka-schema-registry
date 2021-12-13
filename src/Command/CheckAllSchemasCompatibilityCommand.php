@@ -11,7 +11,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
 {
-
     /**
      * @return void
      */
