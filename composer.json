@@ -20,7 +20,7 @@
         "flix-tech/avro-php": "^3.0|^4.0",
         "symfony/console": "^4.3|^5.1",
         "pimple/pimple": "^3.2",
-        "jobcloud/php-kafka-schema-registry-client": "^0.1",
+        "jobcloud/php-kafka-schema-registry-client": "^1.0",
         "guzzlehttp/guzzle": "^6.3|^7.3"
     },
     "require-dev": {
