@@ -2,8 +2,11 @@
 
 ## Installation
 ```
-composer require jobcloud/php-console-kafka-schema-registry "^1.1"
+composer require jobcloud/php-console-kafka-schema-registry
 ```
+
+## Requirements
+- php: >= 7.4
 
 ## Register commands
 You can register each command separately like this:
