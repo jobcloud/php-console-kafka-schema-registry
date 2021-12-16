@@ -2,9 +2,7 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
+use Buzz\Exception\ClientException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\GetLatestSchemaCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
@@ -53,8 +51,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
     {
         $clientException = new ClientException(
             '',
-            new Request('POST', '/'),
-            new Response(404)
+            404
         );
 
         $expectedSchemaName = 'SomeSchemaName';
@@ -84,8 +81,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
     {
         $clientException = new ClientException(
             'ERROR MESSAGE',
-            new Request('POST', '/'),
-            new Response(401)
+            401
         );
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
