@@ -4,7 +4,7 @@ namespace Jobcloud\SchemaConsole\Command;
 
 use AvroSchema;
 use AvroSchemaParseException;
-use GuzzleHttp\Exception\RequestException;
+use Buzz\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

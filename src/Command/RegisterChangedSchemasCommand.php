@@ -4,7 +4,7 @@ namespace Jobcloud\SchemaConsole\Command;
 
 use AvroSchema;
 use AvroSchemaParseException;
-use GuzzleHttp\Exception\RequestException;
+use Buzz\Exception\RequestException;
 use Jobcloud\Kafka\SchemaRegistryClient\Exception\SubjectNotFoundException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;

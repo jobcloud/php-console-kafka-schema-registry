@@ -2,12 +2,12 @@
 
 namespace Jobcloud\SchemaConsole\Tests;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\Stream;
+use http\Client;
+use Nyholm\Psr7\Response;
+use Nyholm\Psr7\Stream;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientInterface;
 use Throwable;
 
 abstract class AbstractSchemaRegistryTestCase extends TestCase
