@@ -2,12 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\Tests;
 
-use http\Client;
-use Nyholm\Psr7\Response;
-use Nyholm\Psr7\Stream;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Client\ClientInterface;
 use Throwable;
 
 abstract class AbstractSchemaRegistryTestCase extends TestCase
@@ -63,34 +59,6 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
         }
 
         return $mock;
-    }
-
-    /**
-     * Mocks Guzzle client object
-     *
-     * @param string|null $responseContents (JSON String)
-     * @param int $code
-     * @return MockObject|ClientInterface
-     */
-    final protected function mockClient(string $responseContents = '', int $code = 200): MockObject {
-        return $this->makeMock(Client::class, [
-            'send' => $this->mockResponse($responseContents, $code)
-        ]);
-    }
-
-    /**
-     * @param string $responseContents
-     * @param int $code
-     * @return MockObject
-     */
-    final protected function mockResponse(string $responseContents = '', int $code = 200): MockObject
-    {
-        return $this->makeMock(Response::class, [
-            'getBody' => $this->makeMock(Stream::class, [
-                'getContents' => $responseContents,
-            ]),
-            'getStatusCode' => $code,
-        ]);
     }
 
     /**
