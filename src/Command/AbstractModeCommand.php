@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use Buzz\Exception\ClientException;
+use JsonException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -22,10 +23,11 @@ abstract class AbstractModeCommand extends AbstractSchemaCommand implements Mode
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
-     * @throws ClientException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {

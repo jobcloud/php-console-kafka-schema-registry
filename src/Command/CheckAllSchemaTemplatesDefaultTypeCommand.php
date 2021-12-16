@@ -2,7 +2,6 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use Buzz\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,7 +40,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
      * @param InputInterface  $input
      * @param OutputInterface $output
      * @return integer
-     * @throws RequestException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {

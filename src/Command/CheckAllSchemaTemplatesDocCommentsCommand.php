@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use Buzz\Exception\RequestException;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
+use JsonException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,10 +34,10 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
-     * @throws RequestException
+     * @throws JsonException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -66,6 +66,7 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
      * @param array<string, mixed> $avroFiles
      * @param array<string, mixed> $failed
      * @return boolean
+     * @throws JsonException
      */
     private function checkDocCommentsOnSchemaTemplates(array $avroFiles, array &$failed = []): bool
     {

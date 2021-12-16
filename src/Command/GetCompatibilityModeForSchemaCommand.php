@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\Exception\SchemaRegistryExceptionInterface;
+use JsonException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,9 +26,12 @@ class GetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
+     * @throws SchemaRegistryExceptionInterface
+     * @throws JsonException
+     * @throws ClientExceptionInterface
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {

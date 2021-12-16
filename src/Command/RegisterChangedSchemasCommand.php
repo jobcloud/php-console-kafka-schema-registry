@@ -5,9 +5,12 @@ namespace Jobcloud\SchemaConsole\Command;
 use AvroSchema;
 use AvroSchemaParseException;
 use Buzz\Exception\RequestException;
+use Jobcloud\Kafka\SchemaRegistryClient\Exception\SchemaRegistryExceptionInterface;
 use Jobcloud\Kafka\SchemaRegistryClient\Exception\SubjectNotFoundException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
+use JsonException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,10 +51,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface  $input
+     * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
-     * @throws RequestException
+     * @throws SchemaRegistryExceptionInterface
+     * @throws JsonException
+     * @throws ClientExceptionInterface
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -92,10 +97,13 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
     /**
      * @param array<string, mixed> $avroFiles
-     * @param SymfonyStyle         $io
+     * @param SymfonyStyle $io
      * @param array<string, mixed> $failed
      * @param array<string, mixed> $succeeded
      * @return boolean
+     * @throws SchemaRegistryExceptionInterface
+     * @throws JsonException
+     * @throws ClientExceptionInterface
      */
     private function registerFiles(
         array $avroFiles,
