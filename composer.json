@@ -21,7 +21,8 @@
         "symfony/console": "^4.3|^5.1",
         "pimple/pimple": "^3.2",
         "jobcloud/php-kafka-schema-registry-client": "^1.0",
-        "guzzlehttp/guzzle": "^6.3|^7.3"
+        "nyholm/psr7": "^1.4",
+        "kriswallsmith/buzz": "^1.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
