@@ -2,6 +2,8 @@
 
 namespace Jobcloud\SchemaConsole\ServiceProvider;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\Kafka\SchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
@@ -25,6 +27,7 @@ use Jobcloud\SchemaConsole\Command\SetReadOnlyModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Psr\Http\Client\ClientInterface;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
@@ -36,6 +39,14 @@ class CommandServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
+        $container[KafkaSchemaRegistryApiClientProvider::REQUEST_FACTORY] = static function (): HttpFactory {
+            return new HttpFactory();
+        };
+
+        $container[KafkaSchemaRegistryApiClientProvider::CLIENT] = static function (): ClientInterface {
+            return new Client();
+        };
+
         $container->register(new KafkaSchemaRegistryApiClientProvider());
 
         $container[self::COMMANDS] = static function (Container $container) {
