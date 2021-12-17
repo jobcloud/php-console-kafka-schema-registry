@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Jobcloud\SchemaConsole\Command;
 
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
-use JsonException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,7 +32,6 @@ class CheckDocCommentsCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
-     * @throws JsonException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {

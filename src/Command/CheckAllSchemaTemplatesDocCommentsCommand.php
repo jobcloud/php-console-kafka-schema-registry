@@ -37,7 +37,6 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return integer
-     * @throws JsonException
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
