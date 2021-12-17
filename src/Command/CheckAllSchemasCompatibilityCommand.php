@@ -57,9 +57,6 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
      * @param array<string, mixed> $avroFiles
      * @param array<string, mixed> $failed
      * @return boolean
-     * @throws SchemaRegistryExceptionInterface
-     * @throws JsonException
-     * @throws ClientExceptionInterface
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {
