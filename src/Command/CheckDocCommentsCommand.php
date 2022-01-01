@@ -47,8 +47,9 @@ class CheckDocCommentsCommand extends Command
 
         $schema = json_decode($localSchema, true, 512, JSON_THROW_ON_ERROR);
 
-        if (false === SchemaFileHelper::checkDocCommentsOnSchemaTemplates($schema)) {
+        if ([] !== $missingComments = SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate($schema)) {
             $io->error($errorMessage);
+            $io->listing(array_keys($missingComments));
 
             return 1;
         }

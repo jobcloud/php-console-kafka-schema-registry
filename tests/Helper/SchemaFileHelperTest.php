@@ -85,8 +85,13 @@ EOF
     }
 
     public function testHasDocCommentsOnAllFields(): void {
-        self::assertFalse(
-            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+        self::assertEquals(
+            [
+                'name' => 1,
+                'number1' => 1,
+                'number2' => 1
+            ],
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -100,8 +105,9 @@ EOF
 EOF
         );
 
-        self::assertTrue(
-            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+        self::assertEquals(
+            [],
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -132,8 +138,11 @@ EOF
 EOF
         );
 
-        self::assertFalse(
-            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+        self::assertEquals(
+            [
+                'number2' => 1
+            ],
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
 
         file_put_contents(self::SCHEMA_FILE,
@@ -164,8 +173,9 @@ EOF
 EOF
         );
 
-        self::assertTrue(
-            SchemaFileHelper::checkDocCommentsOnSchemaTemplates(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+        self::assertEquals(
+            [],
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
         );
     }
 }

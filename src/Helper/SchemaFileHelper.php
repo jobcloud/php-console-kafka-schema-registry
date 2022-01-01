@@ -83,24 +83,26 @@ class SchemaFileHelper
 
     /**
      * @param array<string, mixed> $schema
-     * @return bool
+     * @return array<string|int,int>
      */
-    public static function checkDocCommentsOnSchemaTemplates(array $schema): bool
+    public static function getFieldsWithMissingDocCommentForTemplate(array $schema): array
     {
+        $missingDocComments = [];
+
         $fields = $schema[self::FIELDS_FIELD_KEY] ?? null;
 
         if (false === is_array($fields) || 0 === count($fields)) {
-            return true;
+            return $missingDocComments;
         }
 
         foreach ($fields as $field) {
             $doc = $field[self::DOC_FIELD_KEY] ?? null;
 
             if (false === is_string($doc) || '' === trim($doc)) {
-                return false;
+                $missingDocComments[$field['name']] = 1;
             }
         }
 
-        return true;
+        return $missingDocComments;
     }
 }
