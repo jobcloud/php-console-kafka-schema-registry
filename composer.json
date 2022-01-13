@@ -10,6 +10,11 @@
             "homepage": "https://careers.jobcloud.ch/en/our-team/?term=133"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs", "no-api": true, "url": "git@github.com:jobcloud/php-kafka-schema-registry-client.git"
+        }
+    ],
     "require": {
         "php": ">=7.4",
         "ext-json": "*",
