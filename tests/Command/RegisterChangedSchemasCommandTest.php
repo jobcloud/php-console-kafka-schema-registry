@@ -121,7 +121,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
     public function testOutputWhenCommandSuccessWithSkipping():void
     {
-
         $this->generateFiles(5);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
@@ -154,7 +153,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
     public function testOutputWhenCommandSuccessWithAllNew():void
     {
-
         $this->generateFiles(5);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
@@ -246,5 +244,41 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertStringContainsString('has an incompatible change', $commandOutput);
 
         self::assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenCommandRegisterWithSuccessAndVersioningOption():void
+    {
+        $numFiles = 5;
+        $this->generateFiles($numFiles);
+
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'checkSchemaCompatibilityForVersion' => TRUE,
+            'getSchemaDefinitionByVersion',
+            'getVersionForSchema',
+            'registerNewSchemaVersion',
+            'getLatestSubjectVersion' => '1',
+        ]);
+
+        $schemaRegistryApi
+            ->method('getSchemaDefinitionByVersion')
+            ->willReturn([])
+        ;
+
+        $application = new Application();
+        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:register:changed');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaDirectory' => self::SCHEMA_DIRECTORY,
+            '--useSchemaVersioning' => true
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertMatchesRegularExpression('/^Successfully registered new version of schema /', $commandOutput);
+        self::assertStringContainsString('with new versions, the latest being', $commandOutput);
+        self::assertEquals(0, $commandTester->getStatusCode());
     }
 }

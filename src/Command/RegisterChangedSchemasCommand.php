@@ -9,6 +9,7 @@ use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -43,7 +44,13 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             ->setName('kafka-schema-registry:register:changed')
             ->setDescription('Register all changed schemas from a path')
             ->setHelp('Register all changed schemas from a path')
-            ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to avro schema directory');
+            ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to avro schema directory')
+            ->addOption(
+                'useSchemaVersioning',
+                null,
+                InputOption::VALUE_NONE,
+                'Register schemas with multiple versions (e.g. ch.jobcloud.namespace.schema.1.avsc)'
+            );
     }
 
     /**
@@ -64,8 +71,16 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         $failed = [];
         $succeeded = [];
 
+        $useSchemaVersioning = (bool) $input->getOption('useSchemaVersioning');
+
+        $successMessage = '%s with new version: %s';
+        if ($useSchemaVersioning) {
+            natsort($avroFiles);
+            $successMessage = '%s with new versions, the latest being: %s';
+        }
+
         while (false === $this->abortRegister) {
-            if (false === $this->registerFiles($avroFiles, $io, $failed, $succeeded)) {
+            if (false === $this->registerFiles($avroFiles, $io, $failed, $succeeded, $useSchemaVersioning)) {
                 return 1;
             }
 
@@ -79,8 +94,8 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
         if (isset($succeeded) && 0 !== count($succeeded)) {
             $io->success('Succeeded registering the following schemas:');
-            $io->listing(array_map(static function ($item) {
-                return sprintf('%s with new version: %s', $item['name'], $item['version']);
+            $io->listing(array_map(static function ($item) use ($successMessage) {
+                return sprintf($successMessage, $item['name'], $item['version']);
             }, $succeeded));
         }
 
@@ -92,13 +107,15 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      * @param SymfonyStyle $io
      * @param array<string, mixed> $failed
      * @param array<string, mixed> $succeeded
+     * @param bool $useSchemaVersioning
      * @return boolean
      */
     private function registerFiles(
         array $avroFiles,
         SymfonyStyle $io,
         array &$failed = [],
-        array &$succeeded = []
+        array &$succeeded = [],
+        bool $useSchemaVersioning = false
     ): bool {
         foreach ($avroFiles as $schemaName => $avroFile) {
             /** @var string $fileContents */
@@ -109,6 +126,11 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
             /** @var string $localSchema */
             $localSchema = json_encode($jsonDecoded);
+
+            if ($useSchemaVersioning) {
+                /** @var string $schemaName */
+                $schemaName = preg_replace('/[.0-9]*$/', '', $schemaName);
+            }
 
             try {
                 $latestVersion = $this->schemaRegistryApi->getLatestSubjectVersion($schemaName);
