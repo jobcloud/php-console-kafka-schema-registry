@@ -4,6 +4,7 @@ namespace Jobcloud\SchemaConsole\ServiceProvider;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\Kafka\SchemaRegistryClient\ServiceProvider\KafkaSchemaRegistryApiClientProvider;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesNameFieldsCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasAreValidAvroCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand;
@@ -62,7 +63,8 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new CheckAllSchemasAreValidAvroCommand(),
                 new CheckAllSchemaTemplatesDefaultTypeCommand(),
                 new CheckDocCommentsCommand(),
-                new CheckAllSchemaTemplatesDocCommentsCommand()
+                new CheckAllSchemaTemplatesDocCommentsCommand(),
+                new CheckAllSchemaTemplatesNameFieldsCommand(),
             ];
         };
     }
