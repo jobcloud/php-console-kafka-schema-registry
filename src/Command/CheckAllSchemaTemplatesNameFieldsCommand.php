@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jobcloud\SchemaConsole\Command;
 
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
@@ -21,9 +23,6 @@ class CheckAllSchemaTemplatesNameFieldsCommand extends Command
 
     private const REGEX_MATCH_STRING = '/^[A-Za-z0-9_]+$/';
 
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -37,11 +36,6 @@ class CheckAllSchemaTemplatesNameFieldsCommand extends Command
             );
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
