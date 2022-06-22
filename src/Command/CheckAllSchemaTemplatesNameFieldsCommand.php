@@ -19,16 +19,14 @@ class CheckAllSchemaTemplatesNameFieldsCommand extends Command
         'fixed'
     ];
 
-    private const REGEX_MATCH_FIRST_LETTER = '/^[A-Za-z_]/';
-
-    private const REGEX_MATCH_STRING = '/^[A-Za-z0-9_]+$/';
+    private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*[A-Za-z0-9_]$/';
 
     protected function configure(): void
     {
         $this
-            ->setName('kafka-schema-registry:check:template:name:field:all')
-            ->setDescription('Checks if name field follows avro naming convention')
-            ->setHelp('Checks if name field follows avro naming convention')
+            ->setName('kafka-schema-registry:check:template:names:all')
+            ->setDescription('Checks if template names follow avro naming convention')
+            ->setHelp('Checks if template names follow avro naming convention')
             ->addArgument(
                 'schemaTemplateDirectory',
                 InputArgument::REQUIRED,
@@ -47,7 +45,9 @@ class CheckAllSchemaTemplatesNameFieldsCommand extends Command
         $failed = [];
 
         if (false === $this->checkSchemaTemplateNameFields($avroFiles, $failed)) {
-            $io->error('Following schema templates have invalid name field:');
+            $io->error('A template schema name field must comply with the following AVRO naming conventions:
+https://avro.apache.org/docs/current/spec.html#names
+The following template schema names violate the aforementioned rules:');
             $io->listing($failed);
 
             return 1;
@@ -72,15 +72,13 @@ class CheckAllSchemaTemplatesNameFieldsCommand extends Command
             $localSchema = file_get_contents($avroFile);
 
             $decodedSchema = json_decode($localSchema);
+
             if (
                 property_exists($decodedSchema, 'type')
                 && property_exists($decodedSchema, 'name')
                 && in_array($decodedSchema->type, self::TYPES_FOR_VALIDATION)
             ) {
-                if (
-                    preg_match(self::REGEX_MATCH_FIRST_LETTER, $decodedSchema->name)
-                    && preg_match(self::REGEX_MATCH_STRING, $decodedSchema->name)
-                ) {
+                if (preg_match(self::REGEX_MATCH_NAME_NAMING_CONVENTION, $decodedSchema->name)) {
                     continue;
                 } else {
                     $failed[] = $schemaName;

@@ -14,7 +14,7 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
 {
     protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_SCHEMA = <<<EOF
+    protected const GOOD_RECORD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -30,10 +30,44 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         }
         EOF;
 
+    protected const GOOD_ENUM_SCHEMA = <<<EOF
+        {
+          "type": "enum",
+          "name": "Suit",
+          "namespace": "ch.jobcloud",
+          "symbols" : ["SPADES", "HEARTS", "DIAMONDS", "CLUBS"]
+        }
+        EOF;
+
+    protected const GOOD_FIXED_SCHEMA = <<<EOF
+        {
+          "type": "fixed",
+          "name": "md5",
+          "namespace": "ch.jobcloud",
+          "size" : 16
+        }
+        EOF;
+
     protected const BAD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "000test",
+          "namespace": "ch.jobcloud",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
+    protected const BAD_SCHEMA1 = <<<EOF
+        {
+          "type": "record",
+          "name": "test-schema",
           "namespace": "ch.jobcloud",
           "doc": "This is a sample Avro schema to get you started. Please edit",
           "fields": [
@@ -69,41 +103,26 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param bool $makeBad
-     */
-    protected function generateFiles(int $numberOfFiles, bool $makeBad = false): void
-    {
-        $numbers = range(1, $numberOfFiles);
-
-        if ($makeBad) {
-            file_put_contents(
-                sprintf('%s/test.schema.bad1.avsc', self::SCHEMA_DIRECTORY),
-                self::BAD_SCHEMA
-            );
-
-            file_put_contents(
-                sprintf('%s/test.schema.bad2.avsc', self::SCHEMA_DIRECTORY),
-                self::BAD_SCHEMA
-            );
-        }
-
-        array_walk($numbers, static function ($item) {
-            file_put_contents(
-                sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
-                self::GOOD_SCHEMA
-            );
-        });
-    }
-
     public function testOutputWhenAllValid(): void
     {
-        $this->generateFiles(5);
+        file_put_contents(
+            sprintf('%s/test.schema.record.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_RECORD_SCHEMA
+        );
+
+        file_put_contents(
+            sprintf('%s/test.schema.enum.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_ENUM_SCHEMA
+        );
+
+        file_put_contents(
+            sprintf('%s/test.schema.fixed.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_FIXED_SCHEMA
+        );
 
         $application = new Application();
         $application->add(new CheckAllSchemaTemplatesNameFieldsCommand());
-        $command = $application->find('kafka-schema-registry:check:template:name:field:all');
+        $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
@@ -116,13 +135,16 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenAllNotInvalid(): void
+    public function testOutputWhenNameStartsWithNumber(): void
     {
-        $this->generateFiles(5, true);
+        file_put_contents(
+            sprintf('%s/test.schema.bad.avsc', self::SCHEMA_DIRECTORY),
+            self::BAD_SCHEMA
+        );
 
         $application = new Application();
         $application->add(new CheckAllSchemaTemplatesNameFieldsCommand());
-        $command = $application->find('kafka-schema-registry:check:template:name:field:all');
+        $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([
@@ -131,9 +153,37 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertStringContainsString('Following schema templates have invalid name field', $commandOutput);
+        self::assertStringContainsString(
+            'A template schema name field must comply with the following AVRO naming conventions',
+            $commandOutput
+        );
+        self::assertStringContainsString('* test.schema.bad', $commandOutput);
+        self::assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenNameContainsDash(): void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.bad1.avsc', self::SCHEMA_DIRECTORY),
+            self::BAD_SCHEMA1
+        );
+
+        $application = new Application();
+        $application->add(new CheckAllSchemaTemplatesNameFieldsCommand());
+        $command = $application->find('kafka-schema-registry:check:template:names:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString(
+            'A template schema name field must comply with the following AVRO naming conventions',
+            $commandOutput
+        );
         self::assertStringContainsString('* test.schema.bad1', $commandOutput);
-        self::assertStringContainsString('* test.schema.bad2', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 }
