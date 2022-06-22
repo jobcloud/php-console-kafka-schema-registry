@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class CheckAllSchemaTemplatesNameFieldsCommand extends Command
+class CheckAllSchemaTemplatesNamesCommand extends Command
 {
     private const TYPES_FOR_VALIDATION = [
         'record',
@@ -20,6 +20,8 @@ class CheckAllSchemaTemplatesNameFieldsCommand extends Command
     ];
 
     private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*[A-Za-z0-9_]$/';
+
+    private const REGEX_MATCH_NAMESPACE_FIRST_AND_LAST_CHARACTER = '/^[A-Za-z_].*[A-Za-z0-9_]$/';
 
     protected function configure(): void
     {
@@ -44,8 +46,8 @@ class CheckAllSchemaTemplatesNameFieldsCommand extends Command
 
         $failed = [];
 
-        if (false === $this->checkSchemaTemplateNameFields($avroFiles, $failed)) {
-            $io->error('A template schema name field must comply with the following AVRO naming conventions:
+        if (false === $this->checkSchemaTemplateNames($avroFiles, $failed)) {
+            $io->error('A template schema names must comply with the following AVRO naming conventions:
 https://avro.apache.org/docs/current/spec.html#names
 The following template schema names violate the aforementioned rules:');
             $io->listing($failed);
@@ -63,7 +65,7 @@ The following template schema names violate the aforementioned rules:');
      * @param array<string, mixed> $failed
      * @return boolean
      */
-    private function checkSchemaTemplateNameFields(array $avroFiles, array &$failed = []): bool
+    private function checkSchemaTemplateNames(array $avroFiles, array &$failed = []): bool
     {
         $failed = [];
 
@@ -75,17 +77,58 @@ The following template schema names violate the aforementioned rules:');
 
             if (
                 property_exists($decodedSchema, 'type')
-                && property_exists($decodedSchema, 'name')
                 && in_array($decodedSchema->type, self::TYPES_FOR_VALIDATION)
             ) {
-                if (preg_match(self::REGEX_MATCH_NAME_NAMING_CONVENTION, $decodedSchema->name)) {
-                    continue;
-                } else {
-                    $failed[] = $schemaName;
+                if (property_exists($decodedSchema, 'name')) {
+                    $failed = array_merge($failed, $this->checkSingleName($decodedSchema->name, $schemaName));
+                }
+
+                if (property_exists($decodedSchema, 'namespace')) {
+                    $namespace = $decodedSchema->namespace;
+                    $failed = $this->validateNamespaceField($namespace, $schemaName, $failed);
                 }
             }
         }
 
         return 0 === count($failed);
+    }
+
+    /**
+     * @param array<int, string> $failed
+     * @return array<int, string>
+     */
+    private function validateNamespaceField(string $namespace, string $schemaName, array $failed): array
+    {
+        if ('' === $namespace) {
+            return $failed;
+        }
+
+        if (!preg_match(self::REGEX_MATCH_NAMESPACE_FIRST_AND_LAST_CHARACTER, $namespace)) {
+            $failed[] = $schemaName;
+        } elseif (strpos($namespace, '.') !== false) {
+            $nameSequence = explode(".", $namespace);
+
+            foreach ($nameSequence as $name) {
+                $failed = array_merge($failed, $this->checkSingleName($name, $schemaName));
+            }
+        } else {
+            $failed = array_merge($failed, $this->checkSingleName($namespace, $schemaName));
+        }
+
+        return $failed;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function checkSingleName(string $name, string $schemaName): array
+    {
+        $failed = [];
+
+        if (!preg_match(self::REGEX_MATCH_NAME_NAMING_CONVENTION, $name)) {
+            $failed[] = $schemaName;
+        }
+
+        return $failed;
     }
 }

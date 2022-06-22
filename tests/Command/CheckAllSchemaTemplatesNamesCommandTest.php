@@ -2,15 +2,15 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
-use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesNameFieldsCommand;
+use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesNamesCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesNameFieldsCommand
+ * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesNamesCommand
  */
-class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistryTestCase
+class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
@@ -48,6 +48,38 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         }
         EOF;
 
+    protected const GOOD_RECORD_SCHEMA_WITH_EMPTY_NAMESPACE = <<<EOF
+        {
+          "type": "record",
+          "name": "test",
+          "namespace": "",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
+    protected const GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE = <<<EOF
+        {
+          "type": "record",
+          "name": "test",
+          "namespace": "jobcloud",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
     protected const BAD_SCHEMA = <<<EOF
         {
           "type": "record",
@@ -69,6 +101,38 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
           "type": "record",
           "name": "test-schema",
           "namespace": "ch.jobcloud",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
+    protected const BAD_SCHEMA2 = <<<EOF
+        {
+          "type": "record",
+          "name": "test",
+          "namespace": "job-cloud",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
+    protected const BAD_SCHEMA3 = <<<EOF
+        {
+          "type": "record",
+          "name": "test",
+          "namespace": ".ch.jobcloud",
           "doc": "This is a sample Avro schema to get you started. Please edit",
           "fields": [
             {
@@ -120,8 +184,18 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
             self::GOOD_FIXED_SCHEMA
         );
 
+        file_put_contents(
+            sprintf('%s/test.schema.empty.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_RECORD_SCHEMA_WITH_EMPTY_NAMESPACE
+        );
+
+        file_put_contents(
+            sprintf('%s/test.schema.word.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE
+        );
+
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNameFieldsCommand());
+        $application->add(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -143,7 +217,7 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNameFieldsCommand());
+        $application->add(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -154,7 +228,7 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString(
-            'A template schema name field must comply with the following AVRO naming conventions',
+            'A template schema names must comply with the following AVRO naming conventions',
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad', $commandOutput);
@@ -169,7 +243,7 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNameFieldsCommand());
+        $application->add(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -180,10 +254,62 @@ class CheckAllSchemaTemplatesNameFieldsCommandTest extends AbstractSchemaRegistr
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString(
-            'A template schema name field must comply with the following AVRO naming conventions',
+            'A template schema names must comply with the following AVRO naming conventions',
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad1', $commandOutput);
+        self::assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenNamespaceContainsDash(): void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.bad2.avsc', self::SCHEMA_DIRECTORY),
+            self::BAD_SCHEMA2
+        );
+
+        $application = new Application();
+        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $command = $application->find('kafka-schema-registry:check:template:names:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString(
+            'A template schema names must comply with the following AVRO naming conventions',
+            $commandOutput
+        );
+        self::assertStringContainsString('* test.schema.bad2', $commandOutput);
+        self::assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenNamespaceStartsWithDot(): void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.bad3.avsc', self::SCHEMA_DIRECTORY),
+            self::BAD_SCHEMA3
+        );
+
+        $application = new Application();
+        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $command = $application->find('kafka-schema-registry:check:template:names:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString(
+            'A template schema names must comply with the following AVRO naming conventions',
+            $commandOutput
+        );
+        self::assertStringContainsString('* test.schema.bad3', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 }
