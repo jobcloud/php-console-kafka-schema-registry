@@ -1,4 +1,4 @@
-FROM php:7.4-cli-alpine3.15
+FROM php:7.4-cli-alpine3.16
 
 ARG HOST_USER_ID
 
@@ -40,7 +40,7 @@ RUN ln -s /run/secrets/ssh_host_key /root/.ssh/id_rsa && \
 
 # PHP: Install php extensions
 RUN pecl channel-update pecl.php.net && \
-    pecl install pcov rdkafka && \
+    pecl install pcov rdkafka-6.0.2 && \
     php-ext-enable pcov rdkafka
 
 # COMPOSER: install binary
