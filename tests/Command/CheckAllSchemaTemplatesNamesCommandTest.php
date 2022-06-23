@@ -228,7 +228,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString(
-            'A template schema names must comply with the following AVRO naming conventions',
+            'A template schema names must comply with the following AVRO naming',
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad', $commandOutput);
@@ -254,7 +254,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString(
-            'A template schema names must comply with the following AVRO naming conventions',
+            'A template schema names must comply with the following AVRO naming',
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad1', $commandOutput);
@@ -280,7 +280,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString(
-            'A template schema names must comply with the following AVRO naming conventions',
+            'A template schema names must comply with the following AVRO naming',
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
@@ -306,7 +306,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString(
-            'A template schema names must comply with the following AVRO naming conventions',
+            'A template schema names must comply with the following AVRO naming',
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad3', $commandOutput);
