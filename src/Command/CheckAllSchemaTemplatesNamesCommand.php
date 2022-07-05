@@ -99,10 +99,6 @@ The following template schema names violate the aforementioned rules:');
     {
         $failed = [];
 
-        if ('' === $namespace) {
-            return $failed;
-        }
-
         if (!preg_match(self::REGEX_MATCH_NAMESPACE_NAMING_CONVENTION, $namespace)) {
             $failed[] = $schemaName;
         }
