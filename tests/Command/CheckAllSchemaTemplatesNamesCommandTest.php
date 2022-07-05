@@ -64,6 +64,38 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
+    protected const GOOD_RECORD_SCHEMA_NAME_STARTS_WITH_UNDERSCORE = <<<EOF
+        {
+          "type": "record",
+          "name": "_test",
+          "namespace": "",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
+    protected const GOOD_RECORD_SCHEMA_NAME_CONTAINS_UNDERSCORE = <<<EOF
+        {
+          "type": "record",
+          "name": "test_schema",
+          "namespace": "",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
     protected const GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE = <<<EOF
         {
           "type": "record",
@@ -192,6 +224,16 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         file_put_contents(
             sprintf('%s/test.schema.word.avsc', self::SCHEMA_DIRECTORY),
             self::GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE
+        );
+
+        file_put_contents(
+            sprintf('%s/test.schema.start-underscore.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_RECORD_SCHEMA_NAME_STARTS_WITH_UNDERSCORE
+        );
+
+        file_put_contents(
+            sprintf('%s/test.schema.contains-underscore.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_RECORD_SCHEMA_NAME_CONTAINS_UNDERSCORE
         );
 
         $application = new Application();

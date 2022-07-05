@@ -19,9 +19,10 @@ class CheckAllSchemaTemplatesNamesCommand extends Command
         'fixed'
     ];
 
-    private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*[A-Za-z0-9_]$/';
+    private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
 
-    private const REGEX_MATCH_NAMESPACE_FIRST_AND_LAST_CHARACTER = '/^[A-Za-z_].*[A-Za-z0-9_]$/';
+    private const REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
+        '/^(?:[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)?$/';
 
     protected function configure(): void
     {
@@ -79,13 +80,11 @@ The following template schema names violate the aforementioned rules:');
                 property_exists($decodedSchema, 'type')
                 && in_array($decodedSchema->type, self::TYPES_FOR_VALIDATION)
             ) {
-                if (property_exists($decodedSchema, 'name')) {
-                    $failed = array_merge($failed, $this->checkSingleName($decodedSchema->name, $schemaName));
-                }
+                $failed = array_merge($failed, $this->validateNameField($decodedSchema->name, $schemaName));
 
                 if (property_exists($decodedSchema, 'namespace')) {
                     $namespace = $decodedSchema->namespace;
-                    $failed = $this->validateNamespaceField($namespace, $schemaName, $failed);
+                    $failed = array_merge($failed, $this->validateNamespaceField($namespace, $schemaName));
                 }
             }
         }
@@ -94,25 +93,18 @@ The following template schema names violate the aforementioned rules:');
     }
 
     /**
-     * @param array<int, string> $failed
      * @return array<int, string>
      */
-    private function validateNamespaceField(string $namespace, string $schemaName, array $failed): array
+    private function validateNamespaceField(string $namespace, string $schemaName): array
     {
+        $failed = [];
+
         if ('' === $namespace) {
             return $failed;
         }
 
-        if (!preg_match(self::REGEX_MATCH_NAMESPACE_FIRST_AND_LAST_CHARACTER, $namespace)) {
+        if (!preg_match(self::REGEX_MATCH_NAMESPACE_NAMING_CONVENTION, $namespace)) {
             $failed[] = $schemaName;
-        } elseif (strpos($namespace, '.') !== false) {
-            $nameSequence = explode(".", $namespace);
-
-            foreach ($nameSequence as $name) {
-                $failed = array_merge($failed, $this->checkSingleName($name, $schemaName));
-            }
-        } else {
-            $failed = array_merge($failed, $this->checkSingleName($namespace, $schemaName));
         }
 
         return $failed;
@@ -121,7 +113,7 @@ The following template schema names violate the aforementioned rules:');
     /**
      * @return array<int, string>
      */
-    private function checkSingleName(string $name, string $schemaName): array
+    private function validateNameField(string $name, string $schemaName): array
     {
         $failed = [];
 
