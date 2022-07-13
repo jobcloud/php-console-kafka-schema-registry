@@ -80,7 +80,7 @@ EOF;
     protected function setUp(): void
     {
         parent::setUp();
-        if (!file_exists(self::SCHEMA_DIRECTORY)){
+        if (!file_exists(self::SCHEMA_DIRECTORY)) {
             mkdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -97,7 +97,7 @@ EOF;
         }
     }
 
-    public function testOutputWhenAllValid():void
+    public function testOutputWhenAllValid(): void
     {
         file_put_contents(
             sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, 1),
@@ -119,7 +119,7 @@ EOF;
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenAllNotInvalid():void
+    public function testOutputWhenAllNotInvalid(): void
     {
         file_put_contents(
             sprintf('%s/test.schema.bad.avsc', self::SCHEMA_DIRECTORY),
@@ -151,7 +151,7 @@ EOF;
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 
-    public function testExceptionWhenAllNotInvalid():void
+    public function testExceptionWhenAllNotInvalid(): void
     {
         file_put_contents(
             sprintf('%s/test.schema.bad1.avsc', self::SCHEMA_DIRECTORY),

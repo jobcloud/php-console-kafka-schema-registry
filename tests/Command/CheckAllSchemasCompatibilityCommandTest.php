@@ -47,7 +47,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
     protected function setUp(): void
     {
         parent::setUp();
-        if (!file_exists(self::SCHEMA_DIRECTORY)){
+        if (!file_exists(self::SCHEMA_DIRECTORY)) {
             mkdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -58,7 +58,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
     protected function tearDown(): void
     {
         parent::tearDown();
-        if (file_exists(self::SCHEMA_DIRECTORY)){
+        if (file_exists(self::SCHEMA_DIRECTORY)) {
             array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
@@ -68,10 +68,11 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
      * @param int $numberOfFiles
      * @param string $contents
      */
-    protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void {
-        $numbers = range(1,$numberOfFiles);
+    protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void
+    {
+        $numbers = range(1, $numberOfFiles);
 
-        array_walk($numbers , static function ($item) use ($contents) {
+        array_walk($numbers, static function ($item) use ($contents) {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 $contents
@@ -84,13 +85,13 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         );
     }
 
-    public function testOutputWhenAllCompatible():void
+    public function testOutputWhenAllCompatible(): void
     {
         $this->generateFiles(5);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'checkSchemaCompatibilityForVersion' => TRUE,
+            'checkSchemaCompatibilityForVersion' => true,
             'getSchemaDefinitionByVersion',
             'getLatestSubjectVersion' => '1'
         ]);
@@ -115,7 +116,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenAllNotCompatible():void
+    public function testOutputWhenAllNotCompatible(): void
     {
         $this->generateFiles(5);
 

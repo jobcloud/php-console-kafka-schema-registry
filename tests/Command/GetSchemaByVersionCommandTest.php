@@ -18,7 +18,7 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
-    public function testCommand():void
+    public function testCommand(): void
     {
         $schema = [];
 
@@ -47,7 +47,7 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(json_encode($schema, JSON_THROW_ON_ERROR), $fileContents);
     }
 
-    public function testCommandFailToReadFile():void
+    public function testCommandFailToReadFile(): void
     {
         $failurePath = '..';
 

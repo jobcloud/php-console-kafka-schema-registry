@@ -16,7 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class ListVersionForSchemaCommandTest extends AbstractSchemaRegistryTestCase
 {
-    public function testCommand():void
+    public function testCommand(): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [

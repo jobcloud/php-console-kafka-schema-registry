@@ -18,9 +18,10 @@ class RegisterSchemaVersionCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
-    public function testCommand():void
+    public function testCommand(): void
     {
-        file_put_contents(self::SCHEMA_TEST_FILE,
+        file_put_contents(
+            self::SCHEMA_TEST_FILE,
             <<<EOF
 {
   "type": "record",
@@ -42,7 +43,8 @@ class RegisterSchemaVersionCommandTest extends AbstractSchemaRegistryTestCase
     }
   ]
 }
-EOF);
+EOF
+        );
 
         $expectedId = '12345abcdefg';
 

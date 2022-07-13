@@ -74,7 +74,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 
-    public function testUnknownClientErrorCodeThrowsException():void
+    public function testUnknownClientErrorCodeThrowsException(): void
     {
         $clientException = new ClientException('ERROR MESSAGE', 401);
 

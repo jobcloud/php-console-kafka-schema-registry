@@ -38,7 +38,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
      * @param string $expectedOutput
      * @param int $expectedExitCode
      */
-    public function testCommand(?string $actualVersion, string $expectedOutput, int $expectedExitCode):void
+    public function testCommand(?string $actualVersion, string $expectedOutput, int $expectedExitCode): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [

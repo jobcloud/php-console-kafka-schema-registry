@@ -48,7 +48,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        if (!file_exists(self::SCHEMA_DIRECTORY)){
+        if (!file_exists(self::SCHEMA_DIRECTORY)) {
             mkdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -59,7 +59,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        if (file_exists(self::SCHEMA_DIRECTORY)){
+        if (file_exists(self::SCHEMA_DIRECTORY)) {
             array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
@@ -69,10 +69,11 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
      * @param int $numberOfFiles
      * @param string $contents
      */
-    protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void {
-        $numbers = range(1,$numberOfFiles);
+    protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void
+    {
+        $numbers = range(1, $numberOfFiles);
 
-        array_walk($numbers , static function ($item) use ($contents) {
+        array_walk($numbers, static function ($item) use ($contents) {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 $contents
@@ -85,14 +86,13 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         );
     }
 
-    public function testOutputWhenCommandRegisterWithSuccess():void
+    public function testOutputWhenCommandRegisterWithSuccess(): void
     {
-        $numFiles = 5;
-        $this->generateFiles($numFiles);
+        $this->generateFiles(5);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'checkSchemaCompatibilityForVersion' => TRUE,
+            'checkSchemaCompatibilityForVersion' => true,
             'getSchemaDefinitionByVersion',
             'getVersionForSchema',
             'registerNewSchemaVersion',
@@ -119,13 +119,13 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenCommandSuccessWithSkipping():void
+    public function testOutputWhenCommandSuccessWithSkipping(): void
     {
         $this->generateFiles(5);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'checkSchemaCompatibilityForVersion' => TRUE,
+            'checkSchemaCompatibilityForVersion' => true,
             'getVersionForSchema' => '1',
             'registerNewSchemaVersion',
             'getLatestSubjectVersion' => '1'
@@ -151,13 +151,13 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenCommandSuccessWithAllNew():void
+    public function testOutputWhenCommandSuccessWithAllNew(): void
     {
         $this->generateFiles(5);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'checkSchemaCompatibilityForVersion' => TRUE,
+            'checkSchemaCompatibilityForVersion' => true,
             'getVersionForSchema' => '1',
             'registerNewSchemaVersion',
             'getLatestSubjectVersion' => new SubjectNotFoundException()
@@ -189,13 +189,13 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenCommandFailsRegisteringASchema():void
+    public function testOutputWhenCommandFailsRegisteringASchema(): void
     {
         $this->generateFiles(1, 'asdf');
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'checkSchemaCompatibilityForVersion' => TRUE,
+            'checkSchemaCompatibilityForVersion' => true,
             'getVersionForSchema' => null,
             'registerNewSchemaVersion',
             'getLatestSubjectVersion' => '1'
@@ -212,18 +212,21 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertStringContainsString('Skipping test.schema.1 for now because  is not a schema we know about.', $commandOutput);
+        self::assertStringContainsString(
+            'Skipping test.schema.1 for now because  is not a schema we know about.',
+            $commandOutput
+        );
 
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 
-    public function testOutputTotalFailDueToIncompatibility():void
+    public function testOutputTotalFailDueToIncompatibility(): void
     {
         $this->generateFiles(5);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'checkSchemaCompatibilityForVersion' => FALSE,
+            'checkSchemaCompatibilityForVersion' => false,
             'getSchemaDefinitionByVersion',
             'registerNewSchemaVersion',
             'getLatestSubjectVersion' => '1',
@@ -246,14 +249,14 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenCommandRegisterWithSuccessAndVersioningOption():void
+    public function testOutputWhenCommandRegisterWithSuccessAndVersioningOption(): void
     {
         $numFiles = 5;
         $this->generateFiles($numFiles);
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'checkSchemaCompatibilityForVersion' => TRUE,
+            'checkSchemaCompatibilityForVersion' => true,
             'getSchemaDefinitionByVersion',
             'getVersionForSchema',
             'registerNewSchemaVersion',

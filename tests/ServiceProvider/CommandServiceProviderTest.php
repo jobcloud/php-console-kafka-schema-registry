@@ -33,7 +33,7 @@ use Symfony\Component\Console\Command\Command;
  */
 class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
 {
-    public function testMakesServicesInContainer():void
+    public function testMakesServicesInContainer(): void
     {
         $container = new Container();
 
@@ -50,7 +50,7 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         self::assertArrayHasKey(CommandServiceProvider::COMMANDS, $container);
     }
 
-    public function testAllCommandsThereAreInstancesOfCommand():void
+    public function testAllCommandsThereAreInstancesOfCommand(): void
     {
         $container = new Container();
 
@@ -61,12 +61,12 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         $container->register(new CommandServiceProvider());
         $commands = $container[CommandServiceProvider::COMMANDS];
 
-        foreach ($commands as $command){
+        foreach ($commands as $command) {
             self::assertInstanceOf(Command::class, $command);
         }
     }
 
-    public function testHasAllOfTheCommands():void
+    public function testHasAllOfTheCommands(): void
     {
         $container = new Container();
 

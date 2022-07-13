@@ -75,7 +75,8 @@ EOF;
 }
 EOF;
 
-    public function testCommandSuccess(): void {
+    public function testCommandSuccess(): void
+    {
         $application = new Application();
         $application->add(new CheckDocCommentsCommand());
         $command = $application->find('kafka-schema-registry:check:template:doc');
@@ -93,7 +94,8 @@ EOF;
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testCommandBadSchema(): void {
+    public function testCommandBadSchema(): void
+    {
         $application = new Application();
         $application->add(new CheckDocCommentsCommand());
         $command = $application->find('kafka-schema-registry:check:template:doc');
@@ -111,7 +113,8 @@ EOF;
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 
-    public function testCommandBadSchema1(): void {
+    public function testCommandBadSchema1(): void
+    {
         $application = new Application();
         $application->add(new CheckDocCommentsCommand());
         $command = $application->find('kafka-schema-registry:check:template:doc');
@@ -126,7 +129,8 @@ EOF;
         ]);
     }
 
-    public function testCommandBadSchema2(): void {
+    public function testCommandBadSchema2(): void
+    {
         $application = new Application();
         $application->add(new CheckDocCommentsCommand());
         $command = $application->find('kafka-schema-registry:check:template:doc');

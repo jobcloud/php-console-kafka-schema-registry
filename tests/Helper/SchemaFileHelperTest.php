@@ -20,8 +20,9 @@ class SchemaFileHelperTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        file_put_contents(self::SCHEMA_FILE,
-<<<EOF
+        file_put_contents(
+            self::SCHEMA_FILE,
+            <<<EOF
 {
   "type": "record",
   "name": "evolution",
@@ -51,18 +52,20 @@ EOF
      */
     protected function tearDown(): void
     {
-        if(file_exists(self::SCHEMA_FILE)) {
+        if (file_exists(self::SCHEMA_FILE)) {
             unlink(self::SCHEMA_FILE);
         }
     }
 
-    public function testReadAvroSchemaFromFile():void {
+    public function testReadAvroSchemaFromFile(): void
+    {
         $contents = SchemaFileHelper::readAvroSchemaFromFile(self::SCHEMA_FILE);
 
         self::assertInstanceOf(AvroSchema::class, $contents);
     }
 
-    public function testReadSchemaFromFile():void {
+    public function testReadSchemaFromFile(): void
+    {
         $contents = json_decode(
             SchemaFileHelper::readSchemaFromFile(self::SCHEMA_FILE),
             true,
@@ -75,27 +78,33 @@ EOF
         self::assertArrayHasKey('name', $contents);
     }
 
-    public function testReadSchemaFromFileFail():void {
+    public function testReadSchemaFromFileFail(): void
+    {
         self::expectException(RuntimeException::class);
         SchemaFileHelper::readSchemaFromFile('/tmp/non-existent-file.avsc');
     }
 
-    public function testGetSchemaName(): void {
+    public function testGetSchemaName(): void
+    {
         self::assertEquals('test', SchemaFileHelper::getSchemaName(self::SCHEMA_FILE));
     }
 
-    public function testHasDocCommentsOnAllFields(): void {
+    public function testHasDocCommentsOnAllFields(): void
+    {
         self::assertEquals(
             [
                 'name' => 1,
                 'number1' => 1,
                 'number2' => 1
             ],
-            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
+                json_decode(file_get_contents(self::SCHEMA_FILE), true)
+            )
         );
 
-        file_put_contents(self::SCHEMA_FILE,
-<<<EOF
+        file_put_contents(
+            self::SCHEMA_FILE,
+            <<<EOF
 {
   "type": "record",
   "name": "evolution",
@@ -107,11 +116,14 @@ EOF
 
         self::assertEquals(
             [],
-            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
+                json_decode(file_get_contents(self::SCHEMA_FILE), true)
+            )
         );
 
-        file_put_contents(self::SCHEMA_FILE,
-<<<EOF
+        file_put_contents(
+            self::SCHEMA_FILE,
+            <<<EOF
 {
   "type": "record",
   "name": "evolution",
@@ -142,11 +154,14 @@ EOF
             [
                 'number2' => 1
             ],
-            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
+                json_decode(file_get_contents(self::SCHEMA_FILE), true)
+            )
         );
 
-        file_put_contents(self::SCHEMA_FILE,
-<<<EOF
+        file_put_contents(
+            self::SCHEMA_FILE,
+            <<<EOF
 {
   "type": "record",
   "name": "evolution",
@@ -175,7 +190,9 @@ EOF
 
         self::assertEquals(
             [],
-            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(json_decode(file_get_contents(self::SCHEMA_FILE), true))
+            SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
+                json_decode(file_get_contents(self::SCHEMA_FILE), true)
+            )
         );
     }
 }

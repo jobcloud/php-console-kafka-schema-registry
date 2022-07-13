@@ -40,7 +40,7 @@ RUN ln -s /run/secrets/ssh_host_key /root/.ssh/id_rsa && \
 
 # PHP: Install php extensions
 RUN pecl channel-update pecl.php.net && \
-    pecl install pcov rdkafka-6.0.2 && \
+    pecl install pcov rdkafka-6.0.3 && \
     php-ext-enable pcov rdkafka
 
 # COMPOSER: install binary

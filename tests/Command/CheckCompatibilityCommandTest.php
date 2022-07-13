@@ -43,8 +43,7 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
         $versionArgument,
         string $expectedOutput,
         int $expectedExitCode
-    ):void
-    {
+    ): void {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
             'checkSchemaCompatibilityForVersion' => $actualCompatible,

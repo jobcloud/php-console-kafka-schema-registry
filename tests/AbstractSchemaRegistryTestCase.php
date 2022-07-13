@@ -9,7 +9,7 @@ use Throwable;
 abstract class AbstractSchemaRegistryTestCase extends TestCase
 {
     /**
-     * @param $class
+     * @param string $class
      * @param array|null $methodMap (array of method returns, or NULL)
      *     1. NULL - Methods won't be mocked, it will run original code
      *     2. Array of method names - ['method_name' => 'method_value',...].
@@ -27,14 +27,24 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
         }
 
         $methodNames = array_merge(
-            array_keys(array_filter($methodMap, static function ($key){
-                return !is_numeric($key);
-                }, ARRAY_FILTER_USE_KEY
-            )),
-            array_values(array_filter($methodMap, static function ($key){
-                return is_numeric($key);
-                }, ARRAY_FILTER_USE_KEY
-            ))
+            array_keys(
+                array_filter(
+                    $methodMap,
+                    static function ($key) {
+                        return !is_numeric($key);
+                    },
+                    ARRAY_FILTER_USE_KEY
+                )
+            ),
+            array_values(
+                array_filter(
+                    $methodMap,
+                    static function ($key) {
+                        return is_numeric($key);
+                    },
+                    ARRAY_FILTER_USE_KEY
+                )
+            )
         );
 
         $mock = $mockBuilder->onlyMethods($methodNames)->getMock();
@@ -65,9 +75,9 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
      * @param string $className
      * @param array $array
      */
-    protected static function assertArrayHasInstanceOf(string $className, array $array):void
+    protected static function assertArrayHasInstanceOf(string $className, array $array): void
     {
-        $filtered = array_filter($array, static function ($item) use ($className){
+        $filtered = array_filter($array, static function ($item) use ($className) {
             return $item instanceof $className;
         });
 

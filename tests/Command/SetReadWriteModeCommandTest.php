@@ -27,7 +27,7 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
             ->getMockForAbstractClass();
     }
 
-    public function testCommandSuccess():void
+    public function testCommandSuccess(): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
         $schemaRegistryApi = $this->getFakeClient();
@@ -47,12 +47,13 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertEquals(
-            sprintf("Import mode set to %s", KafkaSchemaRegistryApiClientInterface::MODE_READWRITE), $commandOutput
+            sprintf("Import mode set to %s", KafkaSchemaRegistryApiClientInterface::MODE_READWRITE),
+            $commandOutput
         );
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testCommandFail():void
+    public function testCommandFail(): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
         $schemaRegistryApi = $this

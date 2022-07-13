@@ -67,7 +67,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
     protected function setUp(): void
     {
         parent::setUp();
-        if (!file_exists(self::SCHEMA_DIRECTORY)){
+        if (!file_exists(self::SCHEMA_DIRECTORY)) {
             mkdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -78,7 +78,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
     protected function tearDown(): void
     {
         parent::tearDown();
-        if (file_exists(self::SCHEMA_DIRECTORY)){
+        if (file_exists(self::SCHEMA_DIRECTORY)) {
             array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
@@ -88,10 +88,11 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
      * @param int $numberOfFiles
      * @param bool $makeBad
      */
-    protected function generateFiles(int $numberOfFiles, bool $makeBad = false): void {
-        $numbers = range(1,$numberOfFiles);
+    protected function generateFiles(int $numberOfFiles, bool $makeBad = false): void
+    {
+        $numbers = range(1, $numberOfFiles);
 
-        if($makeBad) {
+        if ($makeBad) {
             file_put_contents(
                 sprintf('%s/test.schema.bad1.avsc', self::SCHEMA_DIRECTORY),
                 self::BAD_SCHEMA
@@ -103,7 +104,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
             );
         }
 
-        array_walk($numbers , static function ($item) {
+        array_walk($numbers, static function ($item) {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 self::GOOD_SCHEMA
@@ -111,7 +112,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         });
     }
 
-    public function testOutputWhenAllValid():void
+    public function testOutputWhenAllValid(): void
     {
         $this->generateFiles(5);
 
@@ -130,7 +131,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 
-    public function testOutputWhenAllNotInvalid():void
+    public function testOutputWhenAllNotInvalid(): void
     {
         $this->generateFiles(5, true);
 
