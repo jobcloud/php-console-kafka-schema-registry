@@ -2,8 +2,6 @@
 
 namespace Jobcloud\SchemaConsole\Command;
 
-use AvroSchema;
-use AvroSchemaParseException;
 use Jobcloud\Kafka\SchemaRegistryClient\Exception\SubjectNotFoundException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
@@ -151,17 +149,16 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             }
 
             try {
-                $schema = AvroSchema::parse($localSchema);
-            } catch (AvroSchemaParseException $e) {
+                $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, $localSchema);
+            } catch (\Throwable $e) {
                 $io->writeln(sprintf('Skipping %s for now because %s', $schemaName, $e->getMessage()));
                 $failed[$schemaName] = $schemaName;
                 continue;
             }
-            $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, $schema);
 
             $succeeded[$schemaName] = [
                 'name' => $schemaName,
-                'version' => $this->schemaRegistryApi->getVersionForSchema($schemaName, $schema),
+                'version' => $this->schemaRegistryApi->getVersionForSchema($schemaName, $localSchema),
             ];
             unset($failed[$schemaName]);
 
