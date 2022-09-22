@@ -10,14 +10,8 @@ services:
     environment:
       KAFKA_SCHEMA_REGISTRY_URL: 'jobcloud-kafka-schema-registry:9081'
     extra_hosts:
-      - "jobcloud-kafka-schema-registry:172.17.0.1"
+      - "jobcloud-kafka-schema-registry:host-gateway"
     volumes:
       - ../:/app/
     working_dir: /app
     tty: true
-    secrets:
-      - ssh_host_key
-
-secrets:
-  ssh_host_key:
-    file: ~/.ssh/id_rsa

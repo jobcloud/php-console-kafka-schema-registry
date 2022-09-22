@@ -7,10 +7,7 @@ COPY files/php/ /phpIni
 
 # SYS: Install required packages
 RUN apk --no-cache upgrade && \
-    apk --no-cache add bash git sudo openssh autoconf gcc g++ make gettext make shadow
-
-RUN apk add librdkafka librdkafka-dev \
-        --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community
+    apk --no-cache add bash git sudo openssh autoconf gcc g++ make gettext make shadow librdkafka librdkafka-dev
 
 # SYS: add ssh key (for GitHub)
 COPY --chown=www-data:www-data files/.ssh /home/www-data/.ssh
