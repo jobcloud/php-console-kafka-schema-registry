@@ -149,12 +149,13 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             }
 
             try {
-                $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, $localSchema);
-            } catch (\Throwable $e) {
+                AvroSchema::parse($localSchema);
+            } catch (AvroSchemaParseException $e) {
                 $io->writeln(sprintf('Skipping %s for now because %s', $schemaName, $e->getMessage()));
                 $failed[$schemaName] = $schemaName;
                 continue;
             }
+            $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, $localSchema);
 
             $succeeded[$schemaName] = [
                 'name' => $schemaName,
