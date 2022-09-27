@@ -201,12 +201,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
             'getLatestSubjectVersion' => '1'
         ]);
 
-        $schemaRegistryApi->expects(self::exactly(10))
-            ->method('registerNewSchemaVersion')
-            ->willThrowException(
-                new \Exception('Skipping test.schema.1 for now because  is not a schema we know about.')
-            );
-
         $application = new Application();
         $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
