@@ -29,7 +29,6 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
     {
         $schemas = $this->schemaRegistryApi->getSubjects();
 
-        /** @var string $schema */
         foreach ($schemas as $schema) {
             $output->writeln((string) $schema);
         }
