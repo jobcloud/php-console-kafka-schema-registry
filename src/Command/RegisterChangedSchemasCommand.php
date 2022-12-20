@@ -134,7 +134,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
             try {
                 $latestVersion = $this->schemaRegistryApi->getLatestSubjectVersion($schemaName);
-            } catch (SubjectNotFoundException $e) {
+            } catch (\Throwable $e) {
                 $latestVersion = null;
             }
 
