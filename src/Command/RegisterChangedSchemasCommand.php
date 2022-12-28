@@ -4,7 +4,6 @@ namespace Jobcloud\SchemaConsole\Command;
 
 use AvroSchema;
 use AvroSchemaParseException;
-use Jobcloud\Kafka\SchemaRegistryClient\Exception\SubjectNotFoundException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Symfony\Component\Console\Input\InputArgument;
