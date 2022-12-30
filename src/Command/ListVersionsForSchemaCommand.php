@@ -35,7 +35,7 @@ class ListVersionsForSchemaCommand extends AbstractSchemaCommand
         $schemaVersions = $this->schemaRegistryApi->getAllSubjectVersions($schemaName);
 
         foreach ($schemaVersions as $schemaVersion) {
-            $output->writeln($schemaVersion);
+            $output->writeln((string) $schemaVersion);
         }
 
         return 0;

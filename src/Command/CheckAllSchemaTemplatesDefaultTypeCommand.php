@@ -88,7 +88,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
 
     /**
      * @param string $localSchema
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     private function checkDefaultType(string $localSchema): array
     {
@@ -103,7 +103,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     /**
      * @param mixed $decodedSchema
      * @param array<mixed, mixed> $defaultFields
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     private function checkAllFields($decodedSchema, array $defaultFields = []): array
     {
@@ -132,7 +132,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
      * @param mixed $fieldType
      * @param mixed $field
      * @param array<mixed, mixed> $defaultFields
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     private function checkSingleField($fieldType, $field, array $defaultFields): array
     {
