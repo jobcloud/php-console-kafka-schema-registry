@@ -19,6 +19,22 @@ class CheckAllSchemaTemplatesNamesCommand extends Command
         'fixed'
     ];
 
+    private const RESERVED_KEYWORDS = [
+        'null',
+        'boolean',
+        'int',
+        'long',
+        'float',
+        'double',
+        'bytes',
+        'string',
+        'record',
+        'enum',
+        'array',
+        'map',
+        'fixed',
+    ];
+
     private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
 
     private const REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
@@ -113,7 +129,10 @@ The following template schema names violate the aforementioned rules:');
     {
         $failed = [];
 
-        if (!preg_match(self::REGEX_MATCH_NAME_NAMING_CONVENTION, $name)) {
+        if (
+            !preg_match(self::REGEX_MATCH_NAME_NAMING_CONVENTION, $name) ||
+            in_array($name, self::RESERVED_KEYWORDS)
+        ) {
             $failed[] = $schemaName;
         }
 

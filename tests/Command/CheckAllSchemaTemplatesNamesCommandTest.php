@@ -176,6 +176,22 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
+    protected const BAD_SCHEMA4 = <<<EOF
+        {
+          "type": "record",
+          "name": "null",
+          "namespace": "ch.jobcloud",
+          "doc": "This is a sample Avro schema to get you started. Please edit",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
     /**
      * This method is called before each test.
      */
@@ -352,6 +368,32 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad3', $commandOutput);
+        self::assertEquals(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenNameIsReservedKeyword(): void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.bad4.avsc', self::SCHEMA_DIRECTORY),
+            self::BAD_SCHEMA4
+        );
+
+        $application = new Application();
+        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $command = $application->find('kafka-schema-registry:check:template:names:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString(
+            'A template schema names must comply with the following AVRO naming',
+            $commandOutput
+        );
+        self::assertStringContainsString('* test.schema.bad4', $commandOutput);
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 }
