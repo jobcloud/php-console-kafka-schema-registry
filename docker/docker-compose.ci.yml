@@ -1,0 +1,17 @@
+version: '3.2'
+services:
+  php:
+    build:
+      context: dev/php
+      args:
+        HOST_USER_ID: ${USER_ID}
+    container_name: console-kafka-schema-registry-php
+    hostname: console-kafka-schema-registry-php
+    environment:
+      KAFKA_SCHEMA_REGISTRY_URL: 'jobcloud-kafka-schema-registry:9081'
+    extra_hosts:
+      - "jobcloud-kafka-schema-registry:host-gateway"
+    volumes:
+      - ../:/app/
+    working_dir: /app
+    tty: true
