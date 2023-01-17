@@ -41,7 +41,7 @@ RUN pecl channel-update pecl.php.net && \
     php-ext-enable pcov rdkafka
 
 # COMPOSER: install binary
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer --version=2.5.1
 
 USER 'www-data'
 
