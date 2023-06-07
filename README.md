@@ -1,5 +1,6 @@
 # php-console-kafka-schema-registry
 
+TEST
 ## Installation
 ```
 composer require jobcloud/php-console-kafka-schema-registry
