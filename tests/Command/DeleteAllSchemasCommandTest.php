@@ -56,10 +56,10 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $schemaRegistryApi->expects(self::exactly(2))
             ->method('deleteSubject')
-            ->with(self::callback(function ($inputArgument){
+            ->with(self::callback(function ($inputArgument) {
                 static $input = 'schema1';
                 if ($inputArgument === $input) {
-                    $input = $input.'?permanent=true';
+                    $input = $input . '?permanent=true';
                     return true;
                 }
                 return false;

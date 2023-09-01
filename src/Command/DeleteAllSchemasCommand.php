@@ -24,7 +24,7 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Hard delete of a schema (removes all metadata, including schema ID)'
-            );;
+            );
     }
 
     /**
