@@ -17,7 +17,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class DeleteAllSchemasCommandTest extends TestCase
 {
-    public function testCommand(): void
+    public function testCommandSoftDelete(): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->getMockBuilder(KafkaSchemaRegistryApiClient::class)
@@ -35,6 +35,43 @@ class DeleteAllSchemasCommandTest extends TestCase
         $commandTester = new CommandTester($command);
 
         $commandTester->execute([]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertEquals('All schemas deleted.', $commandOutput);
+        self::assertEquals(0, $commandTester->getStatusCode());
+    }
+
+    public function testCommandHardDelete(): void
+    {
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->getMockBuilder(KafkaSchemaRegistryApiClient::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getSubjects', 'deleteSubject'])
+            ->getMock();
+
+        $schemaRegistryApi->expects(self::once())
+            ->method('getSubjects')
+            ->willReturn(['schema1']);
+
+        $schemaRegistryApi->expects(self::exactly(2))
+            ->method('deleteSubject')
+            ->with(self::callback(function ($inputArgument) {
+                static $input = 'schema1';
+                if ($inputArgument === $input) {
+                    $input = $input . '?permanent=true';
+                    return true;
+                }
+                return false;
+            }))
+            ->willReturn([]);
+
+        $application = new Application();
+        $application->add(new DeleteAllSchemasCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:delete:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute(['--hard' => true]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
