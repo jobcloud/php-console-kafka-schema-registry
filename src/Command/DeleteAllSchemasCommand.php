@@ -39,12 +39,12 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
         $hardDelete = (bool) $input->getOption('hard');
 
         foreach ($schemas as $schemaName) {
-            $this->schemaRegistryApi->deleteSubject($schemaName);
+            var_dump($this->schemaRegistryApi->deleteSubject($schemaName));
 
             if ($hardDelete) {
-                $this->schemaRegistryApi->deleteSubject(
+                var_dump($this->schemaRegistryApi->deleteSubject(
                     sprintf('%s%s', $schemaName, '?permanent=true')
-                );
+                ));
             }
         }
 
