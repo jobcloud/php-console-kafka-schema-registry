@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use mysql_xdevapi\Exception;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,12 +40,20 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
         $hardDelete = (bool) $input->getOption('hard');
 
         foreach ($schemas as $schemaName) {
-            var_dump($this->schemaRegistryApi->deleteSubject($schemaName));
+            try {
+                $this->schemaRegistryApi->deleteSubject($schemaName);
+            } catch (Exception $e) {
+                var_dump($e);
+            }
 
             if ($hardDelete) {
-                var_dump($this->schemaRegistryApi->deleteSubject(
-                    sprintf('%s%s', $schemaName, '?permanent=true')
-                ));
+                try {
+                    $this->schemaRegistryApi->deleteSubject(
+                        sprintf('%s%s', $schemaName, '?permanent=true')
+                    );
+                } catch (Exception $e) {
+                    var_dump($e);
+                }
             }
         }
 
