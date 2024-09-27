@@ -21,7 +21,7 @@
         "symfony/console": "^5.1 || ^6.0 || ^7.0"
     },
     "require-dev": {
-        "infection/infection": "^0.29",
+        "infection/infection": "^0.26",
         "phpstan/phpstan": "^1.9",
         "phpunit/phpunit": "^9.5",
         "rregeer/phpunit-coverage-check": "^0.3.1",
