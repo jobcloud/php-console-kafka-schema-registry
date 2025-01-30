@@ -6,7 +6,7 @@ composer require jobcloud/php-console-kafka-schema-registry
 ```
 
 ## Requirements
-- php: >= 7.4
+- php: >= 8.1
 
 ## Register commands
 You can register each command separately like this:

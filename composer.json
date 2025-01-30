@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-json": "*",
         "flix-tech/avro-php": "^3.0 || ^4.0 || ^5.0",
         "jobcloud/php-kafka-schema-registry-client": "^2.0",
@@ -21,7 +21,7 @@
         "symfony/console": "^5.1 || ^6.0 || ^7.0"
     },
     "require-dev": {
-        "infection/infection": "^0.26",
+        "infection/infection": "^0.29",
         "phpstan/phpstan": "^1.9",
         "phpunit/phpunit": "^9.5",
         "rregeer/phpunit-coverage-check": "^0.3.1",
