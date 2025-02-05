@@ -1,4 +1,4 @@
-FROM php:8.3-cli-alpine3.21
+FROM public.ecr.aws/docker/library/php:8.3-cli-alpine3.20
 
 ARG HOST_USER_ID
 
@@ -41,7 +41,7 @@ RUN pecl channel-update pecl.php.net && \
     php-ext-enable pcov rdkafka
 
 # COMPOSER: install binary
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 
 USER 'www-data'
 
