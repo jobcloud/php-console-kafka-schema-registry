@@ -14,7 +14,7 @@
         "php": "^8.0",
         "ext-json": "*",
         "flix-tech/avro-php": "^3.0 || ^4.0 || ^5.0",
-        "jobcloud/php-kafka-schema-registry-client": "feat/CDP-1451/upgrade-to-php84",
+        "jobcloud/php-kafka-schema-registry-client": "dev-feat/CDP-1451/upgrade-to-php84",
         "kriswallsmith/buzz": "^1.2",
         "nyholm/psr7": "^1.4",
         "pimple/pimple": "^3.2",
