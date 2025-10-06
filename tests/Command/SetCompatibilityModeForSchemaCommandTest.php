@@ -10,7 +10,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * @covers \Jobcloud\SchemaConsole\Command\GetCompatibilityModeForSchemaCommand
+ * @covers \Jobcloud\SchemaConsole\Command\SetCompatibilityModeForSchemaCommand
  * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
  * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
  */
