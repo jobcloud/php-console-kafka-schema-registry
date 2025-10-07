@@ -28,19 +28,16 @@ class SetAllSchemasCompatibilityModeCommand extends AbstractSchemaCommand
 Set compatibility modes for multiple schemas based on configuration in a JSON file.
 
 JSON File Format:
-The configuration file must be a valid JSON file with the following structure:
+The configuration file must be a valid JSON array with the following structure:
 
-{
-  "schemas": [
-    {
-      "schemaName": "schema-subject-name",
-      "compatibilityLevel": "COMPATIBILITY_LEVEL"
-    }
-  ]
-}
+[
+  {
+    "schemaName": "schema-subject-name",
+    "compatibilityLevel": "COMPATIBILITY_LEVEL"
+  }
+]
 
 Required Fields:
-- schemas: Array of schema configuration objects
 - schemaName: The subject name of the schema in the registry
 - compatibilityLevel: One of the following compatibility levels:
   * NONE
@@ -52,22 +49,20 @@ Required Fields:
   * FULL_TRANSITIVE
 
 Example:
-{
-  "schemas": [
-    {
-      "schemaName": "user-events",
-      "compatibilityLevel": "BACKWARD_TRANSITIVE"
-    },
-    {
-      "schemaName": "order-events",
-      "compatibilityLevel": "FORWARD"
-    },
-    {
-      "schemaName": "payment-events",
-      "compatibilityLevel": "FULL"
-    }
-  ]
-}
+[
+  {
+    "schemaName": "user-events",
+    "compatibilityLevel": "BACKWARD_TRANSITIVE"
+  },
+  {
+    "schemaName": "order-events",
+    "compatibilityLevel": "FORWARD"
+  },
+  {
+    "schemaName": "payment-events",
+    "compatibilityLevel": "FULL"
+  }
+]
 
 The command will process each schema in the order specified and provide feedback
 for each operation. If any schema update fails, the command will continue processing
@@ -85,7 +80,20 @@ HELP;
             return 1;
         }
 
-        $jsonContent = file_get_contents($configFilePath);
+        // Check if path is actually a file (not a directory)
+        if (false === is_file($configFilePath)) {
+            $output->writeln(sprintf('Could not read configuration file: %s', $configFilePath));
+
+            return 1;
+        }
+
+        if (false === is_readable($configFilePath)) {
+            $output->writeln(sprintf('Could not read configuration file: %s', $configFilePath));
+
+            return 1;
+        }
+
+        $jsonContent = @file_get_contents($configFilePath);
         if (false === $jsonContent) {
             $output->writeln(sprintf('Could not read configuration file: %s', $configFilePath));
 
@@ -100,19 +108,20 @@ HELP;
             return 1;
         }
 
-        if (false === isset($config['schemas']) || false === is_array($config['schemas'])) {
-            $output->writeln('Configuration file must contain a "schemas" array');
+        // Validate that config is an array
+        if (false === is_array($config)) {
+            $output->writeln('Configuration file must contain a JSON array of schema configurations');
 
             return 1;
         }
 
-        $totalSchemas = count($config['schemas']);
+        $totalSchemas = count($config);
         $successCount = 0;
         $failureCount = 0;
 
         $output->writeln(sprintf('Processing %d schema compatibility configurations...', $totalSchemas));
 
-        foreach ($config['schemas'] as $index => $schemaConfig) {
+        foreach ($config as $index => $schemaConfig) {
             if (false === isset($schemaConfig['schemaName']) || false === isset($schemaConfig['compatibilityLevel'])) {
                 $output->writeln(
                     sprintf('Invalid configuration at index %d: missing schemaName or compatibilityLevel', $index)
