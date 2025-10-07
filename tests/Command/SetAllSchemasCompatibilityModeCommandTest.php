@@ -143,7 +143,6 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
     public function testCommandWithInvalidJsonConfiguration(mixed $configData): void
     {
         if (is_string($configData)) {
-            // For raw string data (like invalid JSON), write directly to file
             $configFile = tempnam(sys_get_temp_dir(), 'test_config');
             file_put_contents($configFile, $configData);
 
@@ -185,6 +184,9 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         unlink($configFile);
     }
 
+    /**
+     * @return array<string, array{mixed}>
+     */
     public static function invalidJsonConfigurationProvider(): array
     {
         return [
