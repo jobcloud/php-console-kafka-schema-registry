@@ -74,44 +74,8 @@ HELP;
     {
         $configFilePath = (string) $input->getArgument('configFile');
 
-        if (false === file_exists($configFilePath)) {
-            $output->writeln(sprintf('Configuration file not found: %s', $configFilePath));
-
-            return 1;
-        }
-
-        // Check if path is actually a file (not a directory)
-        if (false === is_file($configFilePath)) {
-            $output->writeln(sprintf('Could not read configuration file: %s', $configFilePath));
-
-            return 1;
-        }
-
-        if (false === is_readable($configFilePath)) {
-            $output->writeln(sprintf('Could not read configuration file: %s', $configFilePath));
-
-            return 1;
-        }
-
-        $jsonContent = @file_get_contents($configFilePath);
-        if (false === $jsonContent) {
-            $output->writeln(sprintf('Could not read configuration file: %s', $configFilePath));
-
-            return 1;
-        }
-
-        $config = json_decode($jsonContent, true);
+        $config = $this->loadConfigFile($configFilePath, $output);
         if (null === $config) {
-            $output->writeln(sprintf('Invalid JSON in configuration file: %s', $configFilePath));
-            $output->writeln(sprintf('JSON Error: %s', json_last_error_msg()));
-
-            return 1;
-        }
-
-        // Validate that config is an array
-        if (false === is_array($config)) {
-            $output->writeln('Configuration file must contain a JSON array of schema configurations');
-
             return 1;
         }
 
@@ -122,7 +86,7 @@ HELP;
         $output->writeln(sprintf('Processing %d schema compatibility configurations...', $totalSchemas));
 
         foreach ($config as $index => $schemaConfig) {
-            if (false === isset($schemaConfig['schemaName']) || false === isset($schemaConfig['compatibilityLevel'])) {
+            if (false === $this->isValidSchemaConfig($schemaConfig)) {
                 $output->writeln(
                     sprintf('Invalid configuration at index %d: missing schemaName or compatibilityLevel', $index)
                 );
@@ -138,28 +102,72 @@ HELP;
                 sprintf('Setting compatibility mode for schema "%s" to "%s"... ', $schemaName, $compatibilityLevel)
             );
 
-            try {
-                $result = $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
+            if ($this->setSchemaCompatibility($schemaName, $compatibilityLevel, $output)) {
+                $successCount++;
 
-                if (true === $result) {
-                    $output->writeln('<info>SUCCESS</info>');
-                    $successCount++;
-                } else {
-                    $output->writeln('<error>FAILED</error>');
-                    $failureCount++;
-                }
-            } catch (\Exception $e) {
-                $output->writeln(sprintf('<error>FAILED: %s</error>', $e->getMessage()));
-                $failureCount++;
+                continue;
             }
+
+            $failureCount++;
         }
 
-        $output->writeln('');
-        $output->writeln('=== Summary ===');
-        $output->writeln(sprintf('Total schemas processed: %d', $totalSchemas));
-        $output->writeln(sprintf('Successful updates: %d', $successCount));
-        $output->writeln(sprintf('Failed updates: %d', $failureCount));
+        $this->outputSummary($output, $totalSchemas, $successCount, $failureCount);
 
         return $failureCount > 0 ? 1 : 0;
+    }
+
+    private function loadConfigFile(string $configFilePath, OutputInterface $output): ?array
+    {
+        $jsonContent = @file_get_contents($configFilePath);
+        if (false === $jsonContent) {
+            $output->writeln(sprintf('Could not read configuration file: %s', $configFilePath));
+
+            return null;
+        }
+
+        $config = json_decode($jsonContent, true);
+        if (null === $config || false === is_array($config) || false === array_is_list($config)) {
+            $output->writeln('Configuration file must contain a JSON array of schema configurations');
+
+            return null;
+        }
+
+        return $config;
+    }
+
+    private function isValidSchemaConfig(mixed $schemaConfig): bool
+    {
+        return is_array($schemaConfig)
+            && isset($schemaConfig['schemaName'])
+            && isset($schemaConfig['compatibilityLevel']);
+    }
+
+    private function setSchemaCompatibility(string $schemaName, string $compatibilityLevel, OutputInterface $output): bool
+    {
+        try {
+            $result = $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
+
+            if (true === $result) {
+                $output->writeln('<info>SUCCESS</info>');
+                return true;
+            }
+
+            $output->writeln('<error>FAILED</error>');
+
+            return false;
+        } catch (\Exception $e) {
+            $output->writeln(sprintf('<error>FAILED: %s</error>', $e->getMessage()));
+
+            return false;
+        }
+    }
+
+    private function outputSummary(OutputInterface $output, int $total, int $success, int $failure): void
+    {
+        $output->writeln('');
+        $output->writeln('=== Summary ===');
+        $output->writeln(sprintf('Total schemas processed: %d', $total));
+        $output->writeln(sprintf('Successful updates: %d', $success));
+        $output->writeln(sprintf('Failed updates: %d', $failure));
     }
 }
