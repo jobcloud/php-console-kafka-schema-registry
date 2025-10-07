@@ -18,7 +18,8 @@ class SetAllSchemasCompatibilityModeCommand extends AbstractSchemaCommand
             ->setHelp($this->getHelpText())
             ->addArgument(
                 'configFile',
-                InputArgument::REQUIRED, 'Path to JSON configuration file containing schema-compatibility mappings'
+                InputArgument::REQUIRED,
+                'Path to JSON configuration file containing schema-compatibility mappings'
             );
     }
 
@@ -116,6 +117,9 @@ HELP;
         return $failureCount > 0 ? 1 : 0;
     }
 
+    /**
+     * @return array<int, array<string, string>>|null
+     */
     private function loadConfigFile(string $configFilePath, OutputInterface $output): ?array
     {
         $jsonContent = @file_get_contents($configFilePath);
@@ -142,8 +146,11 @@ HELP;
             && isset($schemaConfig['compatibilityLevel']);
     }
 
-    private function setSchemaCompatibility(string $schemaName, string $compatibilityLevel, OutputInterface $output): bool
-    {
+    private function setSchemaCompatibility(
+        string $schemaName,
+        string $compatibilityLevel,
+        OutputInterface $output
+    ): bool {
         try {
             $result = $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
 
