@@ -20,6 +20,8 @@ use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
+use Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand;
+use Jobcloud\SchemaConsole\Command\SetCompatibilityModeForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\SetImportModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadOnlyModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
@@ -83,6 +85,8 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         self::assertArrayHasInstanceOf(DeleteAllSchemasCommand::class, $commands);
         self::assertArrayHasInstanceOf(GetCompatibilityModeCommand::class, $commands);
         self::assertArrayHasInstanceOf(GetCompatibilityModeForSchemaCommand::class, $commands);
+        self::assertArrayHasInstanceOf(SetAllSchemasCompatibilityModeCommand::class, $commands);
+        self::assertArrayHasInstanceOf(SetCompatibilityModeForSchemaCommand::class, $commands);
         self::assertArrayHasInstanceOf(GetLatestSchemaCommand::class, $commands);
         self::assertArrayHasInstanceOf(GetSchemaByVersionCommand::class, $commands);
         self::assertArrayHasInstanceOf(ListAllSchemasCommand::class, $commands);
@@ -97,5 +101,7 @@ class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
         self::assertArrayHasInstanceOf(CheckAllSchemaTemplatesDocCommentsCommand::class, $commands);
         self::assertArrayHasInstanceOf(CheckAllSchemaTemplatesDefaultTypeCommand::class, $commands);
         self::assertArrayHasInstanceOf(CheckAllSchemaTemplatesNamesCommand::class, $commands);
+
+        self::assertCount(22, $commands);
     }
 }

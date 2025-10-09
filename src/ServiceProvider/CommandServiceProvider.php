@@ -21,6 +21,8 @@ use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\ListVersionsForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
+use Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand;
+use Jobcloud\SchemaConsole\Command\SetCompatibilityModeForSchemaCommand;
 use Jobcloud\SchemaConsole\Command\SetImportModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadOnlyModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
@@ -51,6 +53,8 @@ class CommandServiceProvider implements ServiceProviderInterface
                 new GetCompatibilityModeCommand($schemaRegistryApi),
                 new CheckAllSchemasCompatibilityCommand($schemaRegistryApi),
                 new GetCompatibilityModeForSchemaCommand($schemaRegistryApi),
+                new SetAllSchemasCompatibilityModeCommand($schemaRegistryApi),
+                new SetCompatibilityModeForSchemaCommand($schemaRegistryApi),
                 new GetLatestSchemaCommand($schemaRegistryApi),
                 new GetSchemaByVersionCommand($schemaRegistryApi),
                 new ListAllSchemasCommand($schemaRegistryApi),

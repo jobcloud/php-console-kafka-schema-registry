@@ -1,0 +1,75 @@
+<?php
+
+namespace Command;
+
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\SetCompatibilityModeForSchemaCommand;
+use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
+
+/**
+ * @covers \Jobcloud\SchemaConsole\Command\SetCompatibilityModeForSchemaCommand
+ * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
+ * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
+ */
+class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTestCase
+{
+    public function testCommandWhenCompatibilityIsChanged(): void
+    {
+        $schemaName = 'SomeSchemaName';
+
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'setSubjectCompatibilityLevel' => true,
+        ]);
+
+        $application = new Application();
+        $application->add(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:set:schema:compatibility:mode');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaName' => $schemaName,
+            'compatibilityLevel' => 'BACKWARD_TRANSITIVE',
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertEquals(
+            sprintf('Successfully changed compatibility mode for schema: %s', $schemaName),
+            $commandOutput
+        );
+        self::assertEquals(0, $commandTester->getStatusCode());
+    }
+
+    public function testCommandWhenCompatibilityIsNotChanged(): void
+    {
+        $schemaName = 'SomeSchemaName';
+        $errorMessage = 'error';
+
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'setSubjectCompatibilityLevel' => new \Exception($errorMessage),
+        ]);
+
+        $application = new Application();
+        $application->add(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:set:schema:compatibility:mode');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaName' => $schemaName,
+            'compatibilityLevel' => 'BACKWARD_TRANSITIVE',
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertEquals(
+            sprintf('Could not change compatibility mode for schema %s: %s', $schemaName, $errorMessage),
+            $commandOutput
+        );
+        self::assertEquals(1, $commandTester->getStatusCode());
+    }
+}
