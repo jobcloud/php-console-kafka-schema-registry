@@ -115,7 +115,7 @@ HELP;
 
         $this->outputSummary($output, $totalSchemas, $successCount, $failureCount);
 
-        return $failureCount > Command::SUCCESS ? Command::FAILURE : Command::SUCCESS;
+        return $failureCount > 0 ? Command::FAILURE : Command::SUCCESS;
     }
 
     /**
