@@ -47,10 +47,11 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
     public function testCommandWhenCompatibilityIsNotChanged(): void
     {
         $schemaName = 'SomeSchemaName';
+        $errorMessage = 'error';
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'setSubjectCompatibilityLevel' => false,
+            'setSubjectCompatibilityLevel' => new \Exception($errorMessage),
         ]);
 
         $application = new Application();
@@ -66,7 +67,7 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertEquals(
-            sprintf('Could not change compatibility mode for schema: %s', $schemaName),
+            sprintf('Could not change compatibility mode for schema %s: %s', $schemaName, $errorMessage),
             $commandOutput
         );
         self::assertEquals(1, $commandTester->getStatusCode());

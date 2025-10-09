@@ -15,12 +15,22 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 {
+    private const CONFIG_FILE = '/tmp/test_config.json';
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        if (file_exists(self::CONFIG_FILE)) {
+            unlink(self::CONFIG_FILE);
+        }
+    }
+
     public function testCommandWithValidConfigFileAndAllSuccessful(): void
     {
-        $configFile = $this->createTempConfigFile([
+        file_put_contents(self::CONFIG_FILE, json_encode([
             ['schemaName' => 'schema1', 'compatibilityLevel' => 'BACKWARD'],
             ['schemaName' => 'schema2', 'compatibilityLevel' => 'FORWARD'],
-        ]);
+        ]));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
@@ -28,7 +38,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         ]);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -45,25 +55,25 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Successful updates: 2', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
         self::assertEquals(0, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     public function testCommandWithValidConfigFileAndSomeFailures(): void
     {
-        $configFile = $this->createTempConfigFile([
+        file_put_contents(self::CONFIG_FILE, json_encode([
             ['schemaName' => 'schema1', 'compatibilityLevel' => 'BACKWARD'],
             ['schemaName' => 'schema2', 'compatibilityLevel' => 'FORWARD'],
             ['schemaName' => 'schema3', 'compatibilityLevel' => 'FULL'],
-        ]);
+        ]));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
         $schemaRegistryApi->method('setSubjectCompatibilityLevel')
-            ->willReturnOnConsecutiveCalls(true, false, true);
+            ->willReturnCallback(function ($schema) {
+                return $schema === 'schema2' ? throw new \Exception('error') : true;
+            });
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -84,16 +94,14 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Successful updates: 2', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
         self::assertEquals(1, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     public function testCommandWithApiException(): void
     {
-        $configFile = $this->createTempConfigFile([
+        file_put_contents(self::CONFIG_FILE, json_encode([
             ['schemaName' => 'schema1', 'compatibilityLevel' => 'BACKWARD'],
             ['schemaName' => 'schema2', 'compatibilityLevel' => 'FORWARD'],
-        ]);
+        ]));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
@@ -104,7 +112,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
             );
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -119,8 +127,6 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
         self::assertEquals(1, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     public function testCommandWithNonExistentConfigFile(): void
@@ -142,36 +148,13 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
      */
     public function testCommandWithInvalidJsonConfiguration(mixed $configData): void
     {
-        if (is_string($configData)) {
-            $configFile = tempnam(sys_get_temp_dir(), 'test_config');
-            file_put_contents($configFile, $configData);
-
-            /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
-            $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
-
-            $commandTester = $this->createCommandTester($schemaRegistryApi);
-            $commandTester->execute(['configFile' => $configFile]);
-
-            $output = $commandTester->getDisplay();
-
-            self::assertStringContainsString(
-                'Configuration file must contain a JSON array of schema configurations',
-                $output
-            );
-            self::assertEquals(1, $commandTester->getStatusCode());
-
-            unlink($configFile);
-
-            return;
-        }
-
-        $configFile = $this->createTempConfigFile($configData);
+        file_put_contents(self::CONFIG_FILE, json_encode($configData));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -180,8 +163,6 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
             $output
         );
         self::assertEquals(1, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     /**
@@ -202,10 +183,10 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
 
     public function testCommandWithMissingSchemaNameField(): void
     {
-        $configFile = $this->createTempConfigFile([
+        file_put_contents(self::CONFIG_FILE, json_encode([
             ['compatibilityLevel' => 'BACKWARD'],
             ['schemaName' => 'valid-schema', 'compatibilityLevel' => 'FORWARD'],
-        ]);
+        ]));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
@@ -213,7 +194,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         ]);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -228,16 +209,14 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
         self::assertEquals(1, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     public function testCommandWithMissingCompatibilityLevelField(): void
     {
-        $configFile = $this->createTempConfigFile([
+        file_put_contents(self::CONFIG_FILE, json_encode([
             ['schemaName' => 'incomplete-schema'],
             ['schemaName' => 'valid-schema', 'compatibilityLevel' => 'BACKWARD'],
-        ]);
+        ]));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
@@ -245,7 +224,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         ]);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -260,19 +239,17 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
         self::assertEquals(1, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     public function testCommandWithEmptyArray(): void
     {
-        $configFile = $this->createTempConfigFile([]);
+        file_put_contents(self::CONFIG_FILE, json_encode([]));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -281,8 +258,6 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Successful updates: 0', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
         self::assertEquals(0, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     public function testCommandWithAllValidCompatibilityLevels(): void
@@ -297,7 +272,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
             $schemas[] = ['schemaName' => "schema-{$level}", 'compatibilityLevel' => $level];
         }
 
-        $configFile = $this->createTempConfigFile($schemas);
+        file_put_contents(self::CONFIG_FILE, json_encode($schemas));
 
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
@@ -305,7 +280,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         ]);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
-        $commandTester->execute(['configFile' => $configFile]);
+        $commandTester->execute(['configFile' => self::CONFIG_FILE]);
 
         $output = $commandTester->getDisplay();
 
@@ -321,8 +296,6 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Successful updates: 7', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
         self::assertEquals(0, $commandTester->getStatusCode());
-
-        unlink($configFile);
     }
 
     private function createCommandTester(MockObject $schemaRegistryApi): CommandTester
@@ -332,13 +305,5 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         $command = $application->find('kafka-schema-registry:set:compatibility:mode:all');
 
         return new CommandTester($command);
-    }
-
-    private function createTempConfigFile(mixed $config): string
-    {
-        $configFile = tempnam(sys_get_temp_dir(), 'test_config');
-        file_put_contents($configFile, json_encode($config));
-
-        return $configFile;
     }
 }

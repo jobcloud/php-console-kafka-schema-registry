@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -28,16 +26,18 @@ class SetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
         $schemaName = (string) $input->getArgument('schemaName');
         $compatibilityLevel = (string) $input->getArgument('compatibilityLevel');
 
-        $result = $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
+        try {
+            $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
+        } catch (\Exception $e) {
+            $output->writeln(
+                sprintf('Could not change compatibility mode for schema %s: %s', $schemaName, $e->getMessage())
+            );
 
-        if (true !== $result) {
-            $output->writeln(sprintf('Could not change compatibility mode for schema: %s', $schemaName));
-
-            return 1;
+            return Command::FAILURE;
         }
 
         $output->writeln(sprintf('Successfully changed compatibility mode for schema: %s', $schemaName));
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

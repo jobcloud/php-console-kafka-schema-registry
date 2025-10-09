@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Jobcloud\SchemaConsole\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -77,7 +78,7 @@ HELP;
 
         $config = $this->loadConfigFile($configFilePath, $output);
         if (null === $config) {
-            return 1;
+            return Command::FAILURE;
         }
 
         $totalSchemas = count($config);
@@ -96,8 +97,8 @@ HELP;
                 continue;
             }
 
-            $schemaName = (string) $schemaConfig['schemaName'];
-            $compatibilityLevel = (string) $schemaConfig['compatibilityLevel'];
+            $schemaName = $schemaConfig['schemaName'];
+            $compatibilityLevel = $schemaConfig['compatibilityLevel'];
 
             $output->write(
                 sprintf('Setting compatibility mode for schema "%s" to "%s"... ', $schemaName, $compatibilityLevel)
@@ -114,7 +115,7 @@ HELP;
 
         $this->outputSummary($output, $totalSchemas, $successCount, $failureCount);
 
-        return $failureCount > 0 ? 1 : 0;
+        return $failureCount > Command::SUCCESS ? Command::FAILURE : Command::SUCCESS;
     }
 
     /**
@@ -152,21 +153,16 @@ HELP;
         OutputInterface $output
     ): bool {
         try {
-            $result = $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
-
-            if (true === $result) {
-                $output->writeln('<info>SUCCESS</info>');
-                return true;
-            }
-
-            $output->writeln('<error>FAILED</error>');
-
-            return false;
+            $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
         } catch (\Exception $e) {
             $output->writeln(sprintf('<error>FAILED: %s</error>', $e->getMessage()));
 
             return false;
         }
+
+        $output->writeln('<info>SUCCESS</info>');
+
+        return true;
     }
 
     private function outputSummary(OutputInterface $output, int $total, int $success, int $failure): void
