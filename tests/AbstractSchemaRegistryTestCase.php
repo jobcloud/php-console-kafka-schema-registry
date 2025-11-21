@@ -30,18 +30,14 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
             array_keys(
                 array_filter(
                     $methodMap,
-                    static function ($key) {
-                        return !is_numeric($key);
-                    },
+                    static fn($key) => !is_numeric($key),
                     ARRAY_FILTER_USE_KEY
                 )
             ),
             array_values(
                 array_filter(
                     $methodMap,
-                    static function ($key) {
-                        return is_numeric($key);
-                    },
+                    static fn($key) => is_numeric($key),
                     ARRAY_FILTER_USE_KEY
                 )
             )
@@ -77,9 +73,7 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
      */
     protected static function assertArrayHasInstanceOf(string $className, array $array): void
     {
-        $filtered = array_filter($array, static function ($item) use ($className) {
-            return $item instanceof $className;
-        });
+        $filtered = array_filter($array, static fn($item) => $item instanceof $className);
 
         self::assertGreaterThan(0, count($filtered));
     }

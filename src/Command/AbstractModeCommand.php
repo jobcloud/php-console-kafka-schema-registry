@@ -12,6 +12,7 @@ abstract class AbstractModeCommand extends AbstractSchemaCommand implements Mode
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -25,6 +26,7 @@ abstract class AbstractModeCommand extends AbstractSchemaCommand implements Mode
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         if (true === $this->schemaRegistryApi->setImportMode($this->getMode())) {

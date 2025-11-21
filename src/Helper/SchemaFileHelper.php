@@ -13,10 +13,10 @@ use SplFileInfo;
 class SchemaFileHelper
 {
     /** @var string */
-    private const FIELDS_FIELD_KEY = 'fields';
+    private const string FIELDS_FIELD_KEY = 'fields';
 
     /** @var string */
-    private const DOC_FIELD_KEY = 'doc';
+    private const string DOC_FIELD_KEY = 'doc';
 
     /**
      * @param string $filePath

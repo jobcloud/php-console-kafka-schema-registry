@@ -11,6 +11,7 @@ class SetImportModeCommand extends AbstractModeCommand
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMode(): string
     {
         return KafkaSchemaRegistryApiClientInterface::MODE_IMPORT;

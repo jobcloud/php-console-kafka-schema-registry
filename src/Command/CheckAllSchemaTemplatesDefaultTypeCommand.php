@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
 {
-    private const TYPE_MAP = [
+    private const array TYPE_MAP = [
         "null" => "null",
         "boolean" => "boolean",
         "integer" => "int",
@@ -23,6 +23,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -41,6 +42,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
@@ -101,11 +103,10 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param mixed $decodedSchema
      * @param array<mixed, mixed> $defaultFields
      * @return array<int|string, mixed>
      */
-    private function checkAllFields($decodedSchema, array $defaultFields = []): array
+    private function checkAllFields(mixed $decodedSchema, array $defaultFields = []): array
     {
         foreach ($decodedSchema->fields as $field) {
             if (!property_exists($field, 'default')) {
@@ -129,12 +130,10 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param mixed $fieldType
-     * @param mixed $field
      * @param array<mixed, mixed> $defaultFields
      * @return array<int|string, mixed>
      */
-    private function checkSingleField($fieldType, $field, array $defaultFields): array
+    private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
     {
         $defaultType = strtolower(gettype($field->default));
 
@@ -175,11 +174,9 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param mixed $decodedSchema
-     * @param mixed $field
      * @return string
      */
-    private function getFieldName($decodedSchema, $field): string
+    private function getFieldName(mixed $decodedSchema, mixed $field): string
     {
         return $decodedSchema->namespace . '.' . $decodedSchema->name . '.' . $field->name;
     }

@@ -34,13 +34,12 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
     /**
      * @dataProvider argumentsDataProvider
      * @param bool $actualCompatible
-     * @param mixed $versionArgument
      * @param string $expectedOutput
      * @param int $expectedExitCode
      */
     public function testCommand(
         bool $actualCompatible,
-        $versionArgument,
+        mixed $versionArgument,
         string $expectedOutput,
         int $expectedExitCode
     ): void {

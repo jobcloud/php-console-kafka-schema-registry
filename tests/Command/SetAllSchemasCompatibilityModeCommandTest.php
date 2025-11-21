@@ -15,8 +15,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 {
-    private const CONFIG_FILE = '/tmp/test_config.json';
+    private const string CONFIG_FILE = '/tmp/test_config.json';
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -68,9 +69,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
         $schemaRegistryApi->method('setSubjectCompatibilityLevel')
-            ->willReturnCallback(function ($schema) {
-                return $schema === 'schema2' ? throw new \Exception('error') : true;
-            });
+            ->willReturnCallback(fn($schema) => $schema === 'schema2' ? throw new \Exception('error') : true);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
         $commandTester->execute(['configFile' => self::CONFIG_FILE]);

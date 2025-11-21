@@ -20,6 +20,7 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -38,6 +39,7 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */

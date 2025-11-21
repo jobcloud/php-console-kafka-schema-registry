@@ -19,6 +19,7 @@ class CheckDocCommentsCommand extends Command
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -33,6 +34,7 @@ class CheckDocCommentsCommand extends Command
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $errorMessage = 'Schema template does not have doc comments on all fields';

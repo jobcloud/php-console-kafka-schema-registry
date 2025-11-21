@@ -37,6 +37,7 @@ class CommandServiceProvider implements ServiceProviderInterface
      * @param Container $container
      * @return void
      */
+    #[\Override]
     public function register(Container $container)
     {
         $container->register(new KafkaSchemaRegistryApiClientProvider());

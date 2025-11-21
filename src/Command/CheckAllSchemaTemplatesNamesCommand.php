@@ -13,13 +13,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemaTemplatesNamesCommand extends Command
 {
-    private const TYPES_FOR_VALIDATION = [
+    private const array TYPES_FOR_VALIDATION = [
         'record',
         'enum',
         'fixed'
     ];
 
-    private const RESERVED_KEYWORDS = [
+    private const array RESERVED_KEYWORDS = [
         'null',
         'boolean',
         'int',
@@ -35,11 +35,12 @@ class CheckAllSchemaTemplatesNamesCommand extends Command
         'fixed',
     ];
 
-    private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
+    private const string REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
 
-    private const REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
+    private const string REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
         '/^(?:[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)?$/';
 
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -53,6 +54,7 @@ class CheckAllSchemaTemplatesNamesCommand extends Command
             );
     }
 
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */

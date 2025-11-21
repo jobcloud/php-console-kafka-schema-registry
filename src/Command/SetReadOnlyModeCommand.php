@@ -11,6 +11,7 @@ class SetReadOnlyModeCommand extends AbstractModeCommand
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMode(): string
     {
         return KafkaSchemaRegistryApiClientInterface::MODE_READONLY;

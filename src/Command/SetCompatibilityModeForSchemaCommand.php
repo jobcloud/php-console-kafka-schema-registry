@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
 {
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -21,6 +22,7 @@ class SetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
             ->addArgument('compatibilityLevel', InputArgument::REQUIRED, 'Compatibility level to set');
     }
 
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $schemaName = (string) $input->getArgument('schemaName');

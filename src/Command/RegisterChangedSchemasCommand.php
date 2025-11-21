@@ -15,11 +15,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 {
     /**
-     * @var integer
-     */
-    private $maxRetries;
-
-    /**
      * @var bool
      */
     private $abortRegister = false;
@@ -28,15 +23,17 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      * @param KafkaSchemaRegistryApiClientInterface $schemaRegistryApi
      * @param integer           $maxRetries
      */
-    public function __construct(KafkaSchemaRegistryApiClientInterface $schemaRegistryApi, int $maxRetries = 10)
-    {
+    public function __construct(
+        KafkaSchemaRegistryApiClientInterface $schemaRegistryApi,
+        private readonly int $maxRetries = 10
+    ) {
         parent::__construct($schemaRegistryApi);
-        $this->maxRetries = $maxRetries;
     }
 
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -57,6 +54,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -93,9 +91,14 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
         if (isset($succeeded) && 0 !== count($succeeded)) {
             $io->success('Succeeded registering the following schemas:');
-            $io->listing(array_map(static function ($item) use ($successMessage) {
-                return sprintf($successMessage, $item['name'], $item['version']);
-            }, $succeeded));
+            $io->listing(array_map(
+                static fn($item) => sprintf(
+                    $successMessage,
+                    $item['name'],
+                    $item['version']
+                ),
+                $succeeded
+            ));
         }
 
         return count($failed) ? 1 : 0;

@@ -14,6 +14,7 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -28,6 +29,7 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $schemaFile */

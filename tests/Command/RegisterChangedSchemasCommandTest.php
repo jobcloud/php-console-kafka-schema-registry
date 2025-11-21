@@ -45,6 +45,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
     /**
      * This method is called before each test.
      */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,6 +57,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
     /**
      * This method is called after each test.
      */
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();

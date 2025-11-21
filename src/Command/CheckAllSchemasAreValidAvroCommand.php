@@ -16,6 +16,7 @@ class CheckAllSchemasAreValidAvroCommand extends Command
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -30,6 +31,7 @@ class CheckAllSchemasAreValidAvroCommand extends Command
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
@@ -68,7 +70,7 @@ class CheckAllSchemasAreValidAvroCommand extends Command
 
             try {
                 AvroSchema::parse($localSchema);
-            } catch (AvroSchemaParseException $e) {
+            } catch (AvroSchemaParseException) {
                 $failed[] = $schemaName;
                 continue;
             }

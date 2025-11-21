@@ -14,6 +14,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
     /**
      * @return void
      */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -29,6 +30,7 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
      * @param OutputInterface $output
      * @return integer
      */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $schemaFile */
