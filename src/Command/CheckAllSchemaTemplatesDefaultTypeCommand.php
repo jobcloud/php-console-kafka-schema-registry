@@ -66,8 +66,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
+     * @param array<string, string> $avroFiles
+     * @param list<mixed> $failed
      * @return boolean
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
@@ -137,7 +137,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     {
         $defaultType = strtolower(gettype($field->default));
 
-        if (is_string($fieldType)) {
+        if (is_string($fieldType) && isset(self::TYPE_MAP[$defaultType])) {
             if (
                 self::TYPE_MAP[$defaultType] === $fieldType
                 || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
@@ -146,8 +146,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
         }
 
-        if (property_exists($fieldType, 'type') && $fieldType->type === 'array') {
-            if (is_string($defaultType) && self::TYPE_MAP[$defaultType] === $fieldType->type) {
+        if (property_exists($fieldType, 'type') && $fieldType->type === 'array' && isset(self::TYPE_MAP[$defaultType])) {
+            if (self::TYPE_MAP[$defaultType] === $fieldType->type) {
                 unset($defaultFields[$field->name]);
             }
         }

@@ -55,8 +55,8 @@ class CheckAllSchemasAreValidAvroCommand extends Command
     }
 
     /**
-     * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
+     * @param array<string, string> $avroFiles
+     * @param list<string> $failed
      * @return boolean
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool

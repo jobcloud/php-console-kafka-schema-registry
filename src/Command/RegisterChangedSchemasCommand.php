@@ -76,6 +76,8 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $successMessage = '%s with new versions, the latest being: %s';
         }
 
+        $this->abortRegister = false;
+
         while (false === $this->abortRegister) {
             if (false === $this->registerFiles($avroFiles, $io, $failed, $succeeded, $useSchemaVersioning)) {
                 return 1;
@@ -84,12 +86,12 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $this->abortRegister = (0 === count($failed)) || ($this->maxRetries === ++$retries);
         }
 
-        if (isset($failed) && 0 !== count($failed)) {
+        if (0 !== count($failed)) {
             $io->warning('Failed schemas the following schemas:');
             $io->listing($failed);
         }
 
-        if (isset($succeeded) && 0 !== count($succeeded)) {
+        if (0 !== count($succeeded)) {
             $io->success('Succeeded registering the following schemas:');
             $io->listing(array_map(
                 static fn($item) => sprintf(
@@ -120,13 +122,15 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         bool $useSchemaVersioning = false
     ): bool {
         foreach ($avroFiles as $schemaName => $avroFile) {
-            /** @var string $fileContents */
+            if (false === is_readable($avroFile)) {
+                throw new \RuntimeException(sprintf('Failed to read schema file: %s', $avroFile));
+            }
+
             $fileContents = file_get_contents($avroFile);
 
             /** @var array<string, mixed> $jsonDecoded */
             $jsonDecoded = json_decode($fileContents);
 
-            /** @var string $localSchema */
             $localSchema = json_encode($jsonDecoded);
 
             if ($useSchemaVersioning) {
