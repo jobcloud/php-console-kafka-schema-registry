@@ -23,7 +23,7 @@
     "require-dev": {
         "infection/infection": "^0.29",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^9.5 < 10.0",
+      "phpunit/phpunit": "^9.5 < 10.0",
         "rregeer/phpunit-coverage-check": "^0.3.1",
         "squizlabs/php_codesniffer": "^4.0"
     },
