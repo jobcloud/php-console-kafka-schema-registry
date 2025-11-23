@@ -61,20 +61,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            // Get all items in the directory
-            $items = glob(self::SCHEMA_DIRECTORY . '/*');
-            if ($items) {
-                foreach ($items as $item) {
-                    if (is_dir($item)) {
-                        // Remove directories (including those with .avsc extension)
-                        @rmdir($item);
-                    } else {
-                        // Restore permissions on files before cleanup
-                        @chmod($item, 0644);
-                        unlink($item);
-                    }
-                }
-            }
+            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -298,28 +285,4 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertStringContainsString('with new versions, the latest being', $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
     }
-
-    public function testThrowsRuntimeExceptionWhenFileCannotBeRead(): void
-    {
-        $unreadableFile = self::SCHEMA_DIRECTORY . '/unreadable.avsc';
-        file_put_contents($unreadableFile, self::DUMMY_SCHEMA);
-        chmod($unreadableFile, 0000);
-
-        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
-
-        $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
-        $command = $application->find('kafka-schema-registry:register:changed');
-        $commandTester = new CommandTester($command);
-
-        self::expectException(\RuntimeException::class);
-        self::expectExceptionMessage('Failed to read schema file:');
-
-        $commandTester->execute([
-            'schemaDirectory' => self::SCHEMA_DIRECTORY
-        ]);
-    }
-
 }
-

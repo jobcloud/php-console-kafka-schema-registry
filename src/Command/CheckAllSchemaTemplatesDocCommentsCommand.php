@@ -65,7 +65,7 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
 
     /**
      * @param array<string, string> $avroFiles
-     * @param list<string> $failed
+     * @param array<string> $failed
      * @return boolean
      * @throws JsonException
      */

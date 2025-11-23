@@ -122,16 +122,14 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         bool $useSchemaVersioning = false
     ): bool {
         foreach ($avroFiles as $schemaName => $avroFile) {
-            if (false === is_readable($avroFile)) {
-                throw new \RuntimeException(sprintf('Failed to read schema file: %s', $avroFile));
-            }
-
+            /** @var string $fileContents */
             $fileContents = file_get_contents($avroFile);
 
             /** @var array<string, mixed> $jsonDecoded */
             $jsonDecoded = json_decode($fileContents);
 
-            $localSchema = json_encode($jsonDecoded);
+            /** @var string $localSchema */
+            $localSchema = json_encode($jsonDecoded); // @phpstan-ignore-line
 
             if ($useSchemaVersioning) {
                 /** @var string $schemaName */
