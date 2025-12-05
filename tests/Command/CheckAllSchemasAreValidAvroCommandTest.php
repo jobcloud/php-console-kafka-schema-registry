@@ -86,10 +86,6 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param bool $makeBad
-     */
     protected function generateFiles(int $numberOfFiles, bool $makeBad = false): void
     {
         $numbers = range(1, $numberOfFiles);

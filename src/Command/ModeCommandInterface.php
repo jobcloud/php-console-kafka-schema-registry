@@ -11,8 +11,6 @@ interface ModeCommandInterface
 {
     /**
      * Gets name of Import Mode
-     *
-     * @return string
      */
     public function getMode(): string;
 }

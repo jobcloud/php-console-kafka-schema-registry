@@ -18,9 +18,6 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
-    /**
-     * @return array
-     */
     public function argumentsDataProvider(): array
     {
         return [
@@ -34,9 +31,6 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 
     /**
      * @dataProvider argumentsDataProvider
-     * @param string|null $actualVersion
-     * @param string $expectedOutput
-     * @param int $expectedExitCode
      */
     public function testCommand(?string $actualVersion, string $expectedOutput, int $expectedExitCode): void
     {

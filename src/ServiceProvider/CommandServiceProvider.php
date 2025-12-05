@@ -34,7 +34,6 @@ class CommandServiceProvider implements ServiceProviderInterface
     public const COMMANDS = 'kafka.schema.registry.commands';
 
     /**
-     * @param Container $container
      * @return void
      */
     #[\Override]

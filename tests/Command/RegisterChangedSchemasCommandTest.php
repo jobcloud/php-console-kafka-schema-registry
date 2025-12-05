@@ -66,10 +66,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param string $contents
-     */
     protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void
     {
         $numbers = range(1, $numberOfFiles);

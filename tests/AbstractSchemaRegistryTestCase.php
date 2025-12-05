@@ -9,14 +9,12 @@ use Throwable;
 abstract class AbstractSchemaRegistryTestCase extends TestCase
 {
     /**
-     * @param string $class
      * @param array|null $methodMap (array of method returns, or NULL)
      *     1. NULL - Methods won't be mocked, it will run original code
      *     2. Array of method names - ['method_name' => 'method_value',...].
      *        Specified method will be mocked with return value you set as element value.
      *        Those not specified will run original code
      *
-     * @return MockObject
      */
     final public function makeMock(string $class, array $methodMap = []): MockObject
     {
@@ -37,7 +35,7 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
             array_values(
                 array_filter(
                     $methodMap,
-                    static fn($key) => is_numeric($key),
+                    is_numeric(...),
                     ARRAY_FILTER_USE_KEY
                 )
             )
@@ -67,10 +65,6 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
         return $mock;
     }
 
-    /**
-     * @param string $className
-     * @param array $array
-     */
     protected static function assertArrayHasInstanceOf(string $className, array $array): void
     {
         $filtered = array_filter($array, static fn($item) => $item instanceof $className);

@@ -18,9 +18,6 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
-    /**
-     * @return array
-     */
     public function argumentsDataProvider(): array
     {
         return [
@@ -33,9 +30,6 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 
     /**
      * @dataProvider argumentsDataProvider
-     * @param bool $actualCompatible
-     * @param string $expectedOutput
-     * @param int $expectedExitCode
      */
     public function testCommand(
         bool $actualCompatible,
