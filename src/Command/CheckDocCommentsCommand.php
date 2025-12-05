@@ -16,9 +16,6 @@ use Symfony\Component\Console\Command\Command;
  */
 class CheckDocCommentsCommand extends Command
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -29,11 +26,6 @@ class CheckDocCommentsCommand extends Command
             ->addArgument('schemaTemplateFile', InputArgument::REQUIRED, 'Path to Avro template schema file');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {

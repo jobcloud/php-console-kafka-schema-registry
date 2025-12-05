@@ -10,9 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteAllSchemasCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -28,11 +25,6 @@ class DeleteAllSchemasCommand extends AbstractSchemaCommand
             );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {

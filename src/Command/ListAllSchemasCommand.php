@@ -9,9 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListAllSchemasCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -21,11 +18,6 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
             ->setHelp('List all schemas');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {

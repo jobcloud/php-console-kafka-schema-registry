@@ -11,9 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckCompatibilityCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -25,11 +22,6 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
             ->addArgument('schemaVersion', InputArgument::REQUIRED, 'Version of the schema');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {

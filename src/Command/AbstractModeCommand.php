@@ -9,9 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractModeCommand extends AbstractSchemaCommand implements ModeCommandInterface
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -21,11 +18,6 @@ abstract class AbstractModeCommand extends AbstractSchemaCommand implements Mode
             ->setHelp(sprintf("Sets import mode to %s", $this->getMode()));
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {

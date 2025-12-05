@@ -82,7 +82,6 @@ The following template schema names violate the aforementioned rules:');
     /**
      * @param array<string, string> $avroFiles
      * @param array<string> $failed
-     * @return boolean
      */
     private function checkSchemaTemplateNames(array $avroFiles, array &$failed = []): bool
     {

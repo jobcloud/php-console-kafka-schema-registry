@@ -19,10 +19,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
      */
     private $abortRegister = false;
 
-    /**
-     * @param KafkaSchemaRegistryApiClientInterface $schemaRegistryApi
-     * @param integer           $maxRetries
-     */
     public function __construct(
         KafkaSchemaRegistryApiClientInterface $schemaRegistryApi,
         private readonly int $maxRetries = 10
@@ -30,9 +26,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
         parent::__construct($schemaRegistryApi);
     }
 
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -49,11 +42,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -108,11 +96,8 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
     /**
      * @param array<string, mixed> $avroFiles
-     * @param SymfonyStyle $io
      * @param array<string, mixed> $failed
      * @param array<string, mixed> $succeeded
-     * @param bool $useSchemaVersioning
-     * @return boolean
      */
     private function registerFiles(
         array $avroFiles,

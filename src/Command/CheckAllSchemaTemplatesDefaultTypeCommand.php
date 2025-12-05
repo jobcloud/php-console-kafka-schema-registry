@@ -20,9 +20,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         "array" => "array",
     ];
 
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -37,11 +34,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             );
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -68,7 +60,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     /**
      * @param array<string, string> $avroFiles
      * @param array<mixed> $failed
-     * @return boolean
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {
@@ -89,7 +80,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param string $localSchema
      * @return array<int|string, mixed>
      */
     private function checkDefaultType(string $localSchema): array
@@ -159,11 +149,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         return $defaultFields;
     }
 
-    /**
-     * @param string $defaultType
-     * @param string $currentType
-     * @return bool
-     */
     private function isContainedInBiggerType(string $defaultType, string $currentType): bool
     {
         if ($currentType === 'double' && ($defaultType === 'int' || $defaultType === 'float')) {
@@ -177,9 +162,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         return false;
     }
 
-    /**
-     * @return string
-     */
     private function getFieldName(mixed $decodedSchema, mixed $field): string
     {
         return $decodedSchema->namespace . '.' . $decodedSchema->name . '.' . $field->name;

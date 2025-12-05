@@ -10,9 +10,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -23,11 +20,6 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
             ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to avro schema directory');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -55,7 +47,6 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
     /**
      * @param array<string, string> $avroFiles
      * @param array<string> $failed
-     * @return boolean
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {

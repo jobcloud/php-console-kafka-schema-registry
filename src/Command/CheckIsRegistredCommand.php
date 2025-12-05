@@ -11,9 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CheckIsRegistredCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -24,11 +21,6 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
             ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {

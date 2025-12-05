@@ -17,9 +17,6 @@ use Symfony\Component\Console\Command\Command;
  */
 class CheckAllSchemaTemplatesDocCommentsCommand extends Command
 {
-    /**
-     * @return void
-     */
     #[\Override]
     protected function configure(): void
     {
@@ -34,11 +31,6 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
             );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -66,7 +58,6 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
     /**
      * @param array<string, string> $avroFiles
      * @param array<string> $failed
-     * @return boolean
      * @throws JsonException
      */
     private function checkDocCommentsOnSchemaTemplates(array $avroFiles, array &$failed = []): bool

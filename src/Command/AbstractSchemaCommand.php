@@ -12,9 +12,6 @@ abstract class AbstractSchemaCommand extends Command
      */
     protected $schemaRegistryApi;
 
-    /**
-     * @param KafkaSchemaRegistryApiClientInterface $schemaRegistryApi
-     */
     public function __construct(KafkaSchemaRegistryApiClientInterface $schemaRegistryApi)
     {
         parent::__construct();
