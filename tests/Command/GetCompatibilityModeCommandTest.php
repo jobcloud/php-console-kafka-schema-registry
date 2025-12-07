@@ -24,7 +24,7 @@ class GetCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetCompatibilityModeCommand($schemaRegistryApi));
+        $application->addCommand(new GetCompatibilityModeCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:get:compatibility:mode');
         $commandTester = new CommandTester($command);
 

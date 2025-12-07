@@ -16,7 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class RegisterSchemaVersionCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     public function testCommand(): void
     {
@@ -54,7 +54,7 @@ EOF
         ]);
 
         $application = new Application();
-        $application->add(new RegisterSchemaVersionCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterSchemaVersionCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:version');
         $commandTester = new CommandTester($command);
 

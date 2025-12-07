@@ -12,9 +12,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_RECORD_SCHEMA = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -30,7 +30,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_ENUM_SCHEMA = <<<EOF
+    protected const string GOOD_ENUM_SCHEMA = <<<EOF
         {
           "type": "enum",
           "name": "Suit",
@@ -39,7 +39,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_FIXED_SCHEMA = <<<EOF
+    protected const string GOOD_FIXED_SCHEMA = <<<EOF
         {
           "type": "fixed",
           "name": "md5",
@@ -48,7 +48,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_WITH_EMPTY_NAMESPACE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_WITH_EMPTY_NAMESPACE = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -64,7 +64,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_NAME_STARTS_WITH_UNDERSCORE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_NAME_STARTS_WITH_UNDERSCORE = <<<EOF
         {
           "type": "record",
           "name": "_test",
@@ -80,7 +80,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_NAME_CONTAINS_UNDERSCORE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_NAME_CONTAINS_UNDERSCORE = <<<EOF
         {
           "type": "record",
           "name": "test_schema",
@@ -96,7 +96,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -112,7 +112,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "000test",
@@ -128,7 +128,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA1 = <<<EOF
+    protected const string BAD_SCHEMA1 = <<<EOF
         {
           "type": "record",
           "name": "test-schema",
@@ -144,7 +144,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA2 = <<<EOF
+    protected const string BAD_SCHEMA2 = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -160,7 +160,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA3 = <<<EOF
+    protected const string BAD_SCHEMA3 = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -176,7 +176,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA4 = <<<EOF
+    protected const string BAD_SCHEMA4 = <<<EOF
         {
           "type": "record",
           "name": "null",
@@ -253,7 +253,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -275,7 +275,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -301,7 +301,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -327,7 +327,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -353,7 +353,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -379,7 +379,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
 {
-    private const TYPE_MAP = [
+    private const array TYPE_MAP = [
         "null" => "null",
         "boolean" => "boolean",
         "integer" => "int",
@@ -20,9 +20,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         "array" => "array",
     ];
 
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -36,11 +33,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             );
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
@@ -65,8 +57,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
 
     /**
      * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
-     * @return boolean
+     * @param list<mixed> $failed
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {
@@ -87,7 +78,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param string $localSchema
      * @return array<int|string, mixed>
      */
     private function checkDefaultType(string $localSchema): array
@@ -101,11 +91,10 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param mixed $decodedSchema
-     * @param array<mixed, mixed> $defaultFields
+     * @param array<mixed> $defaultFields
      * @return array<int|string, mixed>
      */
-    private function checkAllFields($decodedSchema, array $defaultFields = []): array
+    private function checkAllFields(mixed $decodedSchema, array $defaultFields = []): array
     {
         foreach ($decodedSchema->fields as $field) {
             if (!property_exists($field, 'default')) {
@@ -129,12 +118,10 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param mixed $fieldType
-     * @param mixed $field
-     * @param array<mixed, mixed> $defaultFields
+     * @param array<mixed> $defaultFields
      * @return array<int|string, mixed>
      */
-    private function checkSingleField($fieldType, $field, array $defaultFields): array
+    private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
     {
         $defaultType = strtolower(gettype($field->default));
 
@@ -156,11 +143,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         return $defaultFields;
     }
 
-    /**
-     * @param string $defaultType
-     * @param string $currentType
-     * @return bool
-     */
     private function isContainedInBiggerType(string $defaultType, string $currentType): bool
     {
         if ($currentType === 'double' && ($defaultType === 'int' || $defaultType === 'float')) {
@@ -174,12 +156,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         return false;
     }
 
-    /**
-     * @param mixed $decodedSchema
-     * @param mixed $field
-     * @return string
-     */
-    private function getFieldName($decodedSchema, $field): string
+    private function getFieldName(mixed $decodedSchema, mixed $field): string
     {
         return $decodedSchema->namespace . '.' . $decodedSchema->name . '.' . $field->name;
     }

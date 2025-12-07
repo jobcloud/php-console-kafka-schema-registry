@@ -1,6 +1,6 @@
 <?php
 
-namespace Command;
+namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\SetCompatibilityModeForSchemaCommand;
@@ -26,7 +26,7 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
         ]);
 
         $application = new Application();
-        $application->add(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:set:schema:compatibility:mode');
         $commandTester = new CommandTester($command);
 
@@ -55,7 +55,7 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
         ]);
 
         $application = new Application();
-        $application->add(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:set:schema:compatibility:mode');
         $commandTester = new CommandTester($command);
 

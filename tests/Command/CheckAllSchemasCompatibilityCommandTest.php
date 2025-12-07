@@ -16,9 +16,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const DUMMY_SCHEMA = <<<EOF
+    protected const string DUMMY_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -64,10 +64,6 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param string $contents
-     */
     protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void
     {
         $numbers = range(1, $numberOfFiles);
@@ -102,7 +98,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         ;
 
         $application = new Application();
-        $application->add(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+        $application->addCommand(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:check:compatibility:all');
         $commandTester = new CommandTester($command);
 
@@ -133,7 +129,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         ;
 
         $application = new Application();
-        $application->add(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+        $application->addCommand(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:check:compatibility:all');
         $commandTester = new CommandTester($command);
 

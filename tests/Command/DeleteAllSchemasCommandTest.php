@@ -4,7 +4,6 @@ namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand;
-use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
@@ -30,7 +29,7 @@ class DeleteAllSchemasCommandTest extends TestCase
         $schemaRegistryApi->expects(self::exactly(3))->method('deleteSubject')->willReturn([]);
 
         $application = new Application();
-        $application->add(new DeleteAllSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new DeleteAllSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:delete:all');
         $commandTester = new CommandTester($command);
 
@@ -67,7 +66,7 @@ class DeleteAllSchemasCommandTest extends TestCase
             ->willReturn([]);
 
         $application = new Application();
-        $application->add(new DeleteAllSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new DeleteAllSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:delete:all');
         $commandTester = new CommandTester($command);
 

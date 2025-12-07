@@ -1,4 +1,7 @@
-FROM public.ecr.aws/docker/library/php:8.3-cli-alpine3.21
+FROM public.ecr.aws/docker/library/php:8.4-cli-alpine3.23
+
+COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
+COPY --from=ghcr.io/php/pie:1.3.1-bin /pie /usr/bin/pie
 
 ARG HOST_USER_ID
 
@@ -36,12 +39,9 @@ RUN ln -s /run/secrets/ssh_host_key /root/.ssh/id_rsa && \
     chmod 400 /home/www-data/.ssh/config /root/.ssh/config
 
 # PHP: Install php extensions
-RUN pecl channel-update pecl.php.net && \
-    pecl install pcov rdkafka-6.0.3 && \
-    php-ext-enable pcov rdkafka
-
-# COMPOSER: install binary
-COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
+RUN pie install rdkafka/rdkafka:6.0.5 && \
+    pie install pecl/pcov && \
+    php-ext-enable rdkafka
 
 USER 'www-data'
 

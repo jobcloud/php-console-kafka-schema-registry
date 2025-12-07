@@ -13,9 +13,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_SCHEMA = <<<EOF
+    protected const string GOOD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -96,7 +96,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         }
         EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -141,7 +141,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         }
         EOF;
 
-    protected const KEY_SCHEMA = <<<EOF
+    protected const string KEY_SCHEMA = <<<EOF
         {
           "type": "string"
         }
@@ -203,7 +203,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $this->generateFiles(5);
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDefaultTypeCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 
@@ -225,7 +225,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDefaultTypeCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 
@@ -244,7 +244,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $this->generateFiles(5, true);
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDefaultTypeCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 

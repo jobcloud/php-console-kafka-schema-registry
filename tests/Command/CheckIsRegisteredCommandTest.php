@@ -16,7 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     /**
      * @return array
@@ -34,9 +34,6 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 
     /**
      * @dataProvider argumentsDataProvider
-     * @param string|null $actualVersion
-     * @param string $expectedOutput
-     * @param int $expectedExitCode
      */
     public function testCommand(?string $actualVersion, string $expectedOutput, int $expectedExitCode): void
     {
@@ -46,7 +43,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new CheckIsRegistredCommand($schemaRegistryApi));
+        $application->addCommand(new CheckIsRegistredCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:entry:exists');
         $commandTester = new CommandTester($command);
 

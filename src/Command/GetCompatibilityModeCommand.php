@@ -9,9 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GetCompatibilityModeCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -20,11 +17,6 @@ class GetCompatibilityModeCommand extends AbstractSchemaCommand
             ->setHelp('Get the default compatibility mode of the registry');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $compatibilityLevel = $this->schemaRegistryApi->getDefaultCompatibilityLevel();

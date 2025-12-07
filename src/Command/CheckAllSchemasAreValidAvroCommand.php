@@ -13,9 +13,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemasAreValidAvroCommand extends Command
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -25,11 +22,6 @@ class CheckAllSchemasAreValidAvroCommand extends Command
             ->addArgument('schemaDirectory', InputArgument::REQUIRED, 'Path to Avro schema directory');
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
@@ -54,8 +46,7 @@ class CheckAllSchemasAreValidAvroCommand extends Command
 
     /**
      * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
-     * @return boolean
+     * @param list<string> $failed
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {

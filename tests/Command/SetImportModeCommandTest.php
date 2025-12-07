@@ -39,7 +39,7 @@ class SetImportModeCommandTest extends AbstractSchemaRegistryTestCase
             ->willReturn(true);
 
         $application = new Application();
-        $application->add(new SetImportModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetImportModeCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:set:mode:Import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -68,7 +68,7 @@ class SetImportModeCommandTest extends AbstractSchemaRegistryTestCase
             ->willReturn(false);
 
         $application = new Application();
-        $application->add(new SetImportModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetImportModeCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:set:mode:import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);

@@ -16,7 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     /**
      * @return array
@@ -33,14 +33,10 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 
     /**
      * @dataProvider argumentsDataProvider
-     * @param bool $actualCompatible
-     * @param mixed $versionArgument
-     * @param string $expectedOutput
-     * @param int $expectedExitCode
      */
     public function testCommand(
         bool $actualCompatible,
-        $versionArgument,
+        mixed $versionArgument,
         string $expectedOutput,
         int $expectedExitCode
     ): void {
@@ -50,7 +46,7 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new CheckCompatibilityCommand($schemaRegistryApi));
+        $application->addCommand(new CheckCompatibilityCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:check:compatibility');
         $commandTester = new CommandTester($command);
 

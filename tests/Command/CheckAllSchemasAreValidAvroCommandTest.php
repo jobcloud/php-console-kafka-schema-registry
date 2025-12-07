@@ -13,9 +13,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_SCHEMA = <<<EOF
+    protected const string GOOD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -38,7 +38,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         }
         EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
         {
           "type: "record",
           "name": "test",
@@ -84,10 +84,6 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param bool $makeBad
-     */
     protected function generateFiles(int $numberOfFiles, bool $makeBad = false): void
     {
         $numbers = range(1, $numberOfFiles);
@@ -117,7 +113,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         $this->generateFiles(5);
 
         $application = new Application();
-        $application->add(new CheckAllSchemasAreValidAvroCommand());
+        $application->addCommand(new CheckAllSchemasAreValidAvroCommand());
         $command = $application->find('kafka-schema-registry:check:valid:avro:all');
         $commandTester = new CommandTester($command);
 
@@ -136,7 +132,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         $this->generateFiles(5, true);
 
         $application = new Application();
-        $application->add(new CheckAllSchemasAreValidAvroCommand());
+        $application->addCommand(new CheckAllSchemasAreValidAvroCommand());
         $command = $application->find('kafka-schema-registry:check:valid:avro:all');
         $commandTester = new CommandTester($command);
 

@@ -13,9 +13,6 @@ use Throwable;
 
 class GetLatestSchemaCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -26,11 +23,6 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
             ->addArgument('outputFile', InputArgument::REQUIRED, 'Path to output file');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $schemaName */

@@ -12,9 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RegisterSchemaVersionCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -25,9 +22,6 @@ class RegisterSchemaVersionCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
      * @throws AvroSchemaParseException
      */
     public function execute(InputInterface $input, OutputInterface $output): int

@@ -9,9 +9,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListAllSchemasCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -20,11 +17,6 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
             ->setHelp('List all schemas');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $schemas = $this->schemaRegistryApi->getSubjects();

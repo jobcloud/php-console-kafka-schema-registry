@@ -17,7 +17,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     public function testCommand(): void
     {
@@ -29,7 +29,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -59,7 +59,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -84,7 +84,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -107,7 +107,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 

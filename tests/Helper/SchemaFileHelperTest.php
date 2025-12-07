@@ -12,7 +12,7 @@ use RuntimeException;
  */
 class SchemaFileHelperTest extends TestCase
 {
-    private const SCHEMA_FILE = '/tmp/test.avsc';
+    private const string SCHEMA_FILE = '/tmp/test.avsc';
 
     /**
      * Setting up test prerequisites

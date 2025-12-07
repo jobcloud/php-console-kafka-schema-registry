@@ -24,7 +24,7 @@ class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new ListAllSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new ListAllSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:list');
         $commandTester = new CommandTester($command);
 

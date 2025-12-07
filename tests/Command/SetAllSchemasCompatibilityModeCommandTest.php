@@ -1,6 +1,6 @@
 <?php
 
-namespace Command;
+namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 {
-    private const CONFIG_FILE = '/tmp/test_config.json';
+    private const string CONFIG_FILE = '/tmp/test_config.json';
 
     protected function tearDown(): void
     {
@@ -301,7 +301,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
     private function createCommandTester(MockObject $schemaRegistryApi): CommandTester
     {
         $application = new Application();
-        $application->add(new SetAllSchemasCompatibilityModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetAllSchemasCompatibilityModeCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:set:compatibility:mode:all');
 
         return new CommandTester($command);

@@ -31,20 +31,16 @@ use Pimple\ServiceProviderInterface;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
-    public const COMMANDS = 'kafka.schema.registry.commands';
+    public const string COMMANDS = 'kafka.schema.registry.commands';
 
-    /**
-     * @param Container $container
-     * @return void
-     */
-    public function register(Container $container)
+    public function register(Container $pimple): void
     {
-        $container->register(new KafkaSchemaRegistryApiClientProvider());
+        $pimple->register(new KafkaSchemaRegistryApiClientProvider());
 
-        $container[self::COMMANDS] = static function (Container $container) {
+        $pimple[self::COMMANDS] = static function (Container $pimple) {
 
             /** @var KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
-            $schemaRegistryApi = $container[KafkaSchemaRegistryApiClientProvider::API_CLIENT];
+            $schemaRegistryApi = $pimple[KafkaSchemaRegistryApiClientProvider::API_CLIENT];
 
             return [
                 new CheckCompatibilityCommand($schemaRegistryApi),

@@ -14,9 +14,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class CheckAllSchemaTemplatesDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_SCHEMA = <<<EOF
+    protected const string GOOD_SCHEMA = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -31,7 +31,7 @@ class CheckAllSchemaTemplatesDocCommentsCommandTest extends AbstractSchemaRegist
 }
 EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -45,7 +45,7 @@ EOF;
 }
 EOF;
 
-    protected const BAD_SCHEMA1 = <<<EOF
+    protected const string BAD_SCHEMA1 = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -59,7 +59,7 @@ EOF;
 }
 EOF;
 
-    protected const BAD_SCHEMA2 = <<<EOF
+    protected const string BAD_SCHEMA2 = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -105,7 +105,7 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
@@ -132,7 +132,7 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
@@ -159,7 +159,7 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 

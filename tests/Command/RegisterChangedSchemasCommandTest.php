@@ -17,9 +17,9 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const DUMMY_SCHEMA = <<<EOF
+    protected const string DUMMY_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -65,10 +65,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param string $contents
-     */
     protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void
     {
         $numbers = range(1, $numberOfFiles);
@@ -105,7 +101,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ;
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -132,7 +128,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -164,7 +160,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -202,7 +198,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -234,7 +230,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -269,7 +265,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ;
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 

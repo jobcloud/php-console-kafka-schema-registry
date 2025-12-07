@@ -13,13 +13,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemaTemplatesNamesCommand extends Command
 {
-    private const TYPES_FOR_VALIDATION = [
+    private const array TYPES_FOR_VALIDATION = [
         'record',
         'enum',
         'fixed'
     ];
 
-    private const RESERVED_KEYWORDS = [
+    private const array RESERVED_KEYWORDS = [
         'null',
         'boolean',
         'int',
@@ -35,9 +35,9 @@ class CheckAllSchemaTemplatesNamesCommand extends Command
         'fixed',
     ];
 
-    private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
+    private const string REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
 
-    private const REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
+    private const string REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
         '/^(?:[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)?$/';
 
     protected function configure(): void
@@ -79,8 +79,7 @@ The following template schema names violate the aforementioned rules:');
 
     /**
      * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
-     * @return boolean
+     * @param list<string> $failed
      */
     private function checkSchemaTemplateNames(array $avroFiles, array &$failed = []): bool
     {
