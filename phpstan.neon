@@ -1,3 +1,9 @@
 parameters:
     level: 8
     paths: [ src ]
+    ignoreErrors:
+        -
+            messages:
+                - "#Offset 'array'\\|'boolean'\\|'double'\\|'integer'\\|'null'\\|'object'\\|'resource'\\|'resource \\(closed\\)'\\|'string'\\|'unknown type' might not exist on array{null\\: 'null', boolean\\: 'boolean', integer\\: 'int', string\\: 'string', double\\: 'double', array\\: 'array'}\\.#"
+                - "#Call to function is_string\\(\\) with 'array'\\|'boolean'\\|'double'\\|'integer'\\|'null'\\|'object'\\|'resource'\\|'resource \\(closed\\)'\\|'string'\\|'unknown type' will always evaluate to true\\.#"
+            path: %currentWorkingDirectory%/src/Command/CheckAllSchemaTemplatesDefaultTypeCommand.php
