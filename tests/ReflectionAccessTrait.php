@@ -2,8 +2,6 @@
 
 namespace Jobcloud\SchemaConsole\Tests;
 
-use ReflectionException;
-
 trait ReflectionAccessTrait
 {
     /**
