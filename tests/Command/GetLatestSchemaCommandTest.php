@@ -42,11 +42,11 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Schema successfully written to %s.', self::SCHEMA_TEST_FILE), $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(sprintf('Schema successfully written to %s.', self::SCHEMA_TEST_FILE), $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
 
         $outputFileContents = file_get_contents(self::SCHEMA_TEST_FILE);
-        self::assertEquals(json_encode($schema, JSON_THROW_ON_ERROR), $outputFileContents);
+        self::assertSame(json_encode($schema, JSON_THROW_ON_ERROR), $outputFileContents);
     }
 
     public function testMissingSchema(): void
@@ -73,8 +73,8 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Schema %s does not exist', $expectedSchemaName), $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(sprintf('Schema %s does not exist', $expectedSchemaName), $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testUnknownClientErrorCodeThrowsException(): void
@@ -125,7 +125,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Was unable to write schema to %s.', $failurePath), $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(sprintf('Was unable to write schema to %s.', $failurePath), $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

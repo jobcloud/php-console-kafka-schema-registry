@@ -34,7 +34,7 @@ class GetCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals('The registry\'s default compatibility mode is BACKWARD', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame('The registry\'s default compatibility mode is BACKWARD', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

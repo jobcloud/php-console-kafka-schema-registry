@@ -55,7 +55,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Total schemas processed: 2', $output);
         self::assertStringContainsString('Successful updates: 2', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandWithValidConfigFileAndSomeFailures(): void
@@ -92,7 +92,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Total schemas processed: 3', $output);
         self::assertStringContainsString('Successful updates: 2', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithApiException(): void
@@ -125,7 +125,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         );
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithNonExistentConfigFile(): void
@@ -139,7 +139,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         $output = $commandTester->getDisplay();
 
         self::assertStringContainsString('Could not read configuration file: /non/existent/file.json', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     #[DataProvider('invalidJsonConfigurationProvider')]
@@ -159,7 +159,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
             'Configuration file must contain a JSON array of schema configurations',
             $output
         );
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     /**
@@ -205,7 +205,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         );
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithMissingCompatibilityLevelField(): void
@@ -235,7 +235,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         );
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithEmptyArray(): void
@@ -254,7 +254,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Total schemas processed: 0', $output);
         self::assertStringContainsString('Successful updates: 0', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandWithAllValidCompatibilityLevels(): void
@@ -292,7 +292,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
 
         self::assertStringContainsString('Successful updates: 7', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     private function createCommandTester(MockObject $schemaRegistryApi): CommandTester

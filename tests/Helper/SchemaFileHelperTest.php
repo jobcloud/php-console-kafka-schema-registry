@@ -85,12 +85,12 @@ EOF
 
     public function testGetSchemaName(): void
     {
-        self::assertEquals('test', SchemaFileHelper::getSchemaName(self::SCHEMA_FILE));
+        self::assertSame('test', SchemaFileHelper::getSchemaName(self::SCHEMA_FILE));
     }
 
     public function testHasDocCommentsOnAllFields(): void
     {
-        self::assertEquals(
+        self::assertSame(
             [
                 'name' => 1,
                 'number1' => 1,
@@ -113,7 +113,7 @@ EOF
 EOF
         );
 
-        self::assertEquals(
+        self::assertSame(
             [],
             SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
                 json_decode(file_get_contents(self::SCHEMA_FILE), true)
@@ -149,7 +149,7 @@ EOF
 EOF
         );
 
-        self::assertEquals(
+        self::assertSame(
             [
                 'number2' => 1
             ],
@@ -187,7 +187,7 @@ EOF
 EOF
         );
 
-        self::assertEquals(
+        self::assertSame(
             [],
             SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
                 json_decode(file_get_contents(self::SCHEMA_FILE), true)

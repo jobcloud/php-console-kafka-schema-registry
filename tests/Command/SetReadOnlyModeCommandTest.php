@@ -47,11 +47,11 @@ class SetReadOnlyModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(
+        self::assertSame(
             sprintf("Import mode set to %s", KafkaSchemaRegistryApiClientInterface::MODE_READONLY),
             $commandOutput
         );
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandFail(): void
@@ -76,7 +76,7 @@ class SetReadOnlyModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(null, $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame('', $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

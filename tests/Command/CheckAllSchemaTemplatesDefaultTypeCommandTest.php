@@ -211,7 +211,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have valid default value types', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWithKeySchema(): void
@@ -234,7 +234,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have valid default value types', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotInvalid(): void
@@ -256,6 +256,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         self::assertStringContainsString('Following schema templates have invalid default value types', $commandOutput);
         self::assertStringContainsString('* ch.jobcloud.test.bool1', $commandOutput);
         self::assertStringContainsString('* ch.jobcloud.test.number2', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

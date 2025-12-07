@@ -56,7 +56,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals($expectedOutput, $commandOutput);
-        self::assertEquals($expectedExitCode, $commandTester->getStatusCode());
+        self::assertSame($expectedOutput, $commandOutput);
+        self::assertSame($expectedExitCode, $commandTester->getStatusCode());
     }
 }

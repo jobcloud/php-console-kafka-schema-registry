@@ -66,7 +66,7 @@ EOF
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(
+        self::assertSame(
             implode(
                 PHP_EOL,
                 [
@@ -77,6 +77,6 @@ EOF
             $commandOutput
         );
 
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

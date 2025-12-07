@@ -44,9 +44,9 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
         $fileContents = file_get_contents(self::SCHEMA_TEST_FILE);
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Schema successfully written to %s.', self::SCHEMA_TEST_FILE), $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
-        self::assertEquals(json_encode($schema, JSON_THROW_ON_ERROR), $fileContents);
+        self::assertSame(sprintf('Schema successfully written to %s.', self::SCHEMA_TEST_FILE), $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
+        self::assertSame(json_encode($schema, JSON_THROW_ON_ERROR), $fileContents);
     }
 
     public function testCommandFailToReadFile(): void
@@ -75,7 +75,7 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Was unable to write schema to %s.', $failurePath), $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(sprintf('Was unable to write schema to %s.', $failurePath), $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

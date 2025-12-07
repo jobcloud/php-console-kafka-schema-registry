@@ -34,7 +34,7 @@ class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(implode(PHP_EOL, [1,2,3,4]), $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(implode(PHP_EOL, [1,2,3,4]), $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

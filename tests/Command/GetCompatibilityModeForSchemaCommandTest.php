@@ -36,7 +36,7 @@ class GetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals('The schema\'s compatibility mode is BACKWARD', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame('The schema\'s compatibility mode is BACKWARD', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

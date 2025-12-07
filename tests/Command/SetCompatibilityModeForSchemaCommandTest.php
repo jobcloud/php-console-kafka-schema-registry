@@ -39,11 +39,11 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(
+        self::assertSame(
             sprintf('Successfully changed compatibility mode for schema: %s', $schemaName),
             $commandOutput
         );
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandWhenCompatibilityIsNotChanged(): void
@@ -69,10 +69,10 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(
+        self::assertSame(
             sprintf('Could not change compatibility mode for schema %s: %s', $schemaName, $errorMessage),
             $commandOutput
         );
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

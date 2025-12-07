@@ -117,7 +117,7 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have doc comments on all fields', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotInvalid(): void
@@ -150,7 +150,7 @@ EOF;
         );
         self::assertStringContainsString('* test.schema.bad', $commandOutput);
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testExceptionWhenAllNotInvalid(): void

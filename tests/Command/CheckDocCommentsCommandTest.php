@@ -92,7 +92,7 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('Schema template has doc comments on all fields', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandBadSchema(): void
@@ -112,7 +112,7 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('Schema template does not have doc comments on all fields', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandBadSchema1(): void
@@ -149,6 +149,6 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('Schema template does not have doc comments on all fields', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

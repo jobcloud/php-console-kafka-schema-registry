@@ -264,7 +264,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have valid name fields', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNameStartsWithNumber(): void
@@ -291,7 +291,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNameContainsDash(): void
@@ -318,7 +318,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad1', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNamespaceContainsDash(): void
@@ -345,7 +345,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNamespaceStartsWithDot(): void
@@ -372,7 +372,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad3', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNameIsReservedKeyword(): void
@@ -399,6 +399,6 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad4', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

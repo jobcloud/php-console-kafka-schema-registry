@@ -39,8 +39,8 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals('All schemas deleted.', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame('All schemas deleted.', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandHardDelete(): void
@@ -78,7 +78,7 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals('All schemas deleted.', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame('All schemas deleted.', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

@@ -125,7 +125,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schemas are valid Avro', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotInvalid(): void
@@ -147,6 +147,6 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
         self::assertStringContainsString('Following schemas are not valid Avro', $commandOutput);
         self::assertStringContainsString('* test.schema.bad1', $commandOutput);
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

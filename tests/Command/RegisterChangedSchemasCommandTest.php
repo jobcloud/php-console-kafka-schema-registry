@@ -114,7 +114,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertMatchesRegularExpression('/^Successfully registered new version of schema /', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandSuccessWithSkipping(): void
@@ -147,7 +147,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertStringContainsString('Schema test.schema.4 has been skipped (no change)', $commandOutput);
         self::assertStringContainsString('Schema test.schema.5 has been skipped (no change)', $commandOutput);
 
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandSuccessWithAllNew(): void
@@ -186,7 +186,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertStringContainsString('test.schema.4 with new version: 1', $commandOutput);
         self::assertStringContainsString('test.schema.5 with new version: 1', $commandOutput);
 
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandFailsRegisteringASchema(): void
@@ -218,7 +218,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
             $commandOutput
         );
 
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputTotalFailDueToIncompatibility(): void
@@ -248,7 +248,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         self::assertStringContainsString('has an incompatible change', $commandOutput);
 
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandRegisterWithSuccessAndVersioningOption(): void
@@ -285,6 +285,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         self::assertMatchesRegularExpression('/^Successfully registered new version of schema /', $commandOutput);
         self::assertStringContainsString('with new versions, the latest being', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }
