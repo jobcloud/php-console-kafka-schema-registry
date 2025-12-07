@@ -104,7 +104,7 @@ The following template schema names violate the aforementioned rules:');
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 
     /**

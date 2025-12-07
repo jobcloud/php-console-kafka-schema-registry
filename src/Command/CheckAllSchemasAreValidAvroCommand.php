@@ -59,12 +59,12 @@ class CheckAllSchemasAreValidAvroCommand extends Command
 
             try {
                 AvroSchema::parse($localSchema);
-            } catch (AvroSchemaParseException $e) {
+            } catch (AvroSchemaParseException) {
                 $failed[] = $schemaName;
                 continue;
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 }

@@ -71,6 +71,6 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 }

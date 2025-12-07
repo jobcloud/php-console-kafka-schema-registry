@@ -80,7 +80,7 @@ class SchemaFileHelper
 
         $fields = $schema[self::FIELDS_FIELD_KEY] ?? null;
 
-        if (false === is_array($fields) || 0 === count($fields)) {
+        if (false === is_array($fields) || [] === $fields) {
             return $missingDocComments;
         }
 

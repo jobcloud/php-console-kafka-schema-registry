@@ -63,7 +63,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     {
         $failed = [];
 
-        foreach ($avroFiles as $schemaName => $avroFile) {
+        foreach ($avroFiles as $avroFile) {
             /** @var string $localSchema */
             $localSchema = file_get_contents($avroFile);
 
@@ -74,7 +74,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 
     /**
@@ -109,7 +109,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
                 $fieldTypes = [$fieldTypes];
             }
 
-            if (count($fieldTypes)) {
+            if ($fieldTypes !== []) {
                 $defaultFields = $this->checkSingleField($fieldTypes[0], $field, $defaultFields);
             }
         }
@@ -148,12 +148,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         if ($currentType === 'double' && ($defaultType === 'int' || $defaultType === 'float')) {
             return true;
         }
-
-        if ($currentType === 'float' && $defaultType === 'int') {
-            return true;
-        }
-
-        return false;
+        return $currentType === 'float' && $defaultType === 'int';
     }
 
     private function getFieldName(mixed $decodedSchema, mixed $field): string

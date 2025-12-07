@@ -28,9 +28,9 @@ class SetCompatibilityModeForSchemaCommand extends AbstractSchemaCommand
 
         try {
             $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             $output->writeln(
-                sprintf('Could not change compatibility mode for schema %s: %s', $schemaName, $e->getMessage())
+                sprintf('Could not change compatibility mode for schema %s: %s', $schemaName, $exception->getMessage())
             );
 
             return Command::FAILURE;

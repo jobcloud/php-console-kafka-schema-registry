@@ -37,7 +37,7 @@ class CommandServiceProvider implements ServiceProviderInterface
     {
         $pimple->register(new KafkaSchemaRegistryApiClientProvider());
 
-        $pimple[self::COMMANDS] = static function (Container $pimple) {
+        $pimple[self::COMMANDS] = static function (Container $pimple): array {
 
             /** @var KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
             $schemaRegistryApi = $pimple[KafkaSchemaRegistryApiClientProvider::API_CLIENT];

@@ -60,6 +60,6 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 }
