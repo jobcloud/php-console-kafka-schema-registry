@@ -3,17 +3,19 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(CheckIsRegistredCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
@@ -21,7 +23,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
     /**
      * @return array
      */
-    public function argumentsDataProvider(): array
+    public static function argumentsDataProvider(): array
     {
         return [
             [null, 'Schema does not exist in any version', 1],
@@ -32,9 +34,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
         ];
     }
 
-    /**
-     * @dataProvider argumentsDataProvider
-     */
+    #[DataProvider('argumentsDataProvider')]
     public function testCommand(?string $actualVersion, string $expectedOutput, int $expectedExitCode): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */

@@ -3,14 +3,14 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- */
+#[CoversClass(CheckAllSchemaTemplatesDefaultTypeCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
 class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';

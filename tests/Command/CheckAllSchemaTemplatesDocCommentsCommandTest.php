@@ -3,15 +3,15 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use JsonException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- */
+#[CoversClass(CheckAllSchemaTemplatesDocCommentsCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
 class CheckAllSchemaTemplatesDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';

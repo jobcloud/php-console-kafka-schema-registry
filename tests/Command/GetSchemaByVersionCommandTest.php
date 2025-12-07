@@ -3,17 +3,18 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\GetSchemaByVersionCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(GetSchemaByVersionCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 {
     protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
@@ -51,9 +52,11 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
     {
         $failurePath = '..';
 
+        $schema = ['a' => "\xB1"];
+
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'getSchemaDefinitionByVersion' => [],
+            'getSchemaDefinitionByVersion' => $schema,
         ]);
 
         $application = new Application();

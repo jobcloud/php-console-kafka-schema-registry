@@ -27,12 +27,11 @@ use Jobcloud\SchemaConsole\Command\SetReadOnlyModeCommand;
 use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
 use Jobcloud\SchemaConsole\ServiceProvider\CommandServiceProvider;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Pimple\Container;
 use Symfony\Component\Console\Command\Command;
 
-/**
- * @covers \Jobcloud\SchemaConsole\ServiceProvider\CommandServiceProvider
- */
+#[CoversClass(CommandServiceProvider::class)]
 class CommandServiceProviderTest extends AbstractSchemaRegistryTestCase
 {
     public function testMakesServicesInContainer(): void

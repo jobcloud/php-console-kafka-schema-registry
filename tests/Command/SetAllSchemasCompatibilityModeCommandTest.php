@@ -3,8 +3,11 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -13,6 +16,8 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @covers \Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand
  * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
  */
+#[CoversClass(SetAllSchemasCompatibilityModeCommand::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     private const string CONFIG_FILE = '/tmp/test_config.json';
@@ -143,9 +148,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertEquals(1, $commandTester->getStatusCode());
     }
 
-    /**
-     * @dataProvider invalidJsonConfigurationProvider
-     */
+    #[DataProvider('invalidJsonConfigurationProvider')]
     public function testCommandWithInvalidJsonConfiguration(mixed $configData): void
     {
         file_put_contents(self::CONFIG_FILE, json_encode($configData));
