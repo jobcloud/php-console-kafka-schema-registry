@@ -209,7 +209,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -253,6 +253,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -275,6 +276,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -301,6 +303,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -327,6 +330,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -353,6 +357,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -379,6 +384,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 

@@ -60,7 +60,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -69,7 +69,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
     {
         $numbers = range(1, $numberOfFiles);
 
-        array_walk($numbers, static function ($item) use ($contents) {
+        array_walk($numbers, static function (int $item) use ($contents): void {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 $contents
@@ -100,6 +100,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:check:compatibility:all');
         $commandTester = new CommandTester($command);
 
@@ -131,6 +132,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:check:compatibility:all');
         $commandTester = new CommandTester($command);
 

@@ -12,10 +12,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
 #[CoversClass(SetAllSchemasCompatibilityModeCommand::class)]
 #[CoversClass(AbstractSchemaCommand::class)]
 class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
@@ -73,9 +69,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
         $schemaRegistryApi->method('setSubjectCompatibilityLevel')
-            ->willReturnCallback(function ($schema) {
-                return $schema === 'schema2' ? throw new \Exception('error') : true;
-            });
+            ->willReturnCallback(fn($schema): true => $schema === 'schema2' ? throw new \Exception('error') : true);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
         $commandTester->execute(['configFile' => self::CONFIG_FILE]);
@@ -272,7 +266,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
 
         $schemas = [];
         foreach ($compatibilityLevels as $level) {
-            $schemas[] = ['schemaName' => "schema-{$level}", 'compatibilityLevel' => $level];
+            $schemas[] = ['schemaName' => 'schema-' . $level, 'compatibilityLevel' => $level];
         }
 
         file_put_contents(self::CONFIG_FILE, json_encode($schemas));
@@ -291,7 +285,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
 
         foreach ($compatibilityLevels as $level) {
             self::assertStringContainsString(
-                "Setting compatibility mode for schema \"schema-{$level}\" to \"{$level}\"... SUCCESS",
+                sprintf('Setting compatibility mode for schema "schema-%s" to "%s"... SUCCESS', $level, $level),
                 $output
             );
         }
@@ -305,6 +299,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
     {
         $application = new Application();
         $application->addCommand(new SetAllSchemasCompatibilityModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:compatibility:mode:all');
 
         return new CommandTester($command);

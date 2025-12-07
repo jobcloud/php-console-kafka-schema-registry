@@ -26,6 +26,7 @@ class ListVersionForSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new ListVersionsForSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:list:versions');
         $commandTester = new CommandTester($command);
 

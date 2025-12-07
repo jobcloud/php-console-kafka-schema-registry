@@ -31,6 +31,7 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $application = new Application();
         $application->addCommand(new DeleteAllSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:delete:all');
         $commandTester = new CommandTester($command);
 
@@ -56,18 +57,20 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $schemaRegistryApi->expects(self::exactly(2))
             ->method('deleteSubject')
-            ->with(self::callback(function ($inputArgument) {
+            ->with(self::callback(function ($inputArgument): bool {
                 static $input = 'schema1';
                 if ($inputArgument === $input) {
-                    $input = $input . '?permanent=true';
+                    $input .= '?permanent=true';
                     return true;
                 }
+
                 return false;
             }))
             ->willReturn([]);
 
         $application = new Application();
         $application->addCommand(new DeleteAllSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:delete:all');
         $commandTester = new CommandTester($command);
 

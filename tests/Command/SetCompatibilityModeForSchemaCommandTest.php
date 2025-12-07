@@ -28,6 +28,7 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
 
         $application = new Application();
         $application->addCommand(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:schema:compatibility:mode');
         $commandTester = new CommandTester($command);
 
@@ -57,6 +58,7 @@ class SetCompatibilityModeForSchemaCommandTest extends AbstractSchemaRegistryTes
 
         $application = new Application();
         $application->addCommand(new SetCompatibilityModeForSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:schema:compatibility:mode');
         $commandTester = new CommandTester($command);
 

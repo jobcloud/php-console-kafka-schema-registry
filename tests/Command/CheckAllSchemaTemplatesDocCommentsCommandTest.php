@@ -92,7 +92,7 @@ EOF;
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -106,6 +106,7 @@ EOF;
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
@@ -133,6 +134,7 @@ EOF;
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
@@ -160,6 +162,7 @@ EOF;
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 

@@ -40,6 +40,7 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new SetReadWriteModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:readwrite');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -68,6 +69,7 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new SetReadWriteModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:readwrite');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);

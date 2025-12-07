@@ -56,6 +56,7 @@ EOF
 
         $application = new Application();
         $application->addCommand(new RegisterSchemaVersionCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:version');
         $commandTester = new CommandTester($command);
 

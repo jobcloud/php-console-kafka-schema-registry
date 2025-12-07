@@ -30,6 +30,7 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new GetSchemaByVersionCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:fetch:schema');
         $commandTester = new CommandTester($command);
 
@@ -61,6 +62,7 @@ class GetSchemaByVersionCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new GetSchemaByVersionCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:fetch:schema');
         $commandTester = new CommandTester($command);
 

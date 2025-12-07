@@ -31,6 +31,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -61,6 +62,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -86,6 +88,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -111,6 +114,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 

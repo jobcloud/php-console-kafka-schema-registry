@@ -40,6 +40,7 @@ class SetReadOnlyModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new SetReadOnlyModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:readonly');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
@@ -68,6 +69,7 @@ class SetReadOnlyModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new SetReadOnlyModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:readonly');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);

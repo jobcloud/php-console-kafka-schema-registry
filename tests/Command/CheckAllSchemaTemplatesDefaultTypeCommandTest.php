@@ -165,15 +165,11 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param bool $makeBad
-     */
     protected function generateFiles(int $numberOfFiles, bool $makeBad = false): void
     {
         $numbers = range(1, $numberOfFiles);
@@ -190,7 +186,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
             );
         }
 
-        array_walk($numbers, static function ($item) {
+        array_walk($numbers, static function (int $item): void {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 self::GOOD_SCHEMA
@@ -204,6 +200,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 
@@ -226,6 +223,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 
@@ -245,6 +243,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 

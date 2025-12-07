@@ -21,7 +21,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
     protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     /**
-     * @return array
+     * @return string[][]|int[][]|null[][]
      */
     public static function argumentsDataProvider(): array
     {
@@ -44,6 +44,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new CheckIsRegistredCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:entry:exists');
         $commandTester = new CommandTester($command);
 

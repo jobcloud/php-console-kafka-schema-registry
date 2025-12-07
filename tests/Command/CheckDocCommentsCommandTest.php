@@ -79,6 +79,7 @@ EOF;
     {
         $application = new Application();
         $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 
@@ -98,6 +99,7 @@ EOF;
     {
         $application = new Application();
         $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 
@@ -117,6 +119,7 @@ EOF;
     {
         $application = new Application();
         $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 
@@ -133,6 +136,7 @@ EOF;
     {
         $application = new Application();
         $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 

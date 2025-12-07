@@ -21,7 +21,7 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
     protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     /**
-     * @return array
+     * @return bool[][]|string[][]|int[][]
      */
     public static function argumentsDataProvider(): array
     {
@@ -47,6 +47,7 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 
         $application = new Application();
         $application->addCommand(new CheckCompatibilityCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:check:compatibility');
         $commandTester = new CommandTester($command);
 

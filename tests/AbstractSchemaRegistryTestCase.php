@@ -19,7 +19,7 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
     {
         $mockBuilder = $this->getMockBuilder($class)->disableOriginalConstructor();
 
-        if (empty($methodMap)) {
+        if ($methodMap === []) {
             return $mockBuilder->getMock();
         }
 
@@ -27,18 +27,14 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
             array_keys(
                 array_filter(
                     $methodMap,
-                    static function ($key) {
-                        return !is_numeric($key);
-                    },
+                    static fn($key): bool => !is_numeric($key),
                     ARRAY_FILTER_USE_KEY
                 )
             ),
             array_values(
                 array_filter(
                     $methodMap,
-                    static function ($key) {
-                        return is_numeric($key);
-                    },
+                    is_numeric(...),
                     ARRAY_FILTER_USE_KEY
                 )
             )
@@ -68,15 +64,9 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
         return $mock;
     }
 
-    /**
-     * @param string $className
-     * @param array $array
-     */
     protected static function assertArrayHasInstanceOf(string $className, array $array): void
     {
-        $filtered = array_filter($array, static function ($item) use ($className) {
-            return $item instanceof $className;
-        });
+        $filtered = array_filter($array, static fn($item): bool => $item instanceof $className);
 
         self::assertGreaterThan(0, count($filtered));
     }

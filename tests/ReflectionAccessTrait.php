@@ -9,7 +9,7 @@ trait ReflectionAccessTrait
      */
     final public function setProperty(object $object, string $propertyName, mixed $newProperty): void
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new \ReflectionClass($object::class);
         $property = $reflection->getProperty($propertyName);
 
         $property->setValue($object, $newProperty);
@@ -18,9 +18,9 @@ trait ReflectionAccessTrait
     /**
      * @throws \ReflectionException
      */
-    final public function getPropertyValue(object $object, string $propertyName)
+    final public function getPropertyValue(object $object, string $propertyName): mixed
     {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new \ReflectionClass($object::class);
         $property = $reflection->getProperty($propertyName);
 
         return $property->getValue($object);
@@ -36,7 +36,7 @@ trait ReflectionAccessTrait
         string $methodName,
         array $parameters = []
     ): mixed {
-        $reflection = new \ReflectionClass(get_class($object));
+        $reflection = new \ReflectionClass($object::class);
         $method = $reflection->getMethod($methodName);
 
         return $method->invokeArgs($object, $parameters);

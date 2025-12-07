@@ -79,7 +79,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -100,7 +100,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
             );
         }
 
-        array_walk($numbers, static function ($item) {
+        array_walk($numbers, static function (int $item): void {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 self::GOOD_SCHEMA
@@ -114,6 +114,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemasAreValidAvroCommand());
+
         $command = $application->find('kafka-schema-registry:check:valid:avro:all');
         $commandTester = new CommandTester($command);
 
@@ -133,6 +134,7 @@ class CheckAllSchemasAreValidAvroCommandTest extends AbstractSchemaRegistryTestC
 
         $application = new Application();
         $application->addCommand(new CheckAllSchemasAreValidAvroCommand());
+
         $command = $application->find('kafka-schema-registry:check:valid:avro:all');
         $commandTester = new CommandTester($command);
 
