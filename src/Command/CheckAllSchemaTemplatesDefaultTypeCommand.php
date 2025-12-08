@@ -136,14 +136,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
         }
 
-        if (
-            property_exists($fieldType, 'type')
-            && $fieldType->type === 'array'
-            && isset(self::TYPE_MAP[$defaultType])
-        ) {
-            if (self::TYPE_MAP[$defaultType] === $fieldType->type) {
-                unset($defaultFields[$field->name]);
-            }
+        if (($fieldType->type ?? null) === 'array' && (self::TYPE_MAP[$defaultType] ?? null) === 'array') {
+            unset($defaultFields[$field->name]);
         }
 
         return $defaultFields;

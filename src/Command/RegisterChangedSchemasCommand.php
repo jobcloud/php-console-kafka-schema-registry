@@ -14,10 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 {
-    /**
-     * @var bool
-     */
-    private $abortRegister = false;
+    private bool $abortRegister = false;
 
     public function __construct(
         KafkaSchemaRegistryApiClientInterface $schemaRegistryApi,
