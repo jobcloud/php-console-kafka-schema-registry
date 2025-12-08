@@ -33,11 +33,8 @@ class CommandServiceProvider implements ServiceProviderInterface
 {
     public const COMMANDS = 'kafka.schema.registry.commands';
 
-    /**
-     * @return void
-     */
     #[\Override]
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $container->register(new KafkaSchemaRegistryApiClientProvider());
 

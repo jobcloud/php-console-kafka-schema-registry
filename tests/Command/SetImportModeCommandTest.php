@@ -16,10 +16,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class SetImportModeCommandTest extends AbstractSchemaRegistryTestCase
 {
-    /**
-     * @return MockObject|KafkaSchemaRegistryApiClientInterface
-     */
-    private function getFakeClient(): MockObject
+    private function getFakeClient(): MockObject|KafkaSchemaRegistryApiClientInterface
     {
         return $this
             ->getMockBuilder(KafkaSchemaRegistryApiClientInterface::class)
