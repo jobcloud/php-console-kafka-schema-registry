@@ -17,8 +17,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     private bool $abortRegister = false;
 
     public function __construct(
-        KafkaSchemaRegistryApiClientInterface $schemaRegistryApi, private int $maxRetries = 10)
-    {
+        KafkaSchemaRegistryApiClientInterface $schemaRegistryApi,
+        private int $maxRetries = 10
+    ) {
         parent::__construct($schemaRegistryApi);
     }
 
@@ -76,7 +77,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $io->listing(
                 array_map(
                     static fn(array $item): string => sprintf(
-                        $successMessage, $item['name'], $item['version']
+                        $successMessage,
+                        $item['name'],
+                        $item['version']
                     ),
                     $succeeded
                 )
