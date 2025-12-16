@@ -10,6 +10,7 @@ ENV RDKAFKA_VERSION 6.0.5
 ARG HOST_USER_ID
 
 COPY files/bin/ /usr/local/bin/
+COPY files/php/ /phpIni
 
 # SYS: Install required packages
 RUN apk --no-cache upgrade && \
