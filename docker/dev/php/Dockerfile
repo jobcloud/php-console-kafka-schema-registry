@@ -6,6 +6,7 @@ COPY --from=ghcr.io/php/pie:1.3.1-bin /pie /usr/bin/pie
 # COMPOSER: install binary
 COPY --from=composer:2.9 /usr/bin/composer /usr/bin/composer
 
+ENV RDKAFKA_VERSION 6.0.5
 ARG HOST_USER_ID
 
 COPY files/bin/ /usr/local/bin/
@@ -15,7 +16,7 @@ RUN apk --no-cache upgrade && \
     apk --no-cache add bash git sudo openssh autoconf gcc g++ make gettext make shadow librdkafka librdkafka-dev
 
 # PHP: Install php extensions
-RUN pie install rdkafka/rdkafka:6.0.5 && \
+RUN pie install rdkafka/rdkafka:${RDKAFKA_VERSION} && \
     pie install pecl/pcov
 
 # SYS: add ssh key (for GitHub)
