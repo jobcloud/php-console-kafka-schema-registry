@@ -38,7 +38,7 @@ coverage:
 	${PHPUNIT} && ${COVCHK} build/logs/phpunit/coverage/coverage.xml 100
 
 infection-testing:
-	${PHPUNIT} --testsuite Unit;
+	${PHPUNIT}
 	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=84 --threads=`nproc` --coverage=build/logs/phpunit/
 
 rector:
