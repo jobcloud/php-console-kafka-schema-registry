@@ -38,11 +38,8 @@ coverage:
 	${PHPUNIT} && ${COVCHK} build/logs/phpunit/coverage/coverage.xml 100
 
 infection-testing:
-	make coverage
-	cp -f build/logs/phpunit/junit.xml build/logs/phpunit/coverage/junit.xml
-	sudo php-ext-disable pcov
-	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=84 --threads=`nproc`
-	sudo php-ext-enable pcov
+	${PHPUNIT} --testsuite Unit;
+	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=84 --threads=`nproc` --coverage=build/logs/phpunit/
 
 rector:
 	./vendor/bin/rector process --dry-run
