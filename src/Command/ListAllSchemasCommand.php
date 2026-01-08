@@ -37,6 +37,7 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
         $includeDeletedArg = $input->getArgument('includeDeleted');
 
         if ($includeDeletedArg !== null && $includeDeletedArg !== 'true' && $includeDeletedArg !== 'false') {
+            // phpcs:ignore
             $message = '<error>Invalid value for \'deletedSchemas\' argument. Allowed values are \'true\' or \'false\'.</error>';
 
             $output->writeln($message);
