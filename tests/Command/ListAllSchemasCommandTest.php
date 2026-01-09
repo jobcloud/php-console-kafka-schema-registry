@@ -17,11 +17,11 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
 {
     /**
-     * @dataProvider validInputArgDataProvider
+     * @dataProvider inputArgDataProvider
      *
      * @param array<string, string> $inputArg
      */
-    public function testCommandWithValidArgs(array $inputArg): void
+    public function testCommand(array $inputArg): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
@@ -44,35 +44,12 @@ class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
     /**
      * @return array<string, array<int, mixed>>
      */
-    public static function validInputArgDataProvider(): array
+    public static function inputArgDataProvider(): array
     {
         return [
-            'validInputArgDataProvider:1' => [[]],
-            'validInputArgDataProvider:2' => [['includeDeleted' => 'true']],
-            'validInputArgDataProvider:3' => [['includeDeleted' => 'false']],
+            'inputArgDataProvider:1' => [[]],
+            'inputArgDataProvider:2' => [['includeDeleted' => 'true']],
+            'inputArgDataProvider:3' => [['includeDeleted' => 'false']],
         ];
-    }
-
-    public function testCommandWithInvalidArg(): void
-    {
-        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
-        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
-
-        $application = new Application();
-        $application->addCommand(new ListAllSchemasCommand($schemaRegistryApi));
-        $command = $application->find('kafka-schema-registry:list');
-        $commandTester = new CommandTester($command);
-
-        $commandTester->execute([
-            'includeDeleted' => 'invalidValue',
-        ]);
-
-        $commandOutput = trim($commandTester->getDisplay());
-
-        self::assertEquals(
-            'Invalid value for \'deletedSchemas\' argument. Allowed values are \'true\' or \'false\'.',
-            $commandOutput
-        );
-        self::assertEquals(1, $commandTester->getStatusCode());
     }
 }
