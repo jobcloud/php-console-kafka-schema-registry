@@ -31,7 +31,6 @@ class CheckCompatibilityCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        throw new \InvalidArgumentException('test');
         /** @var string $schemaFile */
         $schemaFile = $input->getArgument('schemaFile');
 
