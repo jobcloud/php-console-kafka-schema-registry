@@ -35,10 +35,8 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $includeDeletedArg = $input->getArgument('includeDeleted');
-        $output->writeln('arg: ' . $includeDeletedArg);
 
         if ($includeDeletedArg !== null && $includeDeletedArg !== 'true' && $includeDeletedArg !== 'false') {
-            $output->writeln('if');
             // phpcs:ignore
             $message = '<error>Invalid value for \'deletedSchemas\' argument. Allowed values are \'true\' or \'false\'.</error>';
 
@@ -47,7 +45,6 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
             return 1;
         }
 
-        $output->writeln('value:' . ($includeDeletedArg === 'true' ? 'true' : 'false'));
         $schemas = $this->schemaRegistryApi->getSubjects($includeDeletedArg === 'true');
 
         foreach ($schemas as $schema) {
