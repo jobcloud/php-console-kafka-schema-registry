@@ -29,7 +29,6 @@ class CheckAllSchemasCompatibilityCommand extends AbstractSchemaCommand
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        throw new \InvalidArgumentException('test');
         /** @var string $directory */
         $directory = $input->getArgument('schemaDirectory');
         $avroFiles = SchemaFileHelper::getAvroFiles($directory);
