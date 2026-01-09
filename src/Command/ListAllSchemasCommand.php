@@ -31,7 +31,6 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
         $schemas = $this->schemaRegistryApi->getSubjects(
             null === $includeDeletedArg ? 'false' : (string) $includeDeletedArg
         );
-        var_dump(null === $includeDeletedArg ? 'false' : (string) $includeDeletedArg);
 
         foreach ($schemas as $schema) {
             $output->writeln((string) $schema);
