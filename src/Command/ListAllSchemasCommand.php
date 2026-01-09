@@ -10,9 +10,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListAllSchemasCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
     protected function configure(): void
     {
         $this
@@ -27,25 +24,13 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
             );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $includeDeletedArg = $input->getArgument('includeDeleted');
 
-        if ($includeDeletedArg !== null && $includeDeletedArg !== 'true' && $includeDeletedArg !== 'false') {
-            // phpcs:ignore
-            $message = '<error>Invalid value for \'deletedSchemas\' argument. Allowed values are \'true\' or \'false\'.</error>';
-
-            $output->writeln($message);
-
-            return 1;
-        }
-
-        $schemas = $this->schemaRegistryApi->getSubjects($includeDeletedArg === 'true');
+        $schemas = $this->schemaRegistryApi->getSubjects(
+            null === $includeDeletedArg ? 'false' : (string) $includeDeletedArg
+        );
 
         foreach ($schemas as $schema) {
             $output->writeln((string) $schema);
