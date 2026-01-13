@@ -28,9 +28,13 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
     {
         $includeDeletedArg = $input->getArgument('includeDeleted');
 
-        $schemas = $this->schemaRegistryApi->getSubjects(
-            null === $includeDeletedArg ? 'false' : (string) $includeDeletedArg
-        );
+        if (null !== $includeDeletedArg && false === in_array($includeDeletedArg, ['true', 'false'], true)) {
+            $output->writeln('Invalid \'includeDeleted\' argument. Allowed values are \'true\' or \'false\'.');
+
+            return 1;
+        }
+
+        $schemas = $this->schemaRegistryApi->getSubjects(true === $includeDeletedArg);
 
         foreach ($schemas as $schema) {
             $output->writeln((string) $schema);
