@@ -26,6 +26,7 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        throw new \InvalidArgumentException('test');
         $includeDeletedArg = $input->getArgument('includeDeleted');
 
         if (null !== $includeDeletedArg && false === in_array($includeDeletedArg, ['true', 'false'], true)) {
