@@ -25,7 +25,8 @@
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.5",
         "rregeer/phpunit-coverage-check": "^0.3.1",
-        "squizlabs/php_codesniffer": "^4.0"
+        "squizlabs/php_codesniffer": "^4.0",
+        "rector/rector": "^2.3"
     },
     "autoload": {
         "psr-4": {

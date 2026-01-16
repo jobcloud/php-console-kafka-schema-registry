@@ -13,7 +13,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-#[CoversClass(CheckIsRegistredCommand::class)]
+#[CoversClass(CheckIsRegisteredCommand::class)]
 #[CoversClass(SchemaFileHelper::class)]
 #[CoversClass(AbstractSchemaCommand::class)]
 class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
@@ -43,7 +43,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->addCommand(new CheckIsRegistredCommand($schemaRegistryApi));
+        $application->addCommand(new CheckIsRegisteredCommand($schemaRegistryApi));
 
         $command = $application->find('kafka-schema-registry:entry:exists');
         $commandTester = new CommandTester($command);
