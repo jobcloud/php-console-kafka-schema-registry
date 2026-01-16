@@ -3,14 +3,14 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
-use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
+use Jobcloud\SchemaConsole\Command\CheckIsRegisteredCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
- * @covers \Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand
+ * @covers \Jobcloud\SchemaConsole\Command\CheckIsRegisteredCommand
  * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
  * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
  */
@@ -40,7 +40,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new CheckIsRegistredCommand($schemaRegistryApi));
+        $application->add(new CheckIsRegisteredCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:entry:exists');
         $commandTester = new CommandTester($command);
 

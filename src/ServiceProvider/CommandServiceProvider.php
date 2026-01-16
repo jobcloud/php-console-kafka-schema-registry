@@ -11,7 +11,7 @@ use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckDocCommentsCommand;
-use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
+use Jobcloud\SchemaConsole\Command\CheckIsRegisteredCommand;
 use Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\GetCompatibilityModeCommand;
 use Jobcloud\SchemaConsole\Command\GetCompatibilityModeForSchemaCommand;
@@ -45,7 +45,7 @@ class CommandServiceProvider implements ServiceProviderInterface
 
             return [
                 new CheckCompatibilityCommand($schemaRegistryApi),
-                new CheckIsRegistredCommand($schemaRegistryApi),
+                new CheckIsRegisteredCommand($schemaRegistryApi),
                 new DeleteAllSchemasCommand($schemaRegistryApi),
                 new GetCompatibilityModeCommand($schemaRegistryApi),
                 new CheckAllSchemasCompatibilityCommand($schemaRegistryApi),
