@@ -16,7 +16,12 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
 {
-    public function testCommand(): void
+    /**
+     * @dataProvider validInputArgDataProvider
+     *
+     * @param array<string, string> $inputArg
+     */
+    public function testCommandWithValidArgs(array $inputArg): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
@@ -24,15 +29,50 @@ class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new ListAllSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new ListAllSchemasCommand($schemaRegistryApi));
         $command = $application->find('kafka-schema-registry:list');
         $commandTester = new CommandTester($command);
 
-        $commandTester->execute([]);
+        $commandTester->execute($inputArg);
 
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertEquals(implode(PHP_EOL, [1,2,3,4]), $commandOutput);
         self::assertEquals(0, $commandTester->getStatusCode());
+    }
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    public static function validInputArgDataProvider(): array
+    {
+        return [
+            'validInputArgDataProvider:1' => [[]],
+            'validInputArgDataProvider:2' => [['includeDeleted' => 'true']],
+            'validInputArgDataProvider:3' => [['includeDeleted' => 'false']],
+        ];
+    }
+
+    public function testCommandWithInvalidArg(): void
+    {
+        /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
+
+        $application = new Application();
+        $application->addCommand(new ListAllSchemasCommand($schemaRegistryApi));
+        $command = $application->find('kafka-schema-registry:list');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'includeDeleted' => 'invalidValue',
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertEquals(
+            'Invalid \'includeDeleted\' argument. Allowed values are \'true\' or \'false\'.',
+            $commandOutput
+        );
+        self::assertEquals(1, $commandTester->getStatusCode());
     }
 }
