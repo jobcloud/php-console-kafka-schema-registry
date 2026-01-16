@@ -3,17 +3,18 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\GetCompatibilityModeCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\GetCompatibilityModeCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(GetCompatibilityModeCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class GetCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     public function testCommand(): void
@@ -24,7 +25,8 @@ class GetCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetCompatibilityModeCommand($schemaRegistryApi));
+        $application->addCommand(new GetCompatibilityModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:compatibility:mode');
         $commandTester = new CommandTester($command);
 
@@ -32,7 +34,7 @@ class GetCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals('The registry\'s default compatibility mode is BACKWARD', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame('The registry\'s default compatibility mode is BACKWARD', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

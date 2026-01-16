@@ -12,9 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Command\Command;
 
-/**
- * Class CheckAllSchemaTemplatesDocCommentsCommand
- */
 class CheckAllSchemaTemplatesDocCommentsCommand extends Command
 {
     #[\Override]
@@ -76,6 +73,6 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 }

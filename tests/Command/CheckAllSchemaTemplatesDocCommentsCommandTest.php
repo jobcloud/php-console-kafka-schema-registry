@@ -3,20 +3,20 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use JsonException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- */
+#[CoversClass(CheckAllSchemaTemplatesDocCommentsCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
 class CheckAllSchemaTemplatesDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_SCHEMA = <<<EOF
+    protected const string GOOD_SCHEMA = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -31,7 +31,7 @@ class CheckAllSchemaTemplatesDocCommentsCommandTest extends AbstractSchemaRegist
 }
 EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -45,7 +45,7 @@ EOF;
 }
 EOF;
 
-    protected const BAD_SCHEMA1 = <<<EOF
+    protected const string BAD_SCHEMA1 = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -59,7 +59,7 @@ EOF;
 }
 EOF;
 
-    protected const BAD_SCHEMA2 = <<<EOF
+    protected const string BAD_SCHEMA2 = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -94,7 +94,7 @@ EOF;
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -107,7 +107,8 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
@@ -118,7 +119,7 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have doc comments on all fields', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotInvalid(): void
@@ -134,7 +135,8 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 
@@ -150,7 +152,7 @@ EOF;
         );
         self::assertStringContainsString('* test.schema.bad', $commandOutput);
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testExceptionWhenAllNotInvalid(): void
@@ -161,7 +163,8 @@ EOF;
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDocCommentsCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc:all');
         $commandTester = new CommandTester($command);
 

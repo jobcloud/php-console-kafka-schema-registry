@@ -67,6 +67,6 @@ class CheckAllSchemasAreValidAvroCommand extends Command
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 }

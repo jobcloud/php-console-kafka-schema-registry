@@ -3,22 +3,27 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(CheckCompatibilityCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
-    public function argumentsDataProvider(): array
+    /**
+     * @return bool[][]|string[][]|int[][]
+     */
+    public static function argumentsDataProvider(): array
     {
         return [
             [true, 1, 'Schema is Compatible', 0],
@@ -28,9 +33,7 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
         ];
     }
 
-    /**
-     * @dataProvider argumentsDataProvider
-     */
+    #[DataProvider('argumentsDataProvider')]
     public function testCommand(
         bool $actualCompatible,
         mixed $versionArgument,
@@ -43,7 +46,8 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new CheckCompatibilityCommand($schemaRegistryApi));
+        $application->addCommand(new CheckCompatibilityCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:check:compatibility');
         $commandTester = new CommandTester($command);
 
@@ -56,7 +60,7 @@ class CheckCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals($expectedOutput, $commandOutput);
-        self::assertEquals($expectedExitCode, $commandTester->getStatusCode());
+        self::assertSame($expectedOutput, $commandOutput);
+        self::assertSame($expectedExitCode, $commandTester->getStatusCode());
     }
 }

@@ -1,18 +1,19 @@
 <?php
 
-namespace Command;
+namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\SetAllSchemasCompatibilityModeCommand
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(SetAllSchemasCompatibilityModeCommand::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     private const string CONFIG_FILE = '/tmp/test_config.json';
@@ -55,7 +56,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Total schemas processed: 2', $output);
         self::assertStringContainsString('Successful updates: 2', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandWithValidConfigFileAndSomeFailures(): void
@@ -69,7 +70,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class);
         $schemaRegistryApi->method('setSubjectCompatibilityLevel')
-            ->willReturnCallback(fn($schema) => $schema === 'schema2' ? throw new \Exception('error') : true);
+            ->willReturnCallback(fn($schema): true => $schema === 'schema2' ? throw new \Exception('error') : true);
 
         $commandTester = $this->createCommandTester($schemaRegistryApi);
         $commandTester->execute(['configFile' => self::CONFIG_FILE]);
@@ -92,7 +93,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Total schemas processed: 3', $output);
         self::assertStringContainsString('Successful updates: 2', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithApiException(): void
@@ -125,7 +126,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         );
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithNonExistentConfigFile(): void
@@ -139,12 +140,10 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         $output = $commandTester->getDisplay();
 
         self::assertStringContainsString('Could not read configuration file: /non/existent/file.json', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
-    /**
-     * @dataProvider invalidJsonConfigurationProvider
-     */
+    #[DataProvider('invalidJsonConfigurationProvider')]
     public function testCommandWithInvalidJsonConfiguration(mixed $configData): void
     {
         file_put_contents(self::CONFIG_FILE, json_encode($configData));
@@ -161,7 +160,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
             'Configuration file must contain a JSON array of schema configurations',
             $output
         );
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     /**
@@ -207,7 +206,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         );
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithMissingCompatibilityLevelField(): void
@@ -237,7 +236,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         );
         self::assertStringContainsString('Successful updates: 1', $output);
         self::assertStringContainsString('Failed updates: 1', $output);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandWithEmptyArray(): void
@@ -256,7 +255,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
         self::assertStringContainsString('Total schemas processed: 0', $output);
         self::assertStringContainsString('Successful updates: 0', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandWithAllValidCompatibilityLevels(): void
@@ -268,7 +267,7 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
 
         $schemas = [];
         foreach ($compatibilityLevels as $level) {
-            $schemas[] = ['schemaName' => "schema-{$level}", 'compatibilityLevel' => $level];
+            $schemas[] = ['schemaName' => 'schema-' . $level, 'compatibilityLevel' => $level];
         }
 
         file_put_contents(self::CONFIG_FILE, json_encode($schemas));
@@ -287,20 +286,21 @@ class SetAllSchemasCompatibilityModeCommandTest extends AbstractSchemaRegistryTe
 
         foreach ($compatibilityLevels as $level) {
             self::assertStringContainsString(
-                "Setting compatibility mode for schema \"schema-{$level}\" to \"{$level}\"... SUCCESS",
+                sprintf('Setting compatibility mode for schema "schema-%s" to "%s"... SUCCESS', $level, $level),
                 $output
             );
         }
 
         self::assertStringContainsString('Successful updates: 7', $output);
         self::assertStringContainsString('Failed updates: 0', $output);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     private function createCommandTester(MockObject $schemaRegistryApi): CommandTester
     {
         $application = new Application();
-        $application->add(new SetAllSchemasCompatibilityModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetAllSchemasCompatibilityModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:compatibility:mode:all');
 
         return new CommandTester($command);

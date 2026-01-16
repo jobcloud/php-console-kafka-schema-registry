@@ -18,7 +18,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
     public function __construct(
         KafkaSchemaRegistryApiClientInterface $schemaRegistryApi,
-        private readonly int $maxRetries = 10
+        private int $maxRetries = 10
     ) {
         parent::__construct($schemaRegistryApi);
     }
@@ -68,24 +68,26 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 return 1;
             }
 
-            $this->abortRegister = (0 === count($failed)) || ($this->maxRetries === ++$retries);
+            $this->abortRegister = ([] === $failed) || ($this->maxRetries === ++$retries);
         }
 
-        if (0 !== count($failed)) {
+        if ([] !== $failed) {
             $io->warning('Failed schemas the following schemas:');
             $io->listing($failed);
         }
 
-        if (0 !== count($succeeded)) {
+        if ([] !== $succeeded) {
             $io->success('Succeeded registering the following schemas:');
-            $io->listing(array_map(
-                static fn($item) => sprintf(
-                    $successMessage,
-                    $item['name'],
-                    $item['version']
-                ),
-                $succeeded
-            ));
+            $io->listing(
+                array_map(
+                    static fn(array $item): string => sprintf(
+                        $successMessage,
+                        $item['name'],
+                        $item['version']
+                    ),
+                    $succeeded
+                )
+            );
         }
 
         return count($failed) ? 1 : 0;
@@ -110,8 +112,8 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             /** @var array<string, mixed> $jsonDecoded */
             $jsonDecoded = json_decode($fileContents);
 
-            /** @var string $localSchema */
-            $localSchema = json_encode($jsonDecoded); // @phpstan-ignore-line
+            /** @var non-empty-string $localSchema */
+            $localSchema = json_encode($jsonDecoded);
 
             if ($useSchemaVersioning) {
                 /** @var string $schemaName */
@@ -143,6 +145,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $failed[$schemaName] = $schemaName;
                 continue;
             }
+
             $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, $localSchema);
 
             $succeeded[$schemaName] = [

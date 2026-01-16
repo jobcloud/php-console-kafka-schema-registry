@@ -76,7 +76,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 
     /**
@@ -111,7 +111,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
                 $fieldTypes = [$fieldTypes];
             }
 
-            if (count($fieldTypes)) {
+            if ($fieldTypes !== []) {
                 $defaultFields = $this->checkSingleField($fieldTypes[0], $field, $defaultFields);
             }
         }
@@ -120,7 +120,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param array<mixed, mixed> $defaultFields
+     * @param array<mixed> $defaultFields
      * @return array<int|string, mixed>
      */
     private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
@@ -149,11 +149,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             return true;
         }
 
-        if ($currentType === 'float' && $defaultType === 'int') {
-            return true;
-        }
-
-        return false;
+        return $currentType === 'float' && $defaultType === 'int';
     }
 
     private function getFieldName(mixed $decodedSchema, mixed $field): string

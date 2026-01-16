@@ -3,18 +3,18 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand;
-use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(DeleteAllSchemasCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class DeleteAllSchemasCommandTest extends TestCase
 {
     public function testCommandSoftDelete(): void
@@ -30,7 +30,8 @@ class DeleteAllSchemasCommandTest extends TestCase
         $schemaRegistryApi->expects(self::exactly(3))->method('deleteSubject')->willReturn([]);
 
         $application = new Application();
-        $application->add(new DeleteAllSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new DeleteAllSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:delete:all');
         $commandTester = new CommandTester($command);
 
@@ -38,8 +39,8 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals('All schemas deleted.', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame('All schemas deleted.', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandHardDelete(): void
@@ -56,18 +57,20 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $schemaRegistryApi->expects(self::exactly(2))
             ->method('deleteSubject')
-            ->with(self::callback(function ($inputArgument) {
+            ->with(self::callback(function ($inputArgument): bool {
                 static $input = 'schema1';
                 if ($inputArgument === $input) {
-                    $input = $input . '?permanent=true';
+                    $input .= '?permanent=true';
                     return true;
                 }
+
                 return false;
             }))
             ->willReturn([]);
 
         $application = new Application();
-        $application->add(new DeleteAllSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new DeleteAllSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:delete:all');
         $commandTester = new CommandTester($command);
 
@@ -75,7 +78,7 @@ class DeleteAllSchemasCommandTest extends TestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals('All schemas deleted.', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame('All schemas deleted.', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

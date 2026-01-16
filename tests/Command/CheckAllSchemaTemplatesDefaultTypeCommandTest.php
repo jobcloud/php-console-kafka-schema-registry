@@ -3,19 +3,19 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- */
+#[CoversClass(CheckAllSchemaTemplatesDefaultTypeCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
 class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_SCHEMA = <<<EOF
+    protected const string GOOD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -96,7 +96,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         }
         EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -141,7 +141,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         }
         EOF;
 
-    protected const KEY_SCHEMA = <<<EOF
+    protected const string KEY_SCHEMA = <<<EOF
         {
           "type": "string"
         }
@@ -167,7 +167,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -188,7 +188,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
             );
         }
 
-        array_walk($numbers, static function ($item) {
+        array_walk($numbers, static function (int $item): void {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 self::GOOD_SCHEMA
@@ -201,7 +201,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $this->generateFiles(5);
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDefaultTypeCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 
@@ -212,7 +213,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have valid default value types', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWithKeySchema(): void
@@ -223,7 +224,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDefaultTypeCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 
@@ -234,7 +236,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have valid default value types', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotInvalid(): void
@@ -242,7 +244,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         $this->generateFiles(5, true);
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesDefaultTypeCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:default:type:all');
         $commandTester = new CommandTester($command);
 
@@ -255,6 +258,6 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         self::assertStringContainsString('Following schema templates have invalid default value types', $commandOutput);
         self::assertStringContainsString('* ch.jobcloud.test.bool1', $commandOutput);
         self::assertStringContainsString('* ch.jobcloud.test.number2', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

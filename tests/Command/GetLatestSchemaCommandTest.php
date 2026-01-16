@@ -4,20 +4,21 @@ namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Buzz\Exception\ClientException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\GetLatestSchemaCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\GetLatestSchemaCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(GetLatestSchemaCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     public function testCommand(): void
     {
@@ -29,7 +30,8 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -40,11 +42,11 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Schema successfully written to %s.', self::SCHEMA_TEST_FILE), $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(sprintf('Schema successfully written to %s.', self::SCHEMA_TEST_FILE), $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
 
         $outputFileContents = file_get_contents(self::SCHEMA_TEST_FILE);
-        self::assertEquals(json_encode($schema, JSON_THROW_ON_ERROR), $outputFileContents);
+        self::assertSame(json_encode($schema, JSON_THROW_ON_ERROR), $outputFileContents);
     }
 
     public function testMissingSchema(): void
@@ -59,7 +61,8 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -70,8 +73,8 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Schema %s does not exist', $expectedSchemaName), $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(sprintf('Schema %s does not exist', $expectedSchemaName), $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testUnknownClientErrorCodeThrowsException(): void
@@ -84,7 +87,8 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -101,13 +105,16 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
     {
         $failurePath = '..';
 
+        $schema = ['a' => "\xB1"];
+
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
         $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
-            'getSchemaDefinitionByVersion' => [],
+            'getSchemaDefinitionByVersion' => $schema,
         ]);
 
         $application = new Application();
-        $application->add(new GetLatestSchemaCommand($schemaRegistryApi));
+        $application->addCommand(new GetLatestSchemaCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:get:schema:latest');
         $commandTester = new CommandTester($command);
 
@@ -118,7 +125,7 @@ class GetLatestSchemaCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(sprintf('Was unable to write schema to %s.', $failurePath), $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(sprintf('Was unable to write schema to %s.', $failurePath), $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

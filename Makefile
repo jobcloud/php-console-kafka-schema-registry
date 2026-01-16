@@ -1,4 +1,4 @@
-.PHONY: clean code-check fix-code-style test coverage help install-dependencies code-style static-analysis ci-static-analysis infection-testing pcov-disable pcov-enable update-dependencies
+.PHONY: clean code-check fix-code-style test coverage help install-dependencies code-style static-analysis ci-static-analysis infection-testing rector pcov-disable pcov-enable update-dependencies
 .DEFAULT_GOAL := test
 
 INFECTION = ./vendor/bin/infection
@@ -38,11 +38,11 @@ coverage:
 	${PHPUNIT} && ${COVCHK} build/logs/phpunit/coverage/coverage.xml 100
 
 infection-testing:
-	make coverage
-	cp -f build/logs/phpunit/junit.xml build/logs/phpunit/coverage/junit.xml
-	sudo php-ext-disable pcov
-	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=84 --threads=`nproc`
-	sudo php-ext-enable pcov
+	${PHPUNIT}
+	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=84 --threads=`nproc` --coverage=build/logs/phpunit/
+
+rector:
+	./vendor/bin/rector process --dry-run
 
 install-dependencies:
 	composer install
@@ -72,5 +72,6 @@ help:
 	#   static-analysis         Run static analysis using phpstan
 	#   ci-static-analysis      Run static analysis using phpstan for CI only.
 	#   test                    Run tests
+	#   rector                  Suggestions for upgrading and refactoring of the PHP code
 	#   pcov-enable             Enable pcov
 	#   pcov-disable            Disable pcov

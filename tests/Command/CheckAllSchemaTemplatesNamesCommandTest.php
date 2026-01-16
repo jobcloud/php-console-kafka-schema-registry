@@ -4,17 +4,16 @@ namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesNamesCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesNamesCommand
- */
+#[CoversClass(CheckAllSchemaTemplatesNamesCommand::class)]
 class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const GOOD_RECORD_SCHEMA = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -30,7 +29,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_ENUM_SCHEMA = <<<EOF
+    protected const string GOOD_ENUM_SCHEMA = <<<EOF
         {
           "type": "enum",
           "name": "Suit",
@@ -39,7 +38,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_FIXED_SCHEMA = <<<EOF
+    protected const string GOOD_FIXED_SCHEMA = <<<EOF
         {
           "type": "fixed",
           "name": "md5",
@@ -48,7 +47,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_WITH_EMPTY_NAMESPACE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_WITH_EMPTY_NAMESPACE = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -64,7 +63,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_NAME_STARTS_WITH_UNDERSCORE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_NAME_STARTS_WITH_UNDERSCORE = <<<EOF
         {
           "type": "record",
           "name": "_test",
@@ -80,7 +79,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_NAME_CONTAINS_UNDERSCORE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_NAME_CONTAINS_UNDERSCORE = <<<EOF
         {
           "type": "record",
           "name": "test_schema",
@@ -96,7 +95,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE = <<<EOF
+    protected const string GOOD_RECORD_SCHEMA_WITH_ONE_WORD_NAMESPACE = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -112,7 +111,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "000test",
@@ -128,7 +127,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA1 = <<<EOF
+    protected const string BAD_SCHEMA1 = <<<EOF
         {
           "type": "record",
           "name": "test-schema",
@@ -144,7 +143,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA2 = <<<EOF
+    protected const string BAD_SCHEMA2 = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -160,7 +159,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA3 = <<<EOF
+    protected const string BAD_SCHEMA3 = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -176,7 +175,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    protected const BAD_SCHEMA4 = <<<EOF
+    protected const string BAD_SCHEMA4 = <<<EOF
         {
           "type": "record",
           "name": "null",
@@ -212,7 +211,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
@@ -255,7 +254,8 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -266,7 +266,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schema templates have valid name fields', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNameStartsWithNumber(): void
@@ -277,7 +277,8 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -292,7 +293,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNameContainsDash(): void
@@ -303,7 +304,8 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -318,7 +320,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad1', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNamespaceContainsDash(): void
@@ -329,7 +331,8 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -344,7 +347,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad2', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNamespaceStartsWithDot(): void
@@ -355,7 +358,8 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -370,7 +374,7 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad3', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenNameIsReservedKeyword(): void
@@ -381,7 +385,8 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         );
 
         $application = new Application();
-        $application->add(new CheckAllSchemaTemplatesNamesCommand());
+        $application->addCommand(new CheckAllSchemaTemplatesNamesCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:names:all');
         $commandTester = new CommandTester($command);
 
@@ -396,6 +401,6 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
             $commandOutput
         );
         self::assertStringContainsString('* test.schema.bad4', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

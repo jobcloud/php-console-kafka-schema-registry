@@ -3,17 +3,18 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\SetReadWriteModeCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractModeCommand
- */
+#[CoversClass(SetReadWriteModeCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
 {
     /**
@@ -23,8 +24,7 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
     {
         return $this
             ->getMockBuilder(KafkaSchemaRegistryApiClientInterface::class)
-            ->onlyMethods(['setImportMode'])
-            ->getMockForAbstractClass();
+            ->getMock();
     }
 
     public function testCommandSuccess(): void
@@ -39,18 +39,19 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
             ->willReturn(true);
 
         $application = new Application();
-        $application->add(new SetReadWriteModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetReadWriteModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:readwrite');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(
+        self::assertSame(
             sprintf("Import mode set to %s", KafkaSchemaRegistryApiClientInterface::MODE_READWRITE),
             $commandOutput
         );
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandFail(): void
@@ -58,8 +59,7 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
         /** @var MockObject|KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
         $schemaRegistryApi = $this
             ->getMockBuilder(KafkaSchemaRegistryApiClientInterface::class)
-            ->onlyMethods(['setImportMode'])
-            ->getMockForAbstractClass();
+            ->getMock();
 
         $schemaRegistryApi
             ->expects(self::once())
@@ -68,14 +68,15 @@ class SetReadWriteModeCommandTest extends AbstractSchemaRegistryTestCase
             ->willReturn(false);
 
         $application = new Application();
-        $application->add(new SetReadWriteModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetReadWriteModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:readwrite');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(null, $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame('', $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

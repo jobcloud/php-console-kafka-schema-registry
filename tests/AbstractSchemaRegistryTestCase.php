@@ -9,18 +9,17 @@ use Throwable;
 abstract class AbstractSchemaRegistryTestCase extends TestCase
 {
     /**
-     * @param array|null $methodMap (array of method returns, or NULL)
+     * @param array<mixed> $methodMap (array of method returns, or NULL)
      *     1. NULL - Methods won't be mocked, it will run original code
      *     2. Array of method names - ['method_name' => 'method_value',...].
      *        Specified method will be mocked with return value you set as element value.
      *        Those not specified will run original code
-     *
      */
     final public function makeMock(string $class, array $methodMap = []): MockObject
     {
         $mockBuilder = $this->getMockBuilder($class)->disableOriginalConstructor();
 
-        if (empty($methodMap)) {
+        if ($methodMap === []) {
             return $mockBuilder->getMock();
         }
 
@@ -28,7 +27,7 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
             array_keys(
                 array_filter(
                     $methodMap,
-                    static fn($key) => !is_numeric($key),
+                    static fn($key): bool => !is_numeric($key),
                     ARRAY_FILTER_USE_KEY
                 )
             ),
@@ -67,7 +66,7 @@ abstract class AbstractSchemaRegistryTestCase extends TestCase
 
     protected static function assertArrayHasInstanceOf(string $className, array $array): void
     {
-        $filtered = array_filter($array, static fn($item) => $item instanceof $className);
+        $filtered = array_filter($array, static fn($item): bool => $item instanceof $className);
 
         self::assertGreaterThan(0, count($filtered));
     }

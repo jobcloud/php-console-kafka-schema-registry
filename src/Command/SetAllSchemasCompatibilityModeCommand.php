@@ -156,8 +156,8 @@ HELP;
     ): bool {
         try {
             $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
-        } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>FAILED: %s</error>', $e->getMessage()));
+        } catch (\Exception $exception) {
+            $output->writeln(sprintf('<error>FAILED: %s</error>', $exception->getMessage()));
 
             return false;
         }

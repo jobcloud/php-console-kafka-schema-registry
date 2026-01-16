@@ -35,9 +35,9 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
                 $schemaName,
                 KafkaSchemaRegistryApiClientInterface::VERSION_LATEST
             );
-        } catch (ClientException $e) {
-            if ($e->getCode() !== 404) {
-                throw $e;
+        } catch (ClientException $clientException) {
+            if ($clientException->getCode() !== 404) {
+                throw $clientException;
             }
 
             $output->writeln(sprintf('Schema %s does not exist', $schemaName));
