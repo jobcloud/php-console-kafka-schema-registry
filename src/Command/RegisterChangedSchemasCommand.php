@@ -61,8 +61,6 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             $successMessage = '%s with new versions, the latest being: %s';
         }
 
-        $this->abortRegister = false;
-
         while (false === $this->abortRegister) {
             if (false === $this->registerFiles($avroFiles, $io, $failed, $succeeded, $useSchemaVersioning)) {
                 return 1;

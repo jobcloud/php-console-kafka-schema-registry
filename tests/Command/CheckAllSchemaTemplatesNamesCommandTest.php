@@ -191,9 +191,6 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    /**
-     * This method is called before each test.
-     */
     #[\Override]
     protected function setUp(): void
     {
@@ -203,9 +200,6 @@ class CheckAllSchemaTemplatesNamesCommandTest extends AbstractSchemaRegistryTest
         }
     }
 
-    /**
-     * This method is called after each test.
-     */
     #[\Override]
     protected function tearDown(): void
     {

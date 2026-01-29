@@ -8,9 +8,7 @@ use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 
 class SetImportModeCommand extends AbstractModeCommand
 {
-    /**
-     * @inheritDoc
-     */
+
     #[\Override]
     public function getMode(): string
     {

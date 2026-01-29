@@ -13,9 +13,6 @@ class SchemaFileHelperTest extends TestCase
 {
     private const string SCHEMA_FILE = '/tmp/test.avsc';
 
-    /**
-     * Setting up test prerequisites
-     */
     #[\Override]
     protected function setUp(): void
     {
@@ -47,9 +44,6 @@ EOF
         );
     }
 
-    /**
-     * Removing test requisites
-     */
     #[\Override]
     protected function tearDown(): void
     {
