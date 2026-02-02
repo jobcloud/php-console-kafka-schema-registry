@@ -59,7 +59,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
 
     /**
      * @param array<string, string> $avroFiles
-     * @param array<mixed> $failed
+     * @param array<string> $failed
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {
@@ -80,7 +80,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @return array<int|string, mixed>
+     * @return array<string, string>
      */
     private function checkDefaultType(string $localSchema): array
     {
@@ -93,8 +93,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param array<mixed, mixed> $defaultFields
-     * @return array<int|string, mixed>
+     * @param array<string, string> $defaultFields
+     * @return array<string, string>
      */
     private function checkAllFields(mixed $decodedSchema, array $defaultFields = []): array
     {
@@ -120,8 +120,8 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param array<mixed> $defaultFields
-     * @return array<int|string, mixed>
+     * @param array<string, string> $defaultFields
+     * @return array<string, string>
      */
     private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
     {

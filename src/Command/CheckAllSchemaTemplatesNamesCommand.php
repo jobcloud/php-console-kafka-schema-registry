@@ -110,7 +110,7 @@ The following template schema names violate the aforementioned rules:');
     }
 
     /**
-     * @return array<int, string>
+     * @return array<string>
      */
     private function validateNamespaceField(string $namespace, string $schemaName): array
     {
@@ -124,7 +124,7 @@ The following template schema names violate the aforementioned rules:');
     }
 
     /**
-     * @return array<int, string>
+     * @return array<string>
      */
     private function validateNameField(string $name, string $schemaName): array
     {
