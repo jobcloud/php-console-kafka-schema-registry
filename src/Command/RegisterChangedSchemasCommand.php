@@ -92,9 +92,9 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
     }
 
     /**
-     * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
-     * @param array<string, mixed> $succeeded
+     * @param array<string, string> $avroFiles
+     * @param array<string, string> $failed
+     * @param array<string, array{name: string, version: string|null}> $succeeded
      */
     private function registerFiles(
         array $avroFiles,
@@ -120,7 +120,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
             try {
                 $latestVersion = $this->schemaRegistryApi->getLatestSubjectVersion($schemaName);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 $latestVersion = null;
             }
 
