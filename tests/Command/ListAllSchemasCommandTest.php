@@ -8,6 +8,7 @@ use Jobcloud\SchemaConsole\Command\ListAllSchemasCommand;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -18,10 +19,9 @@ use Symfony\Component\Console\Tester\CommandTester;
 class ListAllSchemasCommandTest extends AbstractSchemaRegistryTestCase
 {
     /**
-     * @dataProvider validInputArgDataProvider
-     *
      * @param array<string, string> $inputArg
      */
+    #[DataProvider('validInputArgDataProvider')]
     public function testCommandWithValidArgs(array $inputArg): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
