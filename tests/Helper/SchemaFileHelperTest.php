@@ -4,19 +4,16 @@ namespace Jobcloud\SchemaConsole\Tests\Helper;
 
 use AvroSchema;
 use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- */
+#[CoversClass(SchemaFileHelper::class)]
 class SchemaFileHelperTest extends TestCase
 {
-    private const SCHEMA_FILE = '/tmp/test.avsc';
+    private const string SCHEMA_FILE = '/tmp/test.avsc';
 
-    /**
-     * Setting up test prerequisites
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,9 +44,7 @@ EOF
         );
     }
 
-    /**
-     * Removing test requisites
-     */
+    #[\Override]
     protected function tearDown(): void
     {
         if (file_exists(self::SCHEMA_FILE)) {
@@ -86,12 +81,12 @@ EOF
 
     public function testGetSchemaName(): void
     {
-        self::assertEquals('test', SchemaFileHelper::getSchemaName(self::SCHEMA_FILE));
+        self::assertSame('test', SchemaFileHelper::getSchemaName(self::SCHEMA_FILE));
     }
 
     public function testHasDocCommentsOnAllFields(): void
     {
-        self::assertEquals(
+        self::assertSame(
             [
                 'name' => 1,
                 'number1' => 1,
@@ -114,7 +109,7 @@ EOF
 EOF
         );
 
-        self::assertEquals(
+        self::assertSame(
             [],
             SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
                 json_decode(file_get_contents(self::SCHEMA_FILE), true)
@@ -150,7 +145,7 @@ EOF
 EOF
         );
 
-        self::assertEquals(
+        self::assertSame(
             [
                 'number2' => 1
             ],
@@ -188,7 +183,7 @@ EOF
 EOF
         );
 
-        self::assertEquals(
+        self::assertSame(
             [],
             SchemaFileHelper::getFieldsWithMissingDocCommentForTemplate(
                 json_decode(file_get_contents(self::SCHEMA_FILE), true)

@@ -2,80 +2,59 @@
 
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
+use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\SetImportModeCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\SetImportModeCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractModeCommand
- */
+#[CoversClass(SetImportModeCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class SetImportModeCommandTest extends AbstractSchemaRegistryTestCase
 {
-    /**
-     * @return MockObject|KafkaSchemaRegistryApiClientInterface
-     */
-    private function getFakeClient(): MockObject
-    {
-        return $this
-            ->getMockBuilder(KafkaSchemaRegistryApiClientInterface::class)
-            ->onlyMethods(['setImportMode'])
-            ->getMockForAbstractClass();
-    }
-
     public function testCommandSuccess(): void
     {
-        /** @var MockObject|KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
-        $schemaRegistryApi = $this->getFakeClient();
-
-        $schemaRegistryApi
-            ->expects(self::once())
-            ->method('setImportMode')
-            ->with(KafkaSchemaRegistryApiClientInterface::MODE_IMPORT)
-            ->willReturn(true);
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'setImportMode' => true,
+        ]);
 
         $application = new Application();
-        $application->add(new SetImportModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetImportModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:Import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(
+        self::assertSame(
             sprintf("Import mode set to %s", KafkaSchemaRegistryApiClientInterface::MODE_IMPORT),
             $commandOutput
         );
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandFail(): void
     {
-        /** @var MockObject|KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
-        $schemaRegistryApi = $this
-            ->getMockBuilder(KafkaSchemaRegistryApiClientInterface::class)
-            ->onlyMethods(['setImportMode'])
-            ->getMockForAbstractClass();
-
-        $schemaRegistryApi
-            ->expects(self::once())
-            ->method('setImportMode')
-            ->with(KafkaSchemaRegistryApiClientInterface::MODE_IMPORT)
-            ->willReturn(false);
+        $schemaRegistryApi = $this->makeMock(KafkaSchemaRegistryApiClient::class, [
+            'setImportMode' => false,
+        ]);
 
         $application = new Application();
-        $application->add(new SetImportModeCommand($schemaRegistryApi));
+        $application->addCommand(new SetImportModeCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:set:mode:import');
         $commandTester = new CommandTester($command);
         $commandTester->execute([]);
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(null, $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame('', $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

@@ -3,20 +3,21 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\RegisterSchemaVersionCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(RegisterSchemaVersionCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class RegisterSchemaVersionCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     public function testCommand(): void
     {
@@ -54,7 +55,8 @@ EOF
         ]);
 
         $application = new Application();
-        $application->add(new RegisterSchemaVersionCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterSchemaVersionCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:version');
         $commandTester = new CommandTester($command);
 
@@ -64,7 +66,7 @@ EOF
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals(
+        self::assertSame(
             implode(
                 PHP_EOL,
                 [
@@ -75,6 +77,6 @@ EOF
             $commandOutput
         );
 
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

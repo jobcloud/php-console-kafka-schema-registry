@@ -11,7 +11,7 @@ use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDefaultTypeCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemaTemplatesDocCommentsCommand;
 use Jobcloud\SchemaConsole\Command\CheckCompatibilityCommand;
 use Jobcloud\SchemaConsole\Command\CheckDocCommentsCommand;
-use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
+use Jobcloud\SchemaConsole\Command\CheckIsRegisteredCommand;
 use Jobcloud\SchemaConsole\Command\DeleteAllSchemasCommand;
 use Jobcloud\SchemaConsole\Command\GetCompatibilityModeCommand;
 use Jobcloud\SchemaConsole\Command\GetCompatibilityModeForSchemaCommand;
@@ -31,24 +31,21 @@ use Pimple\ServiceProviderInterface;
 
 class CommandServiceProvider implements ServiceProviderInterface
 {
-    public const COMMANDS = 'kafka.schema.registry.commands';
+    public const string COMMANDS = 'kafka.schema.registry.commands';
 
-    /**
-     * @param Container $container
-     * @return void
-     */
-    public function register(Container $container)
+    #[\Override]
+    public function register(Container $pimple): void
     {
-        $container->register(new KafkaSchemaRegistryApiClientProvider());
+        $pimple->register(new KafkaSchemaRegistryApiClientProvider());
 
-        $container[self::COMMANDS] = static function (Container $container) {
+        $pimple[self::COMMANDS] = static function (Container $pimple): array {
 
             /** @var KafkaSchemaRegistryApiClientInterface $schemaRegistryApi */
-            $schemaRegistryApi = $container[KafkaSchemaRegistryApiClientProvider::API_CLIENT];
+            $schemaRegistryApi = $pimple[KafkaSchemaRegistryApiClientProvider::API_CLIENT];
 
             return [
                 new CheckCompatibilityCommand($schemaRegistryApi),
-                new CheckIsRegistredCommand($schemaRegistryApi),
+                new CheckIsRegisteredCommand($schemaRegistryApi),
                 new DeleteAllSchemasCommand($schemaRegistryApi),
                 new GetCompatibilityModeCommand($schemaRegistryApi),
                 new CheckAllSchemasCompatibilityCommand($schemaRegistryApi),

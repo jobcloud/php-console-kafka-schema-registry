@@ -8,9 +8,7 @@ use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClientInterface;
 
 class SetReadWriteModeCommand extends AbstractModeCommand
 {
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function getMode(): string
     {
         return KafkaSchemaRegistryApiClientInterface::MODE_READWRITE;

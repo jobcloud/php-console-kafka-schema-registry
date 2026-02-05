@@ -14,29 +14,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 {
-    /**
-     * @var integer
-     */
-    private $maxRetries;
+    private bool $abortRegister = false;
 
-    /**
-     * @var bool
-     */
-    private $abortRegister = false;
-
-    /**
-     * @param KafkaSchemaRegistryApiClientInterface $schemaRegistryApi
-     * @param integer           $maxRetries
-     */
-    public function __construct(KafkaSchemaRegistryApiClientInterface $schemaRegistryApi, int $maxRetries = 10)
-    {
+    public function __construct(
+        KafkaSchemaRegistryApiClientInterface $schemaRegistryApi,
+        private int $maxRetries = 10
+    ) {
         parent::__construct($schemaRegistryApi);
-        $this->maxRetries = $maxRetries;
     }
 
-    /**
-     * @return void
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -52,11 +39,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -83,31 +66,35 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 return 1;
             }
 
-            $this->abortRegister = (0 === count($failed)) || ($this->maxRetries === ++$retries);
+            $this->abortRegister = ([] === $failed) || ($this->maxRetries === ++$retries);
         }
 
-        if (isset($failed) && 0 !== count($failed)) {
+        if ([] !== $failed) {
             $io->warning('Failed schemas the following schemas:');
             $io->listing($failed);
         }
 
-        if (isset($succeeded) && 0 !== count($succeeded)) {
+        if ([] !== $succeeded) {
             $io->success('Succeeded registering the following schemas:');
-            $io->listing(array_map(static function ($item) use ($successMessage) {
-                return sprintf($successMessage, $item['name'], $item['version']);
-            }, $succeeded));
+            $io->listing(
+                array_map(
+                    static fn(array $item): string => sprintf(
+                        $successMessage,
+                        $item['name'],
+                        $item['version']
+                    ),
+                    $succeeded
+                )
+            );
         }
 
         return count($failed) ? 1 : 0;
     }
 
     /**
-     * @param array<string, mixed> $avroFiles
-     * @param SymfonyStyle $io
-     * @param array<string, mixed> $failed
-     * @param array<string, mixed> $succeeded
-     * @param bool $useSchemaVersioning
-     * @return boolean
+     * @param array<string, string> $avroFiles
+     * @param array<string, string> $failed
+     * @param array<string, array{name: string, version: string|null}> $succeeded
      */
     private function registerFiles(
         array $avroFiles,
@@ -123,7 +110,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
             /** @var array<string, mixed> $jsonDecoded */
             $jsonDecoded = json_decode($fileContents);
 
-            /** @var string $localSchema */
+            /** @var non-empty-string $localSchema */
             $localSchema = json_encode($jsonDecoded);
 
             if ($useSchemaVersioning) {
@@ -133,7 +120,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
 
             try {
                 $latestVersion = $this->schemaRegistryApi->getLatestSubjectVersion($schemaName);
-            } catch (\Throwable $e) {
+            } catch (\Throwable) {
                 $latestVersion = null;
             }
 
@@ -156,6 +143,7 @@ class RegisterChangedSchemasCommand extends AbstractSchemaCommand
                 $failed[$schemaName] = $schemaName;
                 continue;
             }
+
             $this->schemaRegistryApi->registerNewSchemaVersion($schemaName, $localSchema);
 
             $succeeded[$schemaName] = [

@@ -13,13 +13,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemaTemplatesNamesCommand extends Command
 {
-    private const TYPES_FOR_VALIDATION = [
+    private const array TYPES_FOR_VALIDATION = [
         'record',
         'enum',
         'fixed'
     ];
 
-    private const RESERVED_KEYWORDS = [
+    private const array RESERVED_KEYWORDS = [
         'null',
         'boolean',
         'int',
@@ -35,11 +35,12 @@ class CheckAllSchemaTemplatesNamesCommand extends Command
         'fixed',
     ];
 
-    private const REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
+    private const string REGEX_MATCH_NAME_NAMING_CONVENTION = '/^[A-Za-z_][A-Za-z0-9_]*$/';
 
-    private const REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
+    private const string REGEX_MATCH_NAMESPACE_NAMING_CONVENTION =
         '/^(?:[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*)?$/';
 
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -53,6 +54,7 @@ class CheckAllSchemaTemplatesNamesCommand extends Command
             );
     }
 
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
@@ -78,9 +80,8 @@ The following template schema names violate the aforementioned rules:');
     }
 
     /**
-     * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
-     * @return boolean
+     * @param array<string, string> $avroFiles
+     * @param array<string> $failed
      */
     private function checkSchemaTemplateNames(array $avroFiles, array &$failed = []): bool
     {
@@ -105,11 +106,11 @@ The following template schema names violate the aforementioned rules:');
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 
     /**
-     * @return array<int, string>
+     * @return array<string>
      */
     private function validateNamespaceField(string $namespace, string $schemaName): array
     {
@@ -123,7 +124,7 @@ The following template schema names violate the aforementioned rules:');
     }
 
     /**
-     * @return array<int, string>
+     * @return array<string>
      */
     private function validateNameField(string $name, string $schemaName): array
     {

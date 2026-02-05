@@ -11,14 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Command\Command;
 
-/**
- * Class CheckDocCommentsCommand
- */
 class CheckDocCommentsCommand extends Command
 {
-    /**
-     * @return void
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -28,11 +23,7 @@ class CheckDocCommentsCommand extends Command
             ->addArgument('schemaTemplateFile', InputArgument::REQUIRED, 'Path to Avro template schema file');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $errorMessage = 'Schema template does not have doc comments on all fields';

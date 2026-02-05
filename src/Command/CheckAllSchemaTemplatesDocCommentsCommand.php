@@ -12,14 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Command\Command;
 
-/**
- * Class CheckAllSchemaTemplatesDocCommentsCommand
- */
 class CheckAllSchemaTemplatesDocCommentsCommand extends Command
 {
-    /**
-     * @return void
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -33,11 +28,7 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
             );
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
@@ -62,9 +53,8 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
 
 
     /**
-     * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
-     * @return boolean
+     * @param array<string, string> $avroFiles
+     * @param array<string> $failed
      * @throws JsonException
      */
     private function checkDocCommentsOnSchemaTemplates(array $avroFiles, array &$failed = []): bool
@@ -83,6 +73,6 @@ class CheckAllSchemaTemplatesDocCommentsCommand extends Command
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 }

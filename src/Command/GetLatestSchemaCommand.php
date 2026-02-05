@@ -13,9 +13,7 @@ use Throwable;
 
 class GetLatestSchemaCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -26,11 +24,7 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
             ->addArgument('outputFile', InputArgument::REQUIRED, 'Path to output file');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $schemaName */
@@ -41,9 +35,9 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
                 $schemaName,
                 KafkaSchemaRegistryApiClientInterface::VERSION_LATEST
             );
-        } catch (ClientException $e) {
-            if ($e->getCode() !== 404) {
-                throw $e;
+        } catch (ClientException $clientException) {
+            if ($clientException->getCode() !== 404) {
+                throw $clientException;
             }
 
             $output->writeln(sprintf('Schema %s does not exist', $schemaName));
@@ -55,7 +49,7 @@ class GetLatestSchemaCommand extends AbstractSchemaCommand
 
         try {
             file_put_contents($outputFile, json_encode($schema, JSON_THROW_ON_ERROR));
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $output->writeln(sprintf('Was unable to write schema to %s.', $outputFile));
             return 1;
         }

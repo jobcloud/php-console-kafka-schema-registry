@@ -3,22 +3,23 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckAllSchemasCompatibilityCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(CheckAllSchemasCompatibilityCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const DUMMY_SCHEMA = <<<EOF
+    protected const string DUMMY_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -41,9 +42,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         }
         EOF;
 
-    /**
-     * This method is called before each test.
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -52,27 +51,21 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         }
     }
 
-    /**
-     * This method is called after each test.
-     */
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param string $contents
-     */
     protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void
     {
         $numbers = range(1, $numberOfFiles);
 
-        array_walk($numbers, static function ($item) use ($contents) {
+        array_walk($numbers, static function (int $item) use ($contents): void {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 $contents
@@ -102,7 +95,8 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         ;
 
         $application = new Application();
-        $application->add(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+        $application->addCommand(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:check:compatibility:all');
         $commandTester = new CommandTester($command);
 
@@ -113,7 +107,7 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('All schemas are compatible', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenAllNotCompatible(): void
@@ -133,7 +127,8 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         ;
 
         $application = new Application();
-        $application->add(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+        $application->addCommand(new CheckAllSchemasCompatibilityCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:check:compatibility:all');
         $commandTester = new CommandTester($command);
 
@@ -149,6 +144,6 @@ class CheckAllSchemasCompatibilityCommandTest extends AbstractSchemaRegistryTest
         self::assertStringContainsString('* test.schema.3', $commandOutput);
         self::assertStringContainsString('* test.schema.4', $commandOutput);
         self::assertStringContainsString('* test.schema.5', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

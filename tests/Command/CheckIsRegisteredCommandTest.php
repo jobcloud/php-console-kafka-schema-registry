@@ -3,25 +3,27 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
-use Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
+use Jobcloud\SchemaConsole\Command\CheckIsRegisteredCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckIsRegistredCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(CheckIsRegisteredCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
     /**
-     * @return array
+     * @return string[][]|int[][]|null[][]
      */
-    public function argumentsDataProvider(): array
+    public static function argumentsDataProvider(): array
     {
         return [
             [null, 'Schema does not exist in any version', 1],
@@ -32,12 +34,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
         ];
     }
 
-    /**
-     * @dataProvider argumentsDataProvider
-     * @param string|null $actualVersion
-     * @param string $expectedOutput
-     * @param int $expectedExitCode
-     */
+    #[DataProvider('argumentsDataProvider')]
     public function testCommand(?string $actualVersion, string $expectedOutput, int $expectedExitCode): void
     {
         /** @var MockObject|KafkaSchemaRegistryApiClient $schemaRegistryApi */
@@ -46,7 +43,8 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new CheckIsRegistredCommand($schemaRegistryApi));
+        $application->addCommand(new CheckIsRegisteredCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:entry:exists');
         $commandTester = new CommandTester($command);
 
@@ -58,7 +56,7 @@ class CheckIsRegisteredCommandTest extends AbstractSchemaRegistryTestCase
 
         $commandOutput = trim($commandTester->getDisplay());
 
-        self::assertEquals($expectedOutput, $commandOutput);
-        self::assertEquals($expectedExitCode, $commandTester->getStatusCode());
+        self::assertSame($expectedOutput, $commandOutput);
+        self::assertSame($expectedExitCode, $commandTester->getStatusCode());
     }
 }

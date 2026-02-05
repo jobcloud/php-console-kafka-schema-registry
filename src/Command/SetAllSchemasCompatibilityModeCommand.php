@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SetAllSchemasCompatibilityModeCommand extends AbstractSchemaCommand
 {
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -72,6 +73,7 @@ the remaining schemas and return a non-zero exit code at the end.
 HELP;
     }
 
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $configFilePath = (string) $input->getArgument('configFile');
@@ -154,8 +156,8 @@ HELP;
     ): bool {
         try {
             $this->schemaRegistryApi->setSubjectCompatibilityLevel($schemaName, $compatibilityLevel);
-        } catch (\Exception $e) {
-            $output->writeln(sprintf('<error>FAILED: %s</error>', $e->getMessage()));
+        } catch (\Exception $exception) {
+            $output->writeln(sprintf('<error>FAILED: %s</error>', $exception->getMessage()));
 
             return false;
         }

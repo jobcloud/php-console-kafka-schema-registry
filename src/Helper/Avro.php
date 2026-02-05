@@ -4,5 +4,5 @@ namespace Jobcloud\SchemaConsole\Helper;
 
 class Avro
 {
-    public const FILE_EXTENSION = 'avsc';
+    public const string FILE_EXTENSION = 'avsc';
 }

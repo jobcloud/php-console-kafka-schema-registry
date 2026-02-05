@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ListAllSchemasCommand extends AbstractSchemaCommand
 {
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -24,6 +25,7 @@ class ListAllSchemasCommand extends AbstractSchemaCommand
             );
     }
 
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $includeDeletedArg = $input->getArgument('includeDeleted');

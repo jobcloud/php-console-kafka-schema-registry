@@ -1,13 +1,23 @@
-FROM public.ecr.aws/docker/library/php:8.3-cli-alpine3.21
+FROM public.ecr.aws/docker/library/php:8.4-cli-alpine3.23
 
+# PHP: Install pie binary
+COPY --from=ghcr.io/php/pie:1.3.1-bin /pie /usr/bin/pie
+
+# COMPOSER: install binary
+COPY --from=composer:2.9 /usr/bin/composer /usr/bin/composer
+
+ENV RDKAFKA_VERSION 6.0.5
 ARG HOST_USER_ID
 
 COPY files/bin/ /usr/local/bin/
-COPY files/php/ /phpIni
 
 # SYS: Install required packages
 RUN apk --no-cache upgrade && \
     apk --no-cache add bash git sudo openssh autoconf gcc g++ make gettext make shadow librdkafka librdkafka-dev
+
+# PHP: Install php extensions
+RUN pie install rdkafka/rdkafka:${RDKAFKA_VERSION} && \
+    pie install pecl/pcov
 
 # SYS: add ssh key (for GitHub)
 COPY --chown=www-data:www-data files/.ssh /home/www-data/.ssh
@@ -34,14 +44,6 @@ RUN ln -s /run/secrets/ssh_host_key /root/.ssh/id_rsa && \
     chown root:root /root/.ssh/config && \
     chmod 700 /home/www-data/.ssh && \
     chmod 400 /home/www-data/.ssh/config /root/.ssh/config
-
-# PHP: Install php extensions
-RUN pecl channel-update pecl.php.net && \
-    pecl install pcov rdkafka-6.0.3 && \
-    php-ext-enable pcov rdkafka
-
-# COMPOSER: install binary
-COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 
 USER 'www-data'
 

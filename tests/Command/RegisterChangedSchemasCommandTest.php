@@ -4,22 +4,21 @@ namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\Kafka\SchemaRegistryClient\Exception\SubjectNotFoundException;
 use Jobcloud\Kafka\SchemaRegistryClient\KafkaSchemaRegistryApiClient;
+use Jobcloud\SchemaConsole\Command\AbstractSchemaCommand;
 use Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\RegisterChangedSchemasCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- * @covers \Jobcloud\SchemaConsole\Command\AbstractSchemaCommand
- */
+#[CoversClass(RegisterChangedSchemasCommand::class)]
+#[CoversClass(AbstractSchemaCommand::class)]
 class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_DIRECTORY = '/tmp/testSchemas';
+    protected const string SCHEMA_DIRECTORY = '/tmp/testSchemas';
 
-    protected const DUMMY_SCHEMA = <<<EOF
+    protected const string DUMMY_SCHEMA = <<<EOF
         {
           "type": "record",
           "name": "test",
@@ -42,9 +41,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         }
         EOF;
 
-    /**
-     * This method is called before each test.
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -53,27 +50,21 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         }
     }
 
-    /**
-     * This method is called after each test.
-     */
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
         if (file_exists(self::SCHEMA_DIRECTORY)) {
-            array_map('unlink', glob(self::SCHEMA_DIRECTORY . '/*.*'));
+            array_map(unlink(...), glob(self::SCHEMA_DIRECTORY . '/*.*'));
             rmdir(self::SCHEMA_DIRECTORY);
         }
     }
 
-    /**
-     * @param int $numberOfFiles
-     * @param string $contents
-     */
     protected function generateFiles(int $numberOfFiles, string $contents = self::DUMMY_SCHEMA): void
     {
         $numbers = range(1, $numberOfFiles);
 
-        array_walk($numbers, static function ($item) use ($contents) {
+        array_walk($numbers, static function (int $item) use ($contents): void {
             file_put_contents(
                 sprintf('%s/test.schema.%d.avsc', self::SCHEMA_DIRECTORY, $item),
                 $contents
@@ -105,7 +96,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ;
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -116,7 +108,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertMatchesRegularExpression('/^Successfully registered new version of schema /', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandSuccessWithSkipping(): void
@@ -132,7 +124,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -148,7 +141,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertStringContainsString('Schema test.schema.4 has been skipped (no change)', $commandOutput);
         self::assertStringContainsString('Schema test.schema.5 has been skipped (no change)', $commandOutput);
 
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandSuccessWithAllNew(): void
@@ -164,7 +157,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -186,7 +180,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         self::assertStringContainsString('test.schema.4 with new version: 1', $commandOutput);
         self::assertStringContainsString('test.schema.5 with new version: 1', $commandOutput);
 
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandFailsRegisteringASchema(): void
@@ -202,7 +196,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -217,7 +212,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
             $commandOutput
         );
 
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputTotalFailDueToIncompatibility(): void
@@ -234,7 +229,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ]);
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -246,7 +242,7 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         self::assertStringContainsString('has an incompatible change', $commandOutput);
 
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testOutputWhenCommandRegisterWithSuccessAndVersioningOption(): void
@@ -269,7 +265,8 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
         ;
 
         $application = new Application();
-        $application->add(new RegisterChangedSchemasCommand($schemaRegistryApi));
+        $application->addCommand(new RegisterChangedSchemasCommand($schemaRegistryApi));
+
         $command = $application->find('kafka-schema-registry:register:changed');
         $commandTester = new CommandTester($command);
 
@@ -282,6 +279,6 @@ class RegisterChangedSchemasCommandTest extends AbstractSchemaRegistryTestCase
 
         self::assertMatchesRegularExpression('/^Successfully registered new version of schema /', $commandOutput);
         self::assertStringContainsString('with new versions, the latest being', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 }

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
 {
-    private const TYPE_MAP = [
+    private const array TYPE_MAP = [
         "null" => "null",
         "boolean" => "boolean",
         "integer" => "int",
@@ -20,9 +20,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
         "array" => "array",
     ];
 
-    /**
-     * @return void
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -36,11 +34,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             );
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return integer
-     */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $directory */
@@ -64,15 +58,14 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param array<string, mixed> $avroFiles
-     * @param array<string, mixed> $failed
-     * @return boolean
+     * @param array<string, string> $avroFiles
+     * @param array<string> $failed
      */
     private function checkSchemas(array $avroFiles, array &$failed = []): bool
     {
         $failed = [];
 
-        foreach ($avroFiles as $schemaName => $avroFile) {
+        foreach ($avroFiles as $avroFile) {
             /** @var string $localSchema */
             $localSchema = file_get_contents($avroFile);
 
@@ -83,12 +76,11 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
         }
 
-        return 0 === count($failed);
+        return [] === $failed;
     }
 
     /**
-     * @param string $localSchema
-     * @return array<int|string, mixed>
+     * @return array<string, string>
      */
     private function checkDefaultType(string $localSchema): array
     {
@@ -101,11 +93,10 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param mixed $decodedSchema
-     * @param array<mixed, mixed> $defaultFields
-     * @return array<int|string, mixed>
+     * @param array<string, string> $defaultFields
+     * @return array<string, string>
      */
-    private function checkAllFields($decodedSchema, array $defaultFields = []): array
+    private function checkAllFields(mixed $decodedSchema, array $defaultFields = []): array
     {
         foreach ($decodedSchema->fields as $field) {
             if (!property_exists($field, 'default')) {
@@ -120,7 +111,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
                 $fieldTypes = [$fieldTypes];
             }
 
-            if (count($fieldTypes)) {
+            if ($fieldTypes !== []) {
                 $defaultFields = $this->checkSingleField($fieldTypes[0], $field, $defaultFields);
             }
         }
@@ -129,16 +120,14 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     }
 
     /**
-     * @param mixed $fieldType
-     * @param mixed $field
-     * @param array<mixed, mixed> $defaultFields
-     * @return array<int|string, mixed>
+     * @param array<string, string> $defaultFields
+     * @return array<string, string>
      */
-    private function checkSingleField($fieldType, $field, array $defaultFields): array
+    private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
     {
         $defaultType = strtolower(gettype($field->default));
 
-        if (is_string($fieldType)) {
+        if (is_string($fieldType) && isset(self::TYPE_MAP[$defaultType])) {
             if (
                 self::TYPE_MAP[$defaultType] === $fieldType
                 || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
@@ -147,39 +136,23 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
             }
         }
 
-        if (property_exists($fieldType, 'type') && $fieldType->type === 'array') {
-            if (is_string($defaultType) && self::TYPE_MAP[$defaultType] === $fieldType->type) {
-                unset($defaultFields[$field->name]);
-            }
+        if (($fieldType->type ?? null) === 'array' && (self::TYPE_MAP[$defaultType] ?? null) === 'array') {
+            unset($defaultFields[$field->name]);
         }
 
         return $defaultFields;
     }
 
-    /**
-     * @param string $defaultType
-     * @param string $currentType
-     * @return bool
-     */
     private function isContainedInBiggerType(string $defaultType, string $currentType): bool
     {
         if ($currentType === 'double' && ($defaultType === 'int' || $defaultType === 'float')) {
             return true;
         }
 
-        if ($currentType === 'float' && $defaultType === 'int') {
-            return true;
-        }
-
-        return false;
+        return $currentType === 'float' && $defaultType === 'int';
     }
 
-    /**
-     * @param mixed $decodedSchema
-     * @param mixed $field
-     * @return string
-     */
-    private function getFieldName($decodedSchema, $field): string
+    private function getFieldName(mixed $decodedSchema, mixed $field): string
     {
         return $decodedSchema->namespace . '.' . $decodedSchema->name . '.' . $field->name;
     }

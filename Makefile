@@ -38,11 +38,8 @@ coverage:
 	${PHPUNIT} && ${COVCHK} build/logs/phpunit/coverage/coverage.xml 100
 
 infection-testing:
-	make coverage
-	cp -f build/logs/phpunit/junit.xml build/logs/phpunit/coverage/junit.xml
-	sudo php-ext-disable pcov
-	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=84 --threads=`nproc`
-	sudo php-ext-enable pcov
+	${PHPUNIT}
+	${INFECTION} --coverage=build/logs/phpunit/coverage --min-msi=84 --threads=`nproc` --coverage=build/logs/phpunit/
 
 install-dependencies:
 	composer install
@@ -63,7 +60,7 @@ help:
 	# Targets:
 	#   clean                   Cleans the coverage and the vendor directory
 	#   code-check              For Developer machine, to check code style using phpcs & Code analysis
-	#   code-fix                For Developer machine, to fix code-style automatcially using phpcbf
+	#   code-fix                For Developer machine, to fix code-style automatically using phpcbf
 	#   code-style              Check code style using phpcs
 	#   coverage                Code Coverage display
 	#   help                    You're looking at it!

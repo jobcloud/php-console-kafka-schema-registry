@@ -3,20 +3,20 @@
 namespace Jobcloud\SchemaConsole\Tests\Command;
 
 use Jobcloud\SchemaConsole\Command\CheckDocCommentsCommand;
+use Jobcloud\SchemaConsole\Helper\SchemaFileHelper;
 use Jobcloud\SchemaConsole\Tests\AbstractSchemaRegistryTestCase;
 use JsonException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 
-/**
- * @covers \Jobcloud\SchemaConsole\Command\CheckDocCommentsCommand
- * @covers \Jobcloud\SchemaConsole\Helper\SchemaFileHelper
- */
+#[CoversClass(CheckDocCommentsCommand::class)]
+#[CoversClass(SchemaFileHelper::class)]
 class CheckDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
 {
-    protected const SCHEMA_TEST_FILE = '/tmp/test.avsc';
+    protected const string SCHEMA_TEST_FILE = '/tmp/test.avsc';
 
-    protected const GOOD_SCHEMA = <<<EOF
+    protected const string GOOD_SCHEMA = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -31,7 +31,7 @@ class CheckDocCommentsCommandTest extends AbstractSchemaRegistryTestCase
 }
 EOF;
 
-    protected const BAD_SCHEMA = <<<EOF
+    protected const string BAD_SCHEMA = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -45,7 +45,7 @@ EOF;
 }
 EOF;
 
-    protected const BAD_SCHEMA1 = <<<EOF
+    protected const string BAD_SCHEMA1 = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -60,7 +60,7 @@ EOF;
 }
 EOF;
 
-    protected const BAD_SCHEMA2 = <<<EOF
+    protected const string BAD_SCHEMA2 = <<<EOF
 {
   "type": "record",
   "name": "test",
@@ -78,7 +78,8 @@ EOF;
     public function testCommandSuccess(): void
     {
         $application = new Application();
-        $application->add(new CheckDocCommentsCommand());
+        $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 
@@ -91,13 +92,14 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('Schema template has doc comments on all fields', $commandOutput);
-        self::assertEquals(0, $commandTester->getStatusCode());
+        self::assertSame(0, $commandTester->getStatusCode());
     }
 
     public function testCommandBadSchema(): void
     {
         $application = new Application();
-        $application->add(new CheckDocCommentsCommand());
+        $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 
@@ -110,13 +112,14 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('Schema template does not have doc comments on all fields', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 
     public function testCommandBadSchema1(): void
     {
         $application = new Application();
-        $application->add(new CheckDocCommentsCommand());
+        $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 
@@ -132,7 +135,8 @@ EOF;
     public function testCommandBadSchema2(): void
     {
         $application = new Application();
-        $application->add(new CheckDocCommentsCommand());
+        $application->addCommand(new CheckDocCommentsCommand());
+
         $command = $application->find('kafka-schema-registry:check:template:doc');
         $commandTester = new CommandTester($command);
 
@@ -145,6 +149,6 @@ EOF;
         $commandOutput = trim($commandTester->getDisplay());
 
         self::assertStringContainsString('Schema template does not have doc comments on all fields', $commandOutput);
-        self::assertEquals(1, $commandTester->getStatusCode());
+        self::assertSame(1, $commandTester->getStatusCode());
     }
 }

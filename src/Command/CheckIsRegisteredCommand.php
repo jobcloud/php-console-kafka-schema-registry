@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CheckIsRegistredCommand extends AbstractSchemaCommand
+class CheckIsRegisteredCommand extends AbstractSchemaCommand
 {
-    /**
-     * @return void
-     */
+    #[\Override]
     protected function configure(): void
     {
         $this
@@ -23,11 +21,7 @@ class CheckIsRegistredCommand extends AbstractSchemaCommand
             ->addArgument('schemaFile', InputArgument::REQUIRED, 'Path to Avro schema file');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return integer
-     */
+    #[\Override]
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var string $schemaFile */
