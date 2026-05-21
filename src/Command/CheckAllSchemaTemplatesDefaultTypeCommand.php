@@ -123,7 +123,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
      * @param array<string, string> $defaultFields
      * @return array<string, string>
      */
-    private function checkSingleField($fieldType, $field, array $defaultFields): array
+    private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
     {
         $defaultType = strtolower(gettype($field->default));
         if (is_string($fieldType)) {
