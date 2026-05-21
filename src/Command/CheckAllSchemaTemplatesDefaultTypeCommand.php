@@ -123,23 +123,32 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
      * @param array<string, string> $defaultFields
      * @return array<string, string>
      */
-    private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
+    private function checkSingleField($fieldType, $field, array $defaultFields): array
     {
         $defaultType = strtolower(gettype($field->default));
-
-        if (is_string($fieldType) && isset(self::TYPE_MAP[$defaultType])) {
+        if (is_string($fieldType)) {
+            // Primitive match (existing behavior)
             if (
-                self::TYPE_MAP[$defaultType] === $fieldType
-                || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
+                isset(self::TYPE_MAP[$defaultType])
+                && (
+                    self::TYPE_MAP[$defaultType] === $fieldType
+                    || $this->isContainedInBiggerType(self::TYPE_MAP[$defaultType], $fieldType)
+                )
             ) {
+                unset($defaultFields[$field->name]);
+                return $defaultFields;
+            }
+
+            if ($defaultType === 'object' && !in_array($fieldType, self::TYPE_MAP, true)) {
+                unset($defaultFields[$field->name]);
+                return $defaultFields;
+            }
+        }
+        if (property_exists($fieldType, 'type') && $fieldType->type === 'array') {
+            if (self::TYPE_MAP[$defaultType] === $fieldType->type) {
                 unset($defaultFields[$field->name]);
             }
         }
-
-        if (($fieldType->type ?? null) === 'array' && (self::TYPE_MAP[$defaultType] ?? null) === 'array') {
-            unset($defaultFields[$field->name]);
-        }
-
         return $defaultFields;
     }
 

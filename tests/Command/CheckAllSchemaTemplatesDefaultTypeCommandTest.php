@@ -141,6 +141,43 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         }
         EOF;
 
+    protected const string GOOD_SCHEMA_RECORD_OBJECT_DEFAULT = <<<EOF
+        {
+          "type": "record",
+          "name": "test",
+          "namespace": "ch.jobcloud",
+          "doc": "Schema with a record-typed field that has an object default",
+          "fields": [
+            {
+              "name": "embeddedRecord",
+              "type": "ch.jobcloud.address",
+              "default": {
+                "street": null,
+                "city": null
+              },
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
+    protected const string BAD_SCHEMA_RECORD_DEFAULT = <<<EOF
+        {
+          "type": "record",
+          "name": "test",
+          "namespace": "ch.jobcloud",
+          "doc": "Schema with a record-typed field that has an invalid null default",
+          "fields": [
+            {
+              "name": "embeddedRecord",
+              "type": "ch.jobcloud.address",
+              "default": null,
+              "doc": "some desc"
+            }
+          ]
+        }
+        EOF;
+
     protected const string KEY_SCHEMA = <<<EOF
         {
           "type": "string"
@@ -252,6 +289,53 @@ class CheckAllSchemaTemplatesDefaultTypeCommandTest extends AbstractSchemaRegist
         self::assertStringContainsString('Following schema templates have invalid default value types', $commandOutput);
         self::assertStringContainsString('* ch.jobcloud.test.bool1', $commandOutput);
         self::assertStringContainsString('* ch.jobcloud.test.number2', $commandOutput);
+        self::assertSame(1, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenRecordTypedFieldHasObjectDefault(): void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.record.avsc', self::SCHEMA_DIRECTORY),
+            self::GOOD_SCHEMA_RECORD_OBJECT_DEFAULT
+        );
+
+        $application = new Application();
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
+        $command = $application->find('kafka-schema-registry:check:template:default:type:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString('All schema templates have valid default value types', $commandOutput);
+        self::assertSame(0, $commandTester->getStatusCode());
+    }
+
+    public function testOutputWhenRecordTypedFieldHasInvalidNullDefault(): void
+    {
+        file_put_contents(
+            sprintf('%s/test.schema.record.bad.avsc', self::SCHEMA_DIRECTORY),
+            self::BAD_SCHEMA_RECORD_DEFAULT
+        );
+
+        $application = new Application();
+        $application->addCommand(new CheckAllSchemaTemplatesDefaultTypeCommand());
+
+        $command = $application->find('kafka-schema-registry:check:template:default:type:all');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'schemaTemplateDirectory' => self::SCHEMA_DIRECTORY
+        ]);
+
+        $commandOutput = trim($commandTester->getDisplay());
+
+        self::assertStringContainsString('Following schema templates have invalid default value types', $commandOutput);
+        self::assertStringContainsString('* ch.jobcloud.test.embeddedRecord', $commandOutput);
         self::assertSame(1, $commandTester->getStatusCode());
     }
 }
