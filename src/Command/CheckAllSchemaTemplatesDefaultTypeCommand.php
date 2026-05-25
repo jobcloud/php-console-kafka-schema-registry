@@ -126,6 +126,7 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
     private function checkSingleField(mixed $fieldType, mixed $field, array $defaultFields): array
     {
         $defaultType = strtolower(gettype($field->default));
+
         if (is_string($fieldType)) {
             // Primitive match (existing behavior)
             if (
@@ -144,11 +145,13 @@ class CheckAllSchemaTemplatesDefaultTypeCommand extends Command
                 return $defaultFields;
             }
         }
+
         if (property_exists($fieldType, 'type') && $fieldType->type === 'array') {
             if (self::TYPE_MAP[$defaultType] === $fieldType->type) {
                 unset($defaultFields[$field->name]);
             }
         }
+
         return $defaultFields;
     }
 
