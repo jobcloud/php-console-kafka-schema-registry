@@ -24,7 +24,7 @@ code-style:
 
 static-analysis:
 	mkdir -p build/logs/phpstan
-	${PHPSTAN} analyse --memory-limit 512
+	${PHPSTAN} analyse --memory-limit=-1
 
 ci-static-analysis:
 	mkdir -p build/logs/phpstan
